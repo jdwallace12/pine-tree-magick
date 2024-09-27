@@ -2,7 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 import Header from '~/components/widgets/Header.astro';
-import Hero from '~/components/widgets/Hero.astro';
+import HeroBackground from '~/components/widgets/HeroBackground.astro';
 import Content from '~/components/widgets/Content.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Features3 from '~/components/widgets/Features3.astro';
@@ -42,21 +42,20 @@ const metadata = {
 
   <!-- Hero2 Widget ******************* -->
 
-  <Hero
+  <HeroBackground
     id="hero"
-    title="Jersey Griggs"
-    tagline="Astrology"
-    actions={[{ variant: 'primary', text: 'Hire me', href: getPermalink('/contact#form') }]}
+    title="Pine Tree Magic"
+    tagline="The Woo"
+    actions={[{ variant: 'primary', text: 'Book Now', href: getPermalink('/contact#form') }]}
   >
     <Fragment slot="subtitle">
       I'm a Graphic Designer passionate about crafting visual stories. <br /> With 5 years of experience and a degree from
       New York University's School of Design. I infuse vitality into brands and designs, transforming concepts into captivating
       realities.
     </Fragment>
-  </Hero>
+  </HeroBackground>
 
   <!-- Content Widget **************** -->
-
   <Content
     id="about"
     columns={3}
