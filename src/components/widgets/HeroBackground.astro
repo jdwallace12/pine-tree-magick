@@ -18,7 +18,10 @@ const {
 } = Astro.props;
 ---
 
-<section class="relative md:-mt-[76px] not-prose bg-center bg-no-repeat bg-[url('~/assets/images/trees.webp')] bg-gray-700 bg-blend-multiply" {...id ? { id } : {}}>
+<section
+  class="relative md:-mt-[96px] not-prose bg-center bg-no-repeat bg-cover bg-[url('~/assets/images/trees.webp')] bg-gray-700 bg-blend-multiply"
+  {...id ? { id } : {}}
+>
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : null}
