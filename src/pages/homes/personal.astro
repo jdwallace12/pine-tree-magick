@@ -24,10 +24,7 @@ const metadata = {
       links={[
         { text: 'Home', href: '#' },
         { text: 'About', href: '#about' },
-        { text: 'Resume', href: '#resume' },
-        { text: 'Porfolio', href: '#porfolio' },
         { text: 'Blog', href: '#blog' },
-        { text: 'Github', href: 'https://github.com/onwidget' },
       ]}
       actions={[
         {
@@ -55,8 +52,170 @@ const metadata = {
     </Fragment>
   </HeroBackground>
 
-  <!-- Content Widget **************** -->
-  <Content
+   <!-- Content Widget **************** -->
+
+   <Content
+   id="porfolio"
+   isReversed
+   items={[
+     {
+       title: 'Description:',
+       description:
+         'Developed a comprehensive brand identity for a tech startup, Tech Innovators, specializing in disruptive innovations. The goal was to convey a modern yet approachable image that resonated with both corporate clients and tech enthusiasts.',
+     },
+     {
+       title: 'Role:',
+       description:
+         'Led the entire branding process from concept to execution. Created a dynamic logo that symbolized innovation, selected a vibrant color palette, and I designed corporate stationery, website graphics, and social media assets.',
+     },
+   ]}
+   image={{
+     src: 'https://images.unsplash.com/photo-1658248165252-71e116af1b34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=928&q=80',
+     alt: 'Tech Design Image',
+   }}
+   callToAction={{
+     target: '_blank',
+     text: 'Go to the project',
+     icon: 'tabler:chevron-right',
+     href: '#',
+   }}
+ >
+   <Fragment slot="content">
+     <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+       Project 1: <br /><span class="text-2xl">Brand identity for tech innovators</span>
+     </h3>
+   </Fragment>
+
+   <Fragment slot="bg">
+     <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+   </Fragment>
+ </Content>
+
+ <!-- Content Widget **************** -->
+
+ <Content
+   isAfterContent={true}
+   items={[
+     {
+       title: 'Description:',
+       description:
+         'Designed a captivating event poster for an art and music festival, "ArtWave Fusion," aiming to showcase the synergy between visual art and music genres.',
+     },
+     {
+       title: 'Role:',
+       description: `Translated the festival's creative theme into a visually striking poster. Used bold typography, vibrant colors, and abstract elements to depict the fusion of art and music. Ensured the design captured the festival's vibrant atmosphere.`,
+     },
+   ]}
+   image={{
+     src: 'https://images.unsplash.com/photo-1619983081563-430f63602796?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+     alt: 'Art and Music Poster Image',
+   }}
+   callToAction={{
+     target: '_blank',
+     text: 'Go to the project',
+     icon: 'tabler:chevron-right',
+     href: '#',
+   }}
+ >
+   <Fragment slot="content">
+     <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+       Project 2: <br /><span class="text-2xl">Event poster for art & music festival</span>
+     </h3>
+   </Fragment>
+
+   <Fragment slot="bg">
+     <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+   </Fragment>
+ </Content>
+
+ <!-- Content Widget **************** -->
+
+ <Content
+   isReversed
+   isAfterContent={true}
+   items={[
+     {
+       title: 'Description:',
+       description: `Redesigned the e-commerce website for an eco-conscious fashion brand, GreenVogue. The objective was to align the brand's online presence with its sustainable ethos and improve user experience.`,
+     },
+     {
+       title: 'Role:',
+       description: `Conducted a thorough analysis of the brand's values and customer base to inform the design direction. Created a visually appealing interface with intuitive navigation, highlighting sustainable materials, and integrating a user-friendly shopping experience.`,
+     },
+   ]}
+   image={{
+     src: 'https://plus.unsplash.com/premium_photo-1683288295841-782fa47e4770?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
+     alt: 'Fashion e-commerce Image',
+   }}
+   callToAction={{
+     target: '_blank',
+     text: 'Go to the project',
+     icon: 'tabler:chevron-right',
+     href: '#',
+   }}
+ >
+   <Fragment slot="content">
+     <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+       Project 3: <br /><span class="text-2xl">E-commerce website redesign for fashion brand</span>
+     </h3>
+   </Fragment>
+
+   <Fragment slot="bg">
+     <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+   </Fragment>
+ </Content>
+
+
+
+  <!-- Features Widget *************** -->
+
+  <Features
+    id="features"
+    tagline="Features"
+    title="What you get with AstroWind"
+    subtitle="One of the most professional and comprehensive templates currently on the market. Most starred & forked Astro theme in 2022."
+    items={[
+      {
+        title: 'Astro + Tailwind CSS Integration',
+        description:
+          'A seamless integration between two great frameworks that offer high productivity, performance and versatility.',
+        icon: 'tabler:brand-tailwind',
+      },
+      {
+        title: 'Ready-to-use Components',
+        description:
+          'Widgets made with Tailwind CSS ready to be used in Marketing Websites, SaaS, Blogs, Personal Profiles, Small Business...',
+        icon: 'tabler:components',
+      },
+      {
+        title: 'Best Practices',
+        description:
+          'Creating secure, efficient, and user-friendly websites that deliver exceptional experiences and lasting value.',
+        icon: 'tabler:list-check',
+      },
+      {
+        title: 'Excellent Page Speed',
+        description:
+          'Having a good page speed impacts organic search ranking, improves user experience (UI/UX) and increase conversion rates.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'Search Engine Optimization (SEO)',
+        description:
+          "SEO lies in its ability to enhance a website's visibility, driving organic traffic and enabling it to reach a wider audience.",
+        icon: 'tabler:arrows-right-left',
+      },
+      {
+        title: 'Open to new ideas and contributions',
+        description:
+          'Embracing a culture that is open to new ideas and contributions is integral fostering innovation, collaboration, and a dynamic user experience.',
+        icon: 'tabler:bulb',
+      },
+    ]}
+  />
+
+    <!-- Content Widget **************** -->
+    <Content
     id="about"
     columns={3}
     items={[
@@ -111,56 +270,9 @@ const metadata = {
     </Fragment>
   </Content>
 
-  <!-- Features Widget *************** -->
-
-  <Features
-    id="features"
-    tagline="Features"
-    title="What you get with AstroWind"
-    subtitle="One of the most professional and comprehensive templates currently on the market. Most starred & forked Astro theme in 2022."
-    items={[
-      {
-        title: 'Astro + Tailwind CSS Integration',
-        description:
-          'A seamless integration between two great frameworks that offer high productivity, performance and versatility.',
-        icon: 'tabler:brand-tailwind',
-      },
-      {
-        title: 'Ready-to-use Components',
-        description:
-          'Widgets made with Tailwind CSS ready to be used in Marketing Websites, SaaS, Blogs, Personal Profiles, Small Business...',
-        icon: 'tabler:components',
-      },
-      {
-        title: 'Best Practices',
-        description:
-          'Creating secure, efficient, and user-friendly websites that deliver exceptional experiences and lasting value.',
-        icon: 'tabler:list-check',
-      },
-      {
-        title: 'Excellent Page Speed',
-        description:
-          'Having a good page speed impacts organic search ranking, improves user experience (UI/UX) and increase conversion rates.',
-        icon: 'tabler:rocket',
-      },
-      {
-        title: 'Search Engine Optimization (SEO)',
-        description:
-          "SEO lies in its ability to enhance a website's visibility, driving organic traffic and enabling it to reach a wider audience.",
-        icon: 'tabler:arrows-right-left',
-      },
-      {
-        title: 'Open to new ideas and contributions',
-        description:
-          'Embracing a culture that is open to new ideas and contributions is integral fostering innovation, collaboration, and a dynamic user experience.',
-        icon: 'tabler:bulb',
-      },
-    ]}
-  />
-
   <!-- Steps Widget ****************** -->
 
-  <Steps
+  <!-- <Steps
     id="resume"
     title="Work experience"
     items={[
@@ -178,11 +290,11 @@ const metadata = {
       },
     ]}
     classes={{ container: 'max-w-3xl' }}
-  />
+  /> -->
 
   <!-- Steps Widget ****************** -->
 
-  <Steps
+  <!-- <Steps
     id="resume"
     title="Education"
     items={[
@@ -196,11 +308,11 @@ const metadata = {
       },
     ]}
     classes={{ container: 'max-w-3xl' }}
-  />
+  /> -->
 
   <!-- Features3 Widget ************** -->
 
-  <Features3
+  <!-- <Features3
     title="Skills"
     subtitle="Discover the proficiencies that allow me to bring imagination to life through design."
     columns={3}
@@ -243,123 +355,9 @@ const metadata = {
         description: 'Quick to adapt to new design trends, technologies, and client preferences.',
       },
     ]}
-  />
+  /> -->
 
-  <!-- Content Widget **************** -->
-
-  <Content
-    id="porfolio"
-    title="Elevating visual narratives"
-    subtitle="Embark on a design journey that surpasses pixels, entering a realm of imagination. Explore my portfolio, where passion and creativity converge to shape enthralling visual narratives."
-    isReversed
-    items={[
-      {
-        title: 'Description:',
-        description:
-          'Developed a comprehensive brand identity for a tech startup, Tech Innovators, specializing in disruptive innovations. The goal was to convey a modern yet approachable image that resonated with both corporate clients and tech enthusiasts.',
-      },
-      {
-        title: 'Role:',
-        description:
-          'Led the entire branding process from concept to execution. Created a dynamic logo that symbolized innovation, selected a vibrant color palette, and I designed corporate stationery, website graphics, and social media assets.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1658248165252-71e116af1b34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=928&q=80',
-      alt: 'Tech Design Image',
-    }}
-    callToAction={{
-      target: '_blank',
-      text: 'Go to the project',
-      icon: 'tabler:chevron-right',
-      href: '#',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Project 1: <br /><span class="text-2xl">Brand identity for tech innovators</span>
-      </h3>
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    isAfterContent={true}
-    items={[
-      {
-        title: 'Description:',
-        description:
-          'Designed a captivating event poster for an art and music festival, "ArtWave Fusion," aiming to showcase the synergy between visual art and music genres.',
-      },
-      {
-        title: 'Role:',
-        description: `Translated the festival's creative theme into a visually striking poster. Used bold typography, vibrant colors, and abstract elements to depict the fusion of art and music. Ensured the design captured the festival's vibrant atmosphere.`,
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1619983081563-430f63602796?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-      alt: 'Art and Music Poster Image',
-    }}
-    callToAction={{
-      target: '_blank',
-      text: 'Go to the project',
-      icon: 'tabler:chevron-right',
-      href: '#',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Project 2: <br /><span class="text-2xl">Event poster for art & music festival</span>
-      </h3>
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Content Widget **************** -->
-
-  <Content
-    isReversed
-    isAfterContent={true}
-    items={[
-      {
-        title: 'Description:',
-        description: `Redesigned the e-commerce website for an eco-conscious fashion brand, GreenVogue. The objective was to align the brand's online presence with its sustainable ethos and improve user experience.`,
-      },
-      {
-        title: 'Role:',
-        description: `Conducted a thorough analysis of the brand's values and customer base to inform the design direction. Created a visually appealing interface with intuitive navigation, highlighting sustainable materials, and integrating a user-friendly shopping experience.`,
-      },
-    ]}
-    image={{
-      src: 'https://plus.unsplash.com/premium_photo-1683288295841-782fa47e4770?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-      alt: 'Fashion e-commerce Image',
-    }}
-    callToAction={{
-      target: '_blank',
-      text: 'Go to the project',
-      icon: 'tabler:chevron-right',
-      href: '#',
-    }}
-  >
-    <Fragment slot="content">
-      <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Project 3: <br /><span class="text-2xl">E-commerce website redesign for fashion brand</span>
-      </h3>
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
+ 
 
   <!-- Testimonials Widget *********** -->
 
