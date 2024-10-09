@@ -91,42 +91,39 @@ const metadata = {
    </Fragment>
  </Content>
 
- <!-- Content Widget **************** -->
+ <!-- Steps Widget ****************** -->
 
- <Content
-   isAfterContent={true}
-   items={[
-     {
-       title: 'Description:',
-       description:
-         'Designed a captivating event poster for an art and music festival, "ArtWave Fusion," aiming to showcase the synergy between visual art and music genres.',
-     },
-     {
-       title: 'Role:',
-       description: `Translated the festival's creative theme into a visually striking poster. Used bold typography, vibrant colors, and abstract elements to depict the fusion of art and music. Ensured the design captured the festival's vibrant atmosphere.`,
-     },
-   ]}
-   image={{
-     src: 'https://images.unsplash.com/photo-1619983081563-430f63602796?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-     alt: 'Art and Music Poster Image',
-   }}
-   callToAction={{
-     target: '_blank',
-     text: 'Go to the project',
-     icon: 'tabler:chevron-right',
-     href: '#',
-   }}
- >
-   <Fragment slot="content">
-     <h3 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-       Project 2: <br /><span class="text-2xl">Event poster for art & music festival</span>
-     </h3>
-   </Fragment>
-
-   <Fragment slot="bg">
-     <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-   </Fragment>
- </Content>
+ <Steps
+ title="Get your dream website up and running in no time with AstroWind."
+ items={[
+   {
+     title: 'Step 1: <span class="font-medium">Download</span>',
+     description:
+       "Kickstart with GitHub! Either fork the AstroWind template or simply click 'Use this template'. Your canvas awaits, ready for your digital masterpiece. In just a few clicks, you've already set the foundation.",
+     icon: 'tabler:package',
+   },
+   {
+     title: 'Step 2: <span class="font-medium">Add content</span>',
+     description:
+       "Pour your vision into it. Add images, text, and all that jazz to breathe life into your digital space. Remember, it's the content that tells your story, so make it captivating.",
+     icon: 'tabler:letter-case',
+   },
+   {
+     title: 'Step 3: <span class="font-medium">Customize styles</span>',
+     description:
+       'Give it your personal touch. Tailor colors, fonts, and layouts until it feels just right. Your unique flair, amplified by AstroWind! Precision in design ensures a seamless user experience.',
+     icon: 'tabler:paint',
+   },
+   {
+     title: 'Ready!',
+     icon: 'tabler:check',
+   },
+ ]}
+ image={{
+   src: 'https://images.unsplash.com/photo-1616198814651-e71f960c3180?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=987&q=80',
+   alt: 'Steps image',
+ }}
+/>
 
  <!-- Content Widget **************** -->
 
