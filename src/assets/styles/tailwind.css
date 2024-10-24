@@ -30,7 +30,7 @@
   }
 
   .btn-secondary {
-    @apply btn;
+    @apply btn bg-green-dark;
   }
 
   .btn-tertiary {
