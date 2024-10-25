@@ -21,6 +21,7 @@ const {
   id,
   isDark = false,
   classes = {},
+  wrapperClass = '',
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 ---
@@ -29,6 +30,7 @@ const {
   id={id}
   isDark={isDark}
   containerClass={`max-w-7xl mx-auto ${isAfterContent ? 'pt-0 md:pt-0 lg:pt-0' : ''} ${classes?.container ?? ''}`}
+  wrapperClass={wrapperClass}
   bg={bg}
 >
   <Headline

@@ -252,6 +252,7 @@ export interface Features extends Omit<Headline, 'classes'>, Widget {
   isReversed?: boolean;
   isBeforeContent?: boolean;
   isAfterContent?: boolean;
+  wrapperClass?: string;
 }
 
 export interface Faqs extends Omit<Headline, 'classes'>, Widget {
@@ -271,6 +272,7 @@ export interface Steps extends Omit<Headline, 'classes'>, Widget {
   callToAction?: string | CallToAction;
   image?: string | Image;
   isReversed?: boolean;
+  wrapperClass?: string;
 }
 
 export interface Content extends Omit<Headline, 'classes'>, Widget {
@@ -281,6 +283,7 @@ export interface Content extends Omit<Headline, 'classes'>, Widget {
   isReversed?: boolean;
   isAfterContent?: boolean;
   callToAction?: CallToAction;
+  wrapperClass?: string;
 }
 
 export interface Contact extends Omit<Headline, 'classes'>, Form, Widget {}
