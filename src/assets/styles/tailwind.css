@@ -30,7 +30,7 @@
   }
 
   .btn-secondary {
-    @apply btn bg-green-dark;
+    @apply btn bg-green-dark text-white dark:hover:bg-primary dark:hover:text-black;
   }
 
   .btn-tertiary {
