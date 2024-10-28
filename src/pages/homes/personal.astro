@@ -2,7 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 import Header from '~/components/widgets/Header.astro';
-import HeroBackground from '~/components/widgets/HeroBackground.astro';
+import VideoHero from '~/components/widgets/VideoHero.astro';
 import Content from '~/components/widgets/Content.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Testimonials from '~/components/widgets/Testimonials.astro';
@@ -36,12 +36,13 @@ const metadata = {
     />
   </Fragment>
 
-  <!-- Hero2 Widget ******************* -->
+  <!-- Video Hero Widget ******************* -->
 
-  <HeroBackground
+  <VideoHero
     id="hero"
     title="Pine Tree Magic"
     tagline="All Things Woo"
+    video="/assets/videos/space.mp4"
     actions={[{ variant: 'secondary', text: 'Book Now', href: getPermalink('/contact#form') }]}
   >
     <Fragment slot="subtitle">
@@ -49,7 +50,7 @@ const metadata = {
       New York University's School of Design. I infuse vitality into brands and designs, transforming concepts into captivating
       realities.
     </Fragment>
-  </HeroBackground>
+  </VideoHero>
 
   <!-- Content Widget **************** -->
 
@@ -330,7 +331,7 @@ const metadata = {
         },
       },
     ]}
-    wrapperClass=""
+    wrapperClass="bg-center bg-no-repeat bg-cover bg-[url('~/assets/images/forest.webp')] bg-green-dark bg-blend-multiply"
   />
 
   <!-- CallToAction Widget *********** -->
