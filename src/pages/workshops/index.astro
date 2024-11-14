@@ -4,7 +4,7 @@ import Layout from '~/layouts/PageLayout.astro';
 
 const workshops = await getCollection('workshop');
 
-const workshopsWithSlug = workshops.map(workshop => ({
+const workshopsWithSlug = workshops.map((workshop) => ({
   ...workshop,
   data: {
     ...workshop.data,
@@ -16,13 +16,15 @@ const workshopsWithSlug = workshops.map(workshop => ({
 <Layout>
   <h1 class="text-3xl font-bold">Workshops</h1>
   <div class="workshop-list">
-    {workshopsWithSlug.map(workshop => (
-      <div key={workshop.data.slug}>
-        <a href={`/workshops/${workshop.data.slug}`}>
-          <h2>{workshop.data.title}</h2>
-          <p>{workshop.data.excerpt}</p>
-        </a>
-      </div>
-    ))}
+    {
+      workshopsWithSlug.map((workshop) => (
+        <div key={workshop.data.slug}>
+          <a href={`/workshops/${workshop.data.slug}`}>
+            <h2>{workshop.data.title}</h2>
+            <p>{workshop.data.excerpt}</p>
+          </a>
+        </div>
+      ))
+    }
   </div>
 </Layout>
