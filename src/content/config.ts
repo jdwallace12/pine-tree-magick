@@ -63,6 +63,23 @@ const postCollection = defineCollection({
   }),
 });
 
+const workshopCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    excerpt: z.string(),
+    image: z.string(),
+    publishDate: z.date().optional(),
+    price: z.number(),
+    duration: z.string(),
+    maxParticipants: z.number(),
+    instructor: z.string(),
+    category: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    metadata: metadataDefinition(),
+  }),
+});
+
 export const collections = {
   post: postCollection,
+  workshop: workshopCollection,
 };

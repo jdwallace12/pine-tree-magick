@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+
+export async function getStaticPaths() {
+  const workshops = await getCollection('workshop');
+  return workshops.map(workshop => ({
+    params: { slug: workshop.data.slug || workshop.id.replace(/\.md$/, '') },
+  }));
+}
+
+const { slug } = Astro.params;
+console.log('Slug:', slug);
+const workshops = await getCollection('workshop');
+console.log('Workshops:', workshops);
+
+if (!workshops || workshops.length === 0) {
+  throw new Error('Workshop not found');
+}
+
+const { title, excerpt, image, publishDate, price, duration, instructor, body } = workshops[0].data;
+---
+
+<Layout>
+  <article>
+    <h1 class="text-3xl font-bold">{title}</h1>
+    <img src={image} alt={title} class="w-full h-48 object-cover" />
+    <p class="text-gray-600">{excerpt}</p>
+    <p><strong>Instructor:</strong> {instructor}</p>
+    <p><strong>Duration:</strong> {duration}</p>
+    <p><strong>Price:</strong> ${price}</p>
+    <p><strong>Publish Date:</strong> {publishDate ? new Date(publishDate).toLocaleDateString() : 'N/A'}</p>
+    <div>
+      <h2 class="text-2xl">Workshop Details</h2>
+      <p>{body}</p>
+    </div>
+  </article>
+</Layout>

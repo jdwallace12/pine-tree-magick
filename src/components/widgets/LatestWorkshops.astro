@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+
+const {
+  title = 'Upcoming Workshops',
+  subtitle = 'Join our transformative learning experiences',
+  id,
+  isDark = false,
+  classes = {},
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+
+const workshops = await getCollection('workshop');
+
+console.log(workshops);
+const sortedWorkshops = workshops.sort(
+  (a, b) => new Date(a.data.publishDate).valueOf() - new Date(b.data.publishDate).valueOf()
+);
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>
+  <Headline title={title} subtitle={subtitle} />
+  <div class="flex flex-wrap gap-6 row-gap-5 md:gap-8 mx-auto max-w-5xl mt-8">
+    {
+      sortedWorkshops.map((workshop) => (
+        <div class="relative flex flex-col md:w-[calc(50%-1rem)] overflow-hidden rounded-md shadow-md">
+          <a href={`/workshops/${workshop.slug}`} class="block">
+            <img src={workshop.data.image} alt={workshop.data.title} class="w-full h-48 object-cover" />
+            <div class="p-4">
+              <h3 class="text-xl font-bold mb-2">{workshop.data.title}</h3>
+              <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{workshop.data.excerpt}</p>
+              <div class="flex justify-between items-center text-sm">
+                <span class="bg-blue-100 dark:bg-primary px-2 py-1 rounded">
+                  ${workshop.data.price}
+                </span>
+                <span class="text-gray-600 dark:text-gray-400">
+                  {workshop.data.duration}
+                </span>
+              </div>
+              <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                with {workshop.data.instructor}
+              </div>
+            </div>
+          </a>
+        </div>
+      ))
+    }
+  </div>
+</WidgetWrapper> 

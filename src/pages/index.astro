@@ -9,6 +9,7 @@ import Testimonials from '~/components/widgets/Testimonials.astro';
 import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
 import { getPermalink } from '~/utils/permalinks';
 import ContentListicle from '~/components/widgets/ContentListicle.astro';
 
@@ -133,6 +134,9 @@ const metadata = {
     wrapperClass=""
   />
 
+  
+  <LatestWorkshops />
+  
   <!-- Content Widget **************** -->
 
   <Content
