@@ -10,6 +10,7 @@ import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import { getPermalink } from '~/utils/permalinks';
+import ContentListicle from '~/components/widgets/ContentListicle.astro';
 
 const metadata = {
   title: 'Personal Homepage Demo',
@@ -44,6 +45,11 @@ const metadata = {
     title="Pine Tree Magic"
     tagline="All Things Woo"
     actions={[{ variant: 'primary', text: 'Book A Reading', href: getPermalink('/contact#form') }]}
+    bg={`
+      <div class="absolute inset-0 bg-gradient-to-b from-blue-900 to-indigo-900">
+        <div class="absolute inset-0 opacity-30" style="background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80'); background-size: cover;"></div>
+      </div>
+    `}
   >
     <Fragment slot="subtitle">
       I'm an Intuitive Astrologer dedicated to illuminating your soul's cosmic journey. <br /> With 5 years of experience
@@ -70,8 +76,8 @@ const metadata = {
       },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1658248165252-71e116af1b34?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=928&q=80',
-      alt: 'Tech Design Image',
+      src: 'https://images.unsplash.com/photo-1518331647614-7a1f04cd34cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Hand-drawn botanical moon phases',
     }}
     callToAction={{
       target: '_blank',
@@ -143,8 +149,8 @@ const metadata = {
       },
     ]}
     image={{
-      src: 'https://plus.unsplash.com/premium_photo-1683288295841-782fa47e4770?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80',
-      alt: 'Fashion e-commerce Image',
+      src: 'https://images.unsplash.com/photo-1533134486753-c833f0ed4866?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Celestial map with herbs',
     }}
     callToAction={{
       target: '_blank',
@@ -274,59 +280,20 @@ const metadata = {
     subtitle="Hear from those who have found clarity through celestial guidance."
     testimonials={[
       {
-        testimonial: `Their insight into my natal chart was profound. They revealed patterns I'd never noticed and helped me understand my life purpose through the lens of my North Node.`,
-        name: 'Mark Thompson',
-        job: 'Spiritual Seeker',
-        image: {
-          src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-          alt: 'Mark Thompson Image',
-        },
+        testimonial: "Their insight into my natal chart was profound. They revealed patterns I'd never noticed and helped me understand my life purpose through the lens of my North Node.",
+        name: "Sarah Johnson",
+        job: "Spiritual Seeker",
       },
       {
-        testimonial: `She transformed our brand identity with her creative finesse, capturing our essence in every element. Her dedication and talent truly shine through her work.`,
-        name: 'Emily Martinez',
-        job: 'CEO',
-        image: {
-          src: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=772&q=80',
-          alt: 'Emily Martinez Image',
-        },
+        testimonial: "The transit reading helped me navigate a challenging period with greater awareness. Understanding the astrological weather made all the difference.",
+        name: "Michael Chen",
+        job: "Life Coach",
       },
       {
-        testimonial: `She has an uncanny ability to communicate emotions and stories. She crafted a logo for our NGO that not only represents our cause but also evokes empathy. Her professionalism and commitment make her a designer of exceptional caliber.`,
-        name: 'Laura Simmons',
-        job: 'Founder of an NGO',
-        image: {
-          src: 'https://images.unsplash.com/photo-1554727242-741c14fa561c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-          alt: 'Laura Simmons Image',
-        },
-      },
-      {
-        testimonial: `We entrusted Sarah with revamping our website's user interface, and the results were astounding. Her intuitive design sense enhanced user experience, leading to a significant increase in engagement. She's a designer who truly understands the synergy of aesthetics and functionality.`,
-        name: 'Alex Foster',
-        job: 'Director of web services',
-        image: {
-          src: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-          alt: 'Alex Foster Image',
-        },
-      },
-      {
-        testimonial: `She took our vision and elevated it beyond imagination. Her ability to capture brand essence and translate it into design is nothing short of remarkable. Working with her has been an inspiring journey.`,
-        name: 'Jessica Collins',
-        job: 'Product Manager',
-        image: {
-          src: 'https://images.unsplash.com/photo-1548142813-c348350df52b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=778&q=80',
-          alt: 'Jessica Collins Image',
-        },
-      },
-      {
-        testimonial: `Her ability to transform concepts into captivating visuals is nothing short of extraordinary. She took our event poster idea and turned it into a visual masterpiece that perfectly captured the essence of our festival. Sarah's dedication, creativity, and knack for delivering beyond expectations make her an invaluable asset to any project.`,
-        name: 'Michael Carter',
-        job: 'Event Coordinator',
-        image: {
-          src: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-          alt: 'Michael Carter Image',
-        },
-      },
+        testimonial: "Their synastry reading gave my partner and I deep insights into our relationship dynamics. We now understand our challenges and strengths so much better.",
+        name: "Emma Rodriguez",
+        job: "Relationship Coach",
+      }
     ]}
     wrapperClass=""
   />
@@ -351,10 +318,58 @@ const metadata = {
   <BlogLatestPosts
     id="blog"
     title="Cosmic Insights & Astrological Wisdom"
-    information={`Explore the mysteries of the zodiac through my collection of articles on planetary movements, cosmic events, and spiritual growth.`}
+    information={`Explore the mysteries of the zodiac through our collection of articles on planetary movements, cosmic events, and spiritual growth.`}
   >
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </BlogLatestPosts>
+
+  <!-- ContentListicle Widget **************** -->
+
+  <ContentListicle
+    tagline="Listicle Example"
+    title="Top 5 Reasons to Use AstroWind"
+    subtitle="Discover why developers love this template"
+    items={[
+      {
+        title: 'Lightning Fast Performance',
+        description: 'Built with Astro 4.0, delivering incredible speed and optimization out of the box.',
+        icon: 'tabler:rocket',
+      },
+      {
+        title: 'TailwindCSS Powered',
+        description: 'Fully customizable design system with utility-first CSS framework.',
+        icon: 'tabler:brush',
+      },
+      {
+        title: 'Dark Mode Ready',
+        description: 'Seamless dark mode integration with perfect color transitions.',
+        icon: 'tabler:moon',
+      },
+      {
+        title: 'SEO Optimized',
+        description: 'Built-in SEO best practices to help your site rank better.',
+        icon: 'tabler:search',
+      },
+      {
+        title: 'Open Source',
+        description: 'Free to use and modify, with regular updates and community support.',
+        icon: 'tabler:source-code',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+      alt: 'AstroWind Template Screenshot',
+    }}
+    callToAction={{
+      text: 'Get Started',
+      href: 'https://github.com/onwidget/astrowind',
+      icon: 'tabler:download',
+    }}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </ContentListicle>
 </Layout>
