@@ -8,13 +8,13 @@ import CallToAction from '~/components/widgets/CallToAction.astro';
 import Testimonials from '~/components/widgets/Testimonials.astro';
 import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
-import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
 import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
 import { getPermalink } from '~/utils/permalinks';
 import ContentListicle from '~/components/widgets/ContentListicle.astro';
 
 const metadata = {
-  title: 'Personal Homepage Demo',
+  title: 'Pine Tree Magick',
+  desciption: 'Pine Tree Magick is a something',
 };
 ---
 
@@ -35,7 +35,6 @@ const metadata = {
         // },
       ]}
       isSticky
-      showToggleTheme
     />
   </Fragment>
 
@@ -134,9 +133,8 @@ const metadata = {
     wrapperClass=""
   />
 
-  
   <LatestWorkshops />
-  
+
   <!-- Content Widget **************** -->
 
   <Content
@@ -284,20 +282,23 @@ const metadata = {
     subtitle="Hear from those who have found clarity through celestial guidance."
     testimonials={[
       {
-        testimonial: "Their insight into my natal chart was profound. They revealed patterns I'd never noticed and helped me understand my life purpose through the lens of my North Node.",
-        name: "Sarah Johnson",
-        job: "Spiritual Seeker",
+        testimonial:
+          "Their insight into my natal chart was profound. They revealed patterns I'd never noticed and helped me understand my life purpose through the lens of my North Node.",
+        name: 'Sarah Johnson',
+        job: 'Spiritual Seeker',
       },
       {
-        testimonial: "The transit reading helped me navigate a challenging period with greater awareness. Understanding the astrological weather made all the difference.",
-        name: "Michael Chen",
-        job: "Life Coach",
+        testimonial:
+          'The transit reading helped me navigate a challenging period with greater awareness. Understanding the astrological weather made all the difference.',
+        name: 'Michael Chen',
+        job: 'Life Coach',
       },
       {
-        testimonial: "Their synastry reading gave my partner and I deep insights into our relationship dynamics. We now understand our challenges and strengths so much better.",
-        name: "Emma Rodriguez",
-        job: "Relationship Coach",
-      }
+        testimonial:
+          'Their synastry reading gave my partner and I deep insights into our relationship dynamics. We now understand our challenges and strengths so much better.',
+        name: 'Emma Rodriguez',
+        job: 'Relationship Coach',
+      },
     ]}
     wrapperClass=""
   />
@@ -316,18 +317,6 @@ const metadata = {
       },
     ]}
   />
-
-  <!-- BlogLatestPost Widget **************** -->
-
-  <BlogLatestPosts
-    id="blog"
-    title="Cosmic Insights & Astrological Wisdom"
-    information={`Explore the mysteries of the zodiac through our collection of articles on planetary movements, cosmic events, and spiritual growth.`}
-  >
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </BlogLatestPosts>
 
   <!-- ContentListicle Widget **************** -->
 

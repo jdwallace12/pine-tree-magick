@@ -1,4 +1,5 @@
 ---
+import Header from '~/components/widgets/Header.astro';
 import Features2 from '~/components/widgets/Features2.astro';
 import Features3 from '~/components/widgets/Features3.astro';
 import Hero from '~/components/widgets/Hero.astro';
@@ -12,22 +13,37 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
+  <Fragment slot="header">
+    <Header
+      links={[
+        { text: 'Readings', href: '/readings' },
+        { text: 'About', href: '/about' },
+        { text: 'Substack', href: '#substack' },
+      ]}
+      actions={[
+        // {
+        //   text: 'Hire me',
+        //   href: '#',
+        //   variant: 'primary',
+        // },
+      ]}
+      isSticky
+    />
+  </Fragment>
   <!-- Hero Widget ******************* -->
 
   <Hero
     tagline="Welcome to the Mystic Realm"
     image={{
-      src: 'https://images.unsplash.com/photo-1511742022240-5b1c1c1c1c1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      src: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       alt: 'Mystical Image',
     }}
   >
-    <Fragment slot="title">
-      Unveil the secrets of the universe with our <br />
-      <span class="text-accent dark:text-white highlight"> Enchanting Astrological Templates</span>
-    </Fragment>
+    <Fragment slot="title"> Unveil the secrets of the universe with our Enchanting Astrological Templates </Fragment>
 
     <Fragment slot="subtitle">
-      Explore the cosmos, align your energies, and manifest your dreams. Our templates guide you through the mystical journey of self-discovery and empowerment.
+      Explore the cosmos, align your energies, and manifest your dreams. Our templates guide you through the mystical
+      journey of self-discovery and empowerment.
     </Fragment>
   </Hero>
 
@@ -116,7 +132,7 @@ const metadata = {
       },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80',
+      src: 'https://images.unsplash.com/photo-1533294455009-a77b7557d2d1?q=80&w=3840&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       alt: 'Mystical Landscape',
     }}
   />
@@ -129,18 +145,15 @@ const metadata = {
     items={[
       {
         title: 'Intuition',
-        description:
-          'Trust your inner voice and let it guide you on your spiritual journey.',
+        description: 'Trust your inner voice and let it guide you on your spiritual journey.',
       },
       {
         title: 'Community',
-        description:
-          'We believe in the power of connection and support within our mystical community.',
+        description: 'We believe in the power of connection and support within our mystical community.',
       },
       {
         title: 'Empowerment',
-        description:
-          'Our templates are designed to empower you to take charge of your spiritual path.',
+        description: 'Our templates are designed to empower you to take charge of your spiritual path.',
       },
     ]}
   />
@@ -169,8 +182,7 @@ const metadata = {
       },
       {
         title: 'Recognition',
-        description:
-          'Honored as a trusted source for spiritual guidance and resources in the community.',
+        description: 'Honored as a trusted source for spiritual guidance and resources in the community.',
         icon: 'tabler:award',
       },
     ]}
@@ -211,8 +223,7 @@ const metadata = {
     items={[
       {
         title: 'Chat with our Oracles',
-        description:
-          'Connect with our team of spiritual guides for insights and support. We are here to help you.',
+        description: 'Connect with our team of spiritual guides for insights and support. We are here to help you.',
         icon: 'tabler:messages',
       },
       {
