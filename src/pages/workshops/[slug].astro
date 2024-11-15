@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
+import Header from '~/components/widgets/Header.astro';
 
 export async function getStaticPaths() {
   const workshops = await getCollection('workshop');
@@ -12,20 +13,37 @@ export async function getStaticPaths() {
 const { slug } = Astro.params;
 const workshops = await getCollection('workshop');
 
-if (!workshops || workshops.length === 0) {
+// Log available slugs for debugging
+console.log("Available slugs:", workshops.map(w => w.data.slug || w.id.replace(/\.md$/, '')));
+console.log("Requested slug:", slug);
+
+const workshop = workshops.find((workshop) => 
+  (workshop.data.slug || workshop.id.replace(/\.md$/, '')) === slug
+);
+
+if (!workshop) {
   throw new Error('Workshop not found');
 }
 
-const { title, excerpt, image, publishDate, price, duration, instructor } = workshops[0].data;
-const body = workshops[0].body;
+const { title, excerpt, image, price, date, duration, instructor } = workshop.data;
+const body = workshop.body;
 
-console.log(workshops);
 const metadata = {
   title: title,
 };
 ---
 
 <Layout metadata={metadata}>
+  <Fragment slot="header">
+    <Header
+      links={[
+        { text: 'Readings', href: '/readings' },
+        { text: 'About', href: '/about' },
+        { text: 'Substack', href: '#substack' },
+      ]}
+      isSticky
+    />
+  </Fragment>
   <article class="max-w-2xl mx-auto p-4">
     <h1 class="text-3xl font-bold">{title}</h1>
     <img src={image} alt={title} class="w-full h-48 object-cover" />
@@ -33,7 +51,7 @@ const metadata = {
     <p><strong>Instructor:</strong> {instructor}</p>
     <p><strong>Duration:</strong> {duration}</p>
     <p><strong>Price:</strong> ${price}</p>
-    <p><strong>Publish Date:</strong> {publishDate ? new Date(publishDate).toLocaleDateString() : 'N/A'}</p>
+    <p><strong>Date:</strong> {date}</p>
     <div>
       <h2 class="text-2xl">Workshop Details</h2>
       <p>{body}</p>
