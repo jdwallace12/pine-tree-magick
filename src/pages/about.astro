@@ -7,7 +7,7 @@ import Steps2 from '~/components/widgets/Steps2.astro';
 import Layout from '~/layouts/PageLayout.astro';
 
 const metadata = {
-  title: 'About us',
+  title: 'About the Mystic Realm',
 };
 ---
 
@@ -15,61 +15,59 @@ const metadata = {
   <!-- Hero Widget ******************* -->
 
   <Hero
-    tagline="About us"
+    tagline="Welcome to the Mystic Realm"
     image={{
-      src: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-      alt: 'Caos Image',
+      src: 'https://images.unsplash.com/photo-1511742022240-5b1c1c1c1c1c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80',
+      alt: 'Mystical Image',
     }}
   >
     <Fragment slot="title">
-      Elevate your online presence with our <br />
-      <span class="text-accent dark:text-white highlight"> Beautiful Website Templates</span>
+      Unveil the secrets of the universe with our <br />
+      <span class="text-accent dark:text-white highlight"> Enchanting Astrological Templates</span>
     </Fragment>
 
     <Fragment slot="subtitle">
-      Donec efficitur, ipsum quis congue luctus, mauris magna convallis mauris, eu auctor nisi lectus non augue. Donec
-      quis lorem non massa vulputate efficitur ac at turpis. Sed tincidunt ex a nunc convallis, et lobortis nisi tempus.
-      Suspendisse vitae nisi eget tortor luctus maximus sed non lectus.
+      Explore the cosmos, align your energies, and manifest your dreams. Our templates guide you through the mystical journey of self-discovery and empowerment.
     </Fragment>
   </Hero>
 
   <!-- Stats Widget ****************** -->
 
   <Stats
-    title="Statistics about us"
+    title="Cosmic Statistics"
     stats={[
-      { title: 'Offices', amount: '4' },
-      { title: 'Employees', amount: '248' },
-      { title: 'Templates', amount: '12' },
-      { title: 'Awards', amount: '24' },
+      { title: 'Zodiac Signs', amount: '12' },
+      { title: 'Planets', amount: '8' },
+      { title: 'Tarot Cards', amount: '78' },
+      { title: 'Crystals', amount: '50+' },
     ]}
   />
 
   <!-- Features3 Widget ************** -->
 
   <Features3
-    title="Our templates"
-    subtitle="Etiam scelerisque, enim eget vestibulum luctus, nibh mauris blandit nulla, nec vestibulum risus justo ut enim. Praesent lacinia diam et ante imperdiet euismod."
+    title="Our Enchanted Templates"
+    subtitle="Discover templates that resonate with your soul's journey, designed to enhance your spiritual practice."
     columns={3}
     isBeforeContent={true}
     items={[
       {
-        title: 'Educational',
+        title: 'Astrology',
         description:
-          'Morbi faucibus luctus quam, sit amet aliquet felis tempor id. Cras augue massa, ornare quis dignissim a, molestie vel nulla.',
-        icon: 'tabler:template',
+          'Dive deep into the stars and uncover your astrological chart. Our templates help you interpret celestial influences.',
+        icon: 'tabler:star',
       },
       {
-        title: 'Interior Design',
+        title: 'Tarot',
         description:
-          'Vivamus porttitor, tortor convallis aliquam pretium, turpis enim consectetur elit, vitae egestas purus erat ac nunc nulla.',
-        icon: 'tabler:template',
+          'Harness the power of tarot to gain insights and guidance. Our templates provide a framework for your readings.',
+        icon: 'tabler:star',
       },
       {
-        title: 'Photography',
+        title: 'Crystals',
         description:
-          'Duis sed lectus in nisl vehicula porttitor eget quis odio. Aliquam erat volutpat. Nulla eleifend nulla id sem fermentum.',
-        icon: 'tabler:template',
+          'Learn about the healing properties of crystals and how to incorporate them into your life with our beautifully designed templates.',
+        icon: 'tabler:star',
       },
     ]}
   />
@@ -81,68 +79,68 @@ const metadata = {
     isAfterContent={true}
     items={[
       {
-        title: 'E-commerce',
+        title: 'Moon Phases',
         description:
-          'Rutrum non odio at vehicula. Proin ipsum justo, dignissim in vehicula sit amet, dignissim id quam. Sed ac tincidunt sapien.',
-        icon: 'tabler:template',
+          'Align your intentions with the lunar cycle. Our templates guide you through the phases of the moon for optimal manifestation.',
+        icon: 'tabler:moon',
       },
       {
-        title: 'Blog',
+        title: 'Rituals',
         description:
-          'Nullam efficitur volutpat sem sed fringilla. Suspendisse et enim eu orci volutpat laoreet ac vitae libero.',
-        icon: 'tabler:template',
+          'Create sacred space and perform rituals that resonate with your intentions. Our templates provide step-by-step guidance.',
+        icon: 'tabler:wand',
       },
       {
-        title: 'Business',
+        title: 'Meditation',
         description:
-          'Morbi et elit finibus, facilisis justo ut, pharetra ipsum. Donec efficitur, ipsum quis congue luctus, mauris magna.',
-        icon: 'tabler:template',
+          'Enhance your meditation practice with templates designed to deepen your connection to the universe.',
+        icon: 'tabler:star',
       },
       {
-        title: 'Branding',
+        title: 'Herbalism',
         description:
-          'Suspendisse vitae nisi eget tortor luctus maximus sed non lectus. Cras malesuada pretium placerat. Nullam venenatis dolor a ante rhoncus.',
-        icon: 'tabler:template',
+          'Explore the magical properties of herbs and how to use them in your practice with our informative templates.',
+        icon: 'tabler:leaf',
       },
       {
-        title: 'Medical',
+        title: 'Astrological Events',
         description:
-          'Vestibulum malesuada lacus id nibh posuere feugiat. Nam volutpat nulla a felis ultrices, id suscipit mauris congue. In hac habitasse platea dictumst.',
-        icon: 'tabler:template',
+          'Stay informed about upcoming astrological events and how they affect your life with our event tracking templates.',
+        icon: 'tabler:calendar',
       },
       {
-        title: 'Fashion Design',
+        title: 'Spiritual Growth',
         description:
-          'Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus.',
-        icon: 'tabler:template',
+          'Embark on a journey of self-discovery and spiritual growth with our templates designed to support your path.',
+        icon: 'tabler:growth',
       },
     ]}
     image={{
-      src: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-      alt: 'Colorful Image',
+      src: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1740&q=80',
+      alt: 'Mystical Landscape',
     }}
   />
 
   <!-- Steps2 Widget ****************** -->
 
   <Steps2
-    title="Our values"
-    subtitle="Maecenas eu tellus eget est scelerisque lacinia et a diam. Aliquam velit lorem, vehicula id fermentum et, rhoncus et purus. Nulla facilisi. Vestibulum malesuada lacus."
+    title="Our Values"
+    subtitle="Embrace the magic within and connect with the universe. Our values guide our practice and offerings."
     items={[
       {
-        title: 'Customer-centric approach',
+        title: 'Intuition',
         description:
-          'Donec id nibh neque. Quisque et fermentum tortor. Fusce vitae dolor a mauris dignissim commodo. Ut eleifend luctus condimentum.',
+          'Trust your inner voice and let it guide you on your spiritual journey.',
       },
       {
-        title: 'Constant Improvement',
+        title: 'Community',
         description:
-          'Phasellus laoreet fermentum venenatis. Vivamus dapibus pulvinar arcu eget mattis. Fusce eget mauris leo.',
+          'We believe in the power of connection and support within our mystical community.',
       },
       {
-        title: 'Ethical Practices',
+        title: 'Empowerment',
         description:
-          'Vestibulum imperdiet libero et lectus molestie, et maximus augue porta. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.',
+          'Our templates are designed to empower you to take charge of your spiritual path.',
       },
     ]}
   />
@@ -151,28 +149,28 @@ const metadata = {
 
   <Steps2
     title="Achievements"
-    subtitle="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sagittis, quam nec venenatis lobortis, mi risus tempus nulla, sed porttitor est nibh at nulla."
+    subtitle="Celebrating our journey through the mystical realm. Join us as we honor our milestones."
     isReversed={true}
     callToAction={{
-      text: 'See more',
+      text: 'Explore More',
       href: '/',
     }}
     items={[
       {
-        title: 'Global reach',
-        description: 'Nam malesuada urna in enim imperdiet tincidunt. Phasellus non tincidunt nisi, at elementum mi.',
+        title: 'Global Community',
+        description: 'Connecting souls from all corners of the world through shared wisdom and practices.',
         icon: 'tabler:globe',
       },
       {
-        title: 'Positive customer feedback and reviews',
+        title: 'Positive Feedback',
         description:
-          'Cras semper nulla leo, eget laoreet erat cursus sed. Praesent faucibus massa in purus iaculis dictum.',
+          'Our templates have helped countless individuals on their spiritual journeys. Join the testimonials.',
         icon: 'tabler:message-star',
       },
       {
-        title: 'Awards and recognition as industry experts',
+        title: 'Recognition',
         description:
-          'Phasellus lacinia cursus velit, eu malesuada magna pretium eu. Etiam aliquet tellus purus, blandit lobortis ex rhoncus vitae.',
+          'Honored as a trusted source for spiritual guidance and resources in the community.',
         icon: 'tabler:award',
       },
     ]}
@@ -181,25 +179,25 @@ const metadata = {
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title="Our locations"
-    tagline="Find us"
+    title="Our Locations"
+    tagline="Find Us in the Cosmic Realm"
     columns={4}
     items={[
       {
-        title: 'EE.UU',
-        description: '1234 Lorem Ipsum St, 12345, Miami',
+        title: 'Mystic Valley',
+        description: '1234 Enchanted Way, 12345, Dreamland',
       },
       {
-        title: 'Spain',
-        description: '5678 Lorem Ipsum St, 56789, Madrid',
+        title: 'Witchwood',
+        description: '5678 Spellbound St, 56789, Enchantment City',
       },
       {
-        title: 'Australia',
-        description: '9012 Lorem Ipsum St, 90123, Sydney',
+        title: 'Celestial Heights',
+        description: '9012 Starry Lane, 90123, Universe Town',
       },
       {
-        title: 'Brazil',
-        description: '3456 Lorem Ipsum St, 34567, São Paulo',
+        title: 'Crystal Cove',
+        description: '3456 Gemstone Rd, 34567, Mystic Shores',
       },
     ]}
   />
@@ -207,20 +205,20 @@ const metadata = {
   <!-- Features2 Widget ************** -->
 
   <Features2
-    title="Technical Support"
-    tagline="Contact us"
+    title="Mystical Support"
+    tagline="Contact Us for Guidance"
     columns={2}
     items={[
       {
-        title: 'Chat with us',
+        title: 'Chat with our Oracles',
         description:
-          'Integer luctus laoreet libero, auctor varius purus rutrum sit amet. Ut nec molestie nisi, quis eleifend mi.',
+          'Connect with our team of spiritual guides for insights and support. We are here to help you.',
         icon: 'tabler:messages',
       },
       {
-        title: 'Call us',
+        title: 'Call our Mystic Line',
         description:
-          'Mauris faucibus finibus orci, in posuere elit viverra non. In hac habitasse platea dictumst. Cras lobortis metus a hendrerit congue.',
+          'Reach out for personalized guidance and support on your spiritual journey. We are just a call away.',
         icon: 'tabler:headset',
       },
     ]}
