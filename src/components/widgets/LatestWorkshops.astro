@@ -14,9 +14,7 @@ const {
 
 const workshops = await getCollection('workshop');
 
-const sortedWorkshops = workshops.sort(
-  (a, b) => new Date(a.data.date).valueOf() - new Date(b.data.date).valueOf()
-);
+const sortedWorkshops = workshops.sort((a, b) => new Date(a.data.date).valueOf() - new Date(b.data.date).valueOf());
 ---
 
 <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>

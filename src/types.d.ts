@@ -49,6 +49,7 @@ export interface Workshop {
   excerpt: string;
   image: string;
   date: string;
+  time: string;
   price: number;
   location: string;
   slug: string;
