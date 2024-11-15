@@ -4,10 +4,9 @@ slug: "astrology-basics"
 excerpt: "Learn the fundamentals of astrological charts and interpretations"
 image: "https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80"
 date: "November 22, 2024"
-price: 199
-duration: "6 weeks"
+price: 35
+location: "Some Studio"
 maxParticipants: 20
-instructor: "Luna Starling"
 category: "Astrology"
 tags: ["beginners", "natal charts", "planets"]
 ---

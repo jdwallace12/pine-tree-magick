@@ -8,7 +8,7 @@ const workshopsWithSlug = workshops.map((workshop) => ({
   ...workshop,
   data: {
     ...workshop.data,
-    slug: workshop.data.slug || workshop.id.replace(/\.md$/, ''),
+    slug: (workshop.data.slug as string) || workshop.id.replace(/\.md$/, ''),
   },
 }));
 ---
@@ -18,7 +18,7 @@ const workshopsWithSlug = workshops.map((workshop) => ({
   <div class="workshop-list">
     {
       workshopsWithSlug.map((workshop) => (
-        <div key={workshop.data.slug}>
+        <div>
           <a href={`/workshops/${workshop.data.slug}`}>
             <h2>{workshop.data.title}</h2>
             <p>{workshop.data.excerpt}</p>

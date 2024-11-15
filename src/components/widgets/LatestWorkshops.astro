@@ -29,12 +29,12 @@ const sortedWorkshops = workshops.sort(
             <img src={workshop.data.image} alt={workshop.data.title} class="w-full flex h-48 object-cover" />
             <div class="p-4">
               <h3 class="text-xl font-bold mb-2">{workshop.data.title}</h3>
+              <span class="text-gray-600 dark:text-gray-400">{workshop.data.date}</span>
               <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{workshop.data.excerpt}</p>
               <div class="flex justify-between items-center text-sm">
                 <span class="bg-blue-100 dark:bg-primary px-2 py-1 rounded">${workshop.data.price}</span>
-                <span class="text-gray-600 dark:text-gray-400">{workshop.data.date}</span>
               </div>
-              <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">with {workshop.data.instructor}</div>
+              <div class="mt-4 text-sm text-gray-600 dark:text-gray-400">{workshop.data.location}</div>
             </div>
           </a>
         </div>

@@ -50,9 +50,9 @@ export interface Workshop {
   image: string;
   date: string;
   price: number;
-  duration: string;
+  location: string;
+  slug: string;
   maxParticipants: number;
-  instructor: string;
   category?: string;
   tags?: string[];
   body: string;

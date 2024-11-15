@@ -6,16 +6,12 @@ import Header from '~/components/widgets/Header.astro';
 export async function getStaticPaths() {
   const workshops = await getCollection('workshop');
   return workshops.map((workshop) => ({
-    params: { slug: workshop.data.slug || workshop.id.replace(/\.md$/, '') },
+    params: { slug: workshop.data.slug || workshop.id.replace(/\.md$/, '') || 'default-slug' },
   }));
 }
 
-const { slug } = Astro.params;
+const { slug } = Astro.params as { slug: string };
 const workshops = await getCollection('workshop');
-
-// Log available slugs for debugging
-console.log("Available slugs:", workshops.map(w => w.data.slug || w.id.replace(/\.md$/, '')));
-console.log("Requested slug:", slug);
 
 const workshop = workshops.find((workshop) => 
   (workshop.data.slug || workshop.id.replace(/\.md$/, '')) === slug
@@ -25,7 +21,7 @@ if (!workshop) {
   throw new Error('Workshop not found');
 }
 
-const { title, excerpt, image, price, date, duration, instructor } = workshop.data;
+const { title, excerpt, image, price, date, location } = workshop.data;
 const body = workshop.body;
 
 const metadata = {
@@ -44,17 +40,19 @@ const metadata = {
       isSticky
     />
   </Fragment>
-  <article class="max-w-2xl mx-auto p-4">
-    <h1 class="text-3xl font-bold">{title}</h1>
-    <img src={image} alt={title} class="w-full h-48 object-cover" />
-    <p class="text-gray-600">{excerpt}</p>
-    <p><strong>Instructor:</strong> {instructor}</p>
-    <p><strong>Duration:</strong> {duration}</p>
-    <p><strong>Price:</strong> ${price}</p>
-    <p><strong>Date:</strong> {date}</p>
+  <article class="max-w-2xl mx-auto p-6 space-y-6">
+    <h1 class="text-4xl font-bold">{title}</h1>
+    <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
+    <p class="text-gray-500 text-lg">{excerpt}</p>
+    <div class="text-lg">
+      <p><strong>Date:</strong> {date}</p>
+      <p><strong>Location:</strong> {location}</p>
+      <p><strong>Price:</strong> ${price}</p>
+    </div>
     <div>
-      <h2 class="text-2xl">Workshop Details</h2>
-      <p>{body}</p>
+      <h2 class="text-3xl font-semibold mt-4">Workshop Details</h2>
+      <p class="text-base mt-1">{body}</p>
     </div>
   </article>
+  
 </Layout>
