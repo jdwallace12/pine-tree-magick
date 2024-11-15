@@ -3,7 +3,7 @@ title: 'Tarot Reading'
 slug: 'tarot-reading'
 excerpt: 'Learn tarot'
 image: 'https://images.unsplash.com/photo-1532968961962-8a0cb3a2d4f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80'
-date: 2025-01-15
+date: "January 18, 2025"
 price: 199
 duration: '6 weeks'
 maxParticipants: 20

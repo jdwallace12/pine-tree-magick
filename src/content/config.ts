@@ -68,7 +68,7 @@ const workshopCollection = defineCollection({
     title: z.string(),
     excerpt: z.string(),
     image: z.string(),
-    date: z.date().optional(),
+    date: z.string(),
     price: z.number(),
     duration: z.string(),
     maxParticipants: z.number(),
