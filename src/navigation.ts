@@ -121,10 +121,11 @@ export const headerData = {
 export const footerData = {
   links: [
     {
-      title: 'Some Title',
+      title: 'Explore',
       links: [
-        { text: 'About', href: '#' },
-        { text: 'Blog', href: '#' },
+        { text: 'Readings', href: '/readings' },
+        { text: 'About', href: '/about' },
+        { text: 'Substack', href: '#' },
       ],
     },
   ],

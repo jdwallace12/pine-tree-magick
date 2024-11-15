@@ -8,7 +8,6 @@ const workshopsWithSlug = workshops.map((workshop) => ({
   ...workshop,
   data: {
     ...workshop.data,
-    // @ts-ignore
     slug: (workshop.data.slug as string) || workshop.id.replace(/\.md$/, ''),
   },
 }));
