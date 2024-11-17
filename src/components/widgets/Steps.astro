@@ -9,6 +9,7 @@ const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
   tagline = await Astro.slots.render('tagline'),
+  titleMotifImage = await Astro.slots.render('titleMotifImage'),
   items = [],
   image = await Astro.slots.render('image'),
   isReversed = false,
@@ -34,6 +35,7 @@ const {
         title={title}
         subtitle={subtitle}
         tagline={tagline}
+        titleMotifImage={titleMotifImage}
         classes={{
           container: 'text-left rtl:text-right',
           title: 'text-3xl lg:text-4xl',

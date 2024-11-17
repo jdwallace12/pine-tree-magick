@@ -124,6 +124,7 @@ export interface Headline {
   title?: string;
   subtitle?: string;
   tagline?: string;
+  titleMotifImage?: string; 
   classes?: Record<string, string>;
 }
 
