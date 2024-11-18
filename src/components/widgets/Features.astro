@@ -8,6 +8,7 @@ const {
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
   tagline = await Astro.slots.render('tagline'),
+  titleMotifImage = await Astro.slots.render('titleMotifImage'),
   items = [],
   columns = 2,
 
@@ -28,7 +29,7 @@ const {
   wrapperClass={wrapperClass}
   bg={bg}
 >
-  <Headline title={title} subtitle={subtitle} tagline={tagline} classes={classes?.headline as Record<string, string>} />
+  <Headline title={title} subtitle={subtitle} tagline={tagline} titleMotifImage={titleMotifImage} classes={classes?.headline as Record<string, string>} />
   <ItemGrid
     items={items}
     columns={columns}

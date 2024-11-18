@@ -47,8 +47,8 @@ const metadata = {
     tagline="All Things Woo"
     actions={[{ variant: 'primary', text: 'Book A Reading', href: getPermalink('/readings') }]}
     bg={`
-      <div class="absolute inset-0 bg-gradient-to-b from-blue-900 to-indigo-900">
-        <div class="absolute inset-0 opacity-30" style="background-image: url('https://images.unsplash.com/photo-1562944634-d309c1b1666e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover;"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-primary to-dark">
+        <div class="absolute inset-0 opacity-75" style="background-image: url('https://images.unsplash.com/photo-1562944634-d309c1b1666e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover;"></div>
       </div>
     `}
   >
@@ -59,50 +59,10 @@ const metadata = {
     </Fragment>
   </HeroBackground>
 
-  <!-- Content Widget **************** -->
+    <!-- Steps Widget ****************** -->
 
-  <Content
-    id="porfolio"
-    isReversed
-    items={[
-      {
-        title: 'The Reading:',
-        description:
-          'Through the ancient art of astrology, I conducted a deep natal chart analysis for a seeker looking to understand their life path. We explored their rising sign, planetary aspects, and the powerful influences shaping their journey.',
-      },
-      {
-        title: 'My Approach:',
-        description:
-          'Using traditional astrological techniques combined with modern interpretations, I created a comprehensive birth chart analysis, identifying key transits and providing guidance for navigating upcoming celestial events.',
-      },
-    ]}
-    image={{
-      src: 'https://images.unsplash.com/photo-1515355318844-9717e2575853?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      alt: 'Hand-drawn botanical moon phases',
-    }}
-    callToAction={{
-      target: '_blank',
-      text: 'Go to the project',
-      icon: 'tabler:chevron-right',
-      href: '#',
-    }}
-    wrapperClass=""
-  >
-    <Fragment slot="content">
-      <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Sacred Service: <br /><span class="text-2xl">Natal Chart Reading & Transit Analysis</span>
-      </h2>
-    </Fragment>
-
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-    </Fragment>
-  </Content>
-
-  <!-- Steps Widget ****************** -->
-
-  <Steps
-    title="Begin your astrological journey with these sacred steps."
+    <Steps
+    title="Begin your astrological journey with these steps."
     titleMotifImage='/assets/icons/hand-stars.svg'
     items={[
       {
@@ -132,15 +92,53 @@ const metadata = {
       src: 'https://images.unsplash.com/photo-1532592068623-db1978e40df5?q=80&w=2836&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       alt: 'Steps image',
     }}
-    wrapperClass=""
+    wrapperClass="pt-16"
   />
-
-  <LatestWorkshops />
-
   <!-- Content Widget **************** -->
 
   <Content
     isReversed
+    items={[
+      {
+        title: 'The Reading:',
+        description:
+          'Through the ancient art of astrology, I conducted a deep natal chart analysis for a seeker looking to understand their life path. We explored their rising sign, planetary aspects, and the powerful influences shaping their journey.',
+      },
+      {
+        title: 'My Approach:',
+        description:
+          'Using traditional astrological techniques combined with modern interpretations, I created a comprehensive birth chart analysis, identifying key transits and providing guidance for navigating upcoming celestial events.',
+      },
+    ]}
+    image={{
+      src: 'https://images.unsplash.com/photo-1515355318844-9717e2575853?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      alt: 'Hand-drawn botanical moon phases',
+    }}
+    callToAction={{
+      target: '_blank',
+      text: 'Book a Reading',
+      icon: 'tabler:chevron-right',
+      href: '/readings',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
+        Unlock Your Natal Chart
+      </h2>
+      <p>
+        Astrology is the study of the movements and relative positions of celestial bodies, interpreted as having an influence on human affairs and the natural world.
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+
+
+  <!-- Content Widget **************** -->
+
+  <Content
     isAfterContent={true}
     items={[
       {
@@ -161,15 +159,15 @@ const metadata = {
     }}
     callToAction={{
       target: '_blank',
-      text: 'Go to the project',
+      text: 'Book a Reading',
       icon: 'tabler:chevron-right',
-      href: '#',
+      href: '/readings',
     }}
     wrapperClass=""
   >
     <Fragment slot="content">
       <h2 class="text-2xl font-bold tracking-tight dark:text-white sm:text-3xl mb-2">
-        Sacred Service: <br /><span class="text-2xl">Solar Return Reading & Year Ahead Forecast</span>
+        Cosmic Snapshot: Transits + Predictions
       </h2>
     </Fragment>
 
@@ -177,6 +175,8 @@ const metadata = {
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
+
+  <LatestWorkshops />
 
   <!-- Features Widget *************** -->
 
