@@ -42,7 +42,9 @@ import { UI } from 'astrowind:config';
 
   const onLoad = function () {
     let lastKnownScrollPosition = window.scrollY;
-    let ticking = true;
+    let ticking = false;
+    const logo = document.querySelector('header img');
+  
 
     attachEvent('#header nav', 'click', function () {
       document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
@@ -121,8 +123,10 @@ import { UI } from 'astrowind:config';
       if (!header) return;
       if (lastKnownScrollPosition > 60 && !header.classList.contains('scroll')) {
         header.classList.add('scroll');
+        logo.src = '/assets/logo/logo-color.svg';
       } else if (lastKnownScrollPosition <= 60 && header.classList.contains('scroll')) {
         header.classList.remove('scroll');
+        logo.src = '/assets/logo/logo-light.svg';
       }
       ticking = false;
     }
