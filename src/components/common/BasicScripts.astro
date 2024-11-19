@@ -44,7 +44,6 @@ import { UI } from 'astrowind:config';
     let lastKnownScrollPosition = window.scrollY;
     let ticking = false;
     const logo = document.querySelector('header img');
-  
 
     attachEvent('#header nav', 'click', function () {
       document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
@@ -96,7 +95,6 @@ import { UI } from 'astrowind:config';
         case 'mail':
           href = `mailto:?subject=%22${text}%22&body=${text}%20${url}`;
           break;
-
         default:
           return;
       }
@@ -121,15 +119,16 @@ import { UI } from 'astrowind:config';
     function applyHeaderStylesOnScroll() {
       const header = document.querySelector('#header[data-aw-sticky-header]');
       if (!header) return;
-      if (lastKnownScrollPosition > 60 && !header.classList.contains('scroll')) {
+      if (lastKnownScrollPosition > 60) {
         header.classList.add('scroll');
         logo.src = '/assets/logo/logo-color.svg';
-      } else if (lastKnownScrollPosition <= 60 && header.classList.contains('scroll')) {
+      } else {
         header.classList.remove('scroll');
         logo.src = '/assets/logo/logo-light.svg';
       }
       ticking = false;
     }
+
     applyHeaderStylesOnScroll();
 
     attachEvent([document], 'scroll', function () {
@@ -142,7 +141,11 @@ import { UI } from 'astrowind:config';
         ticking = true;
       }
     });
+
+    // Call swapLogo to ensure the logo is set correctly on load
+    swapLogo();
   };
+
   const onPageShow = function () {
     document.documentElement.classList.add('motion-safe:scroll-smooth');
     const elem = document.querySelector('[data-aw-toggle-menu]');
@@ -153,14 +156,27 @@ import { UI } from 'astrowind:config';
     document.getElementById('header')?.classList.remove('h-screen');
     document.getElementById('header')?.classList.remove('expanded');
     document.querySelector('#header nav')?.classList.add('hidden');
+
+    // Call swapLogo to ensure the logo is set correctly on page show
+    swapLogo();
   };
+
+  function swapLogo() {
+    const logo = document.querySelector('header img');
+    const header = document.querySelector('#header[data-aw-sticky-header]');
+    if (header && header.classList.contains('scroll')) {
+      logo.src = '/assets/logo/logo-color.svg';
+    } else {
+      logo.src = '/assets/logo/logo-light.svg';
+    }
+  }
 
   window.onload = onLoad;
   window.onpageshow = onPageShow;
 
   document.addEventListener('astro:after-swap', () => {
     initTheme();
-    onLoad();
-    onPageShow();
+    onLoad(); // Call onLoad to reinitialize scripts
+    onPageShow(); // Call onPageShow to reset the UI
   });
 </script>
