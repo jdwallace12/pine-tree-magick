@@ -1,0 +1,80 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import HeroText from '~/components/widgets/HeroText.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import Header from '~/components/widgets/Header.astro';
+
+const metadata = {
+  title: 'Readings',
+};
+---
+
+<Layout metadata={metadata}>
+  <Fragment slot="header">
+    <Header
+      links={[
+        { text: 'Readings', href: '/readings' },
+        { text: 'About', href: '/about' },
+        { text: 'Substack', href: '#substack' },
+      ]}
+      actions={[
+        // {
+        //   text: 'Hire me',
+        //   href: '#',
+        //   variant: 'primary',
+        // },
+      ]}
+      isSticky
+    />
+  </Fragment>
+  <!-- HeroText Widget ******************* -->
+
+  <HeroText tagline="Some Tagline Here" title="Book a Reading" />
+
+  <iframe
+    src="https://docs.google.com/forms/d/e/1FAIpQLSc_nTGY_HqeXi3kt0WWlhZ-G-69YJ8CbZMtzijiF9N0YhJrYA/viewform?embedded=true"
+    width="100%"
+    class="h-[3300px] md:h-[3000px] xl:h-[2900px]"
+    frameborder="0"
+    marginheight="0"
+    marginwidth="0"
+  >
+    Loading…
+  </iframe>
+  <!-- Features2 Widget ************** -->
+
+  <Features2
+    title="We are here to help!"
+    items={[
+      {
+        title: 'General support',
+        description: `Chat with us for inquiries related to account management, website navigation, payment issues, accessing purchased templates or general questions about the website's functionality.`,
+      },
+      {
+        title: 'Contact sales',
+        description:
+          'Chat with us for questions about purchases, customization options, licensing for commercial use, inquiries about specific template, etc.',
+      },
+      {
+        title: 'Technical support',
+        description:
+          'Chat with us when facing issues like template installation, problems editing difficulties, compatibility issues with software or download errors, or other technical challenges related to using the templates.',
+      },
+      {
+        title: 'Phone',
+        description: '+1 (234) 567-890',
+        icon: 'tabler:headset',
+      },
+      {
+        title: 'Email',
+        description: 'contact@support.com',
+        icon: 'tabler:mail',
+      },
+      {
+        title: 'Location',
+        description: '1234 Lorem Ipsum St, 12345, Miami, EEUU',
+        icon: 'tabler:map-pin',
+      },
+    ]}
+  />
+</Layout>
