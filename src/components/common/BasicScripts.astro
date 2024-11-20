@@ -44,6 +44,12 @@ import { UI } from 'astrowind:config';
     let lastKnownScrollPosition = window.scrollY;
     let ticking = false;
 
+    // Ensure the header does not have the scroll class on load if not scrolled
+    const header = document.querySelector('#header[data-aw-sticky-header]');
+    if (header && lastKnownScrollPosition === 0) {
+      header.classList.remove('scroll');
+    }
+
     attachEvent('#header nav', 'click', function () {
       document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
       document.body.classList.remove('overflow-hidden');
@@ -104,40 +110,27 @@ import { UI } from 'astrowind:config';
       newlink.click();
     });
 
-    const screenSize = window.matchMedia('(max-width: 767px)');
-    screenSize.addEventListener('change', swapLogo);
-
-    function applyHeaderStylesOnScroll() {
-      const header = document.querySelector('#header[data-aw-sticky-header]');
-      const logo = document.querySelector('header img');
+    const applyHeaderStylesOnScroll = function () {
       const isMobile = window.matchMedia('(max-width: 767px)').matches;
-
       if (!header) return;
 
-      if (isMobile) {
-        // Do nothing for logo on mobile during scroll
-        header.classList.add('scroll'); // Optional: Maintain visual consistency
+      if (lastKnownScrollPosition > 0) {
+        header.classList.add('scroll');
       } else {
+        header.classList.remove('scroll');
+      }
+
+      if (!isMobile) {
+        const logo = document.querySelector('header img');
         if (header.classList.contains('useLightLogo')) {
-          if (window.scrollY > 0) {
-            header.classList.add('scroll');
-            logo.src = '/assets/logo/logo-color.svg';
-          } else {
-            header.classList.remove('scroll');
-            logo.src = '/assets/logo/logo-light.svg';
-          }
+          logo.src = lastKnownScrollPosition > 0 ? '/assets/logo/logo-color.svg' : '/assets/logo/logo-light.svg';
         } else {
           logo.src = '/assets/logo/logo-color.svg';
-
-          if (window.scrollY > 0) {
-            header.classList.add('scroll');
-          } else {
-            header.classList.remove('scroll');
-          }
         }
       }
+
       ticking = false;
-    }
+    };
 
     attachEvent([document], 'scroll', function () {
       lastKnownScrollPosition = window.scrollY;
@@ -165,6 +158,7 @@ import { UI } from 'astrowind:config';
     document.getElementById('header')?.classList.remove('expanded');
     document.querySelector('#header nav')?.classList.add('hidden');
 
+    // Call swapLogo to ensure the logo is set correctly on page show
     swapLogo();
   };
 
@@ -189,11 +183,10 @@ import { UI } from 'astrowind:config';
 
   window.onload = onLoad;
   window.onpageshow = onPageShow;
-  window.addEventListener('resize', swapLogo);
 
   document.addEventListener('astro:after-swap', () => {
     initTheme();
-    onLoad();
-    onPageShow();
+    onLoad(); // Call onLoad to reinitialize scripts
+    onPageShow(); // Call onPageShow to reset the UI
   });
 </script>
