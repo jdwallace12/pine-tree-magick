@@ -1,6 +1,6 @@
 site:
   name: Pine Tree Magick
-  site: 'https://astrowind.vercel.app'
+  site: 'https://www.pinetreemagick.com'
   base: '/'
   trailingSlash: false
 
@@ -10,20 +10,20 @@ site:
 metadata:
   title:
     default: Pine Tree Magick
-  description: 'This is some description'
+  description: 'Astrology Made Simple, Magick Made Real.'
   robots:
     index: true
     follow: true
   openGraph:
     site_name: Pine Tree Magick
     images:
-      - url: '~/assets/images/default.png'
+      - url: '~/assets/images/forest.png'
         width: 1200
         height: 628
     type: website
   twitter:
-    handle: '@onwidget'
-    site: '@onwidget'
+    handle: ''
+    site: ''
     cardType: summary_large_image
 
 i18n:
@@ -32,7 +32,7 @@ i18n:
 
 apps:
   blog:
-    isEnabled: true
+    isEnabled: false
     postsPerPage: 6
 
     post:
