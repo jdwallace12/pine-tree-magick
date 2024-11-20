@@ -26,11 +26,11 @@
   }
 
   .btn-primary {
-    @apply btn font-semibold bg-primary text-dark border-primary hover:bg-primary hover:border-secondary hover:text-dark hover:dark:text-white dark:text-dark dark:bg-primary dark:border-primary dark:hover:border-accent dark:hover:bg-dark;
+    @apply btn font-semibold bg-primary text-dark border-primary hover:bg-primary hover:border-secondary hover:text-dark hover:dark:text-white dark:text-dark dark:bg-primary dark:border-primary dark:hover:border-primary dark:hover:bg-dark;
   }
 
   .btn-secondary {
-    @apply btn bg-green-dark text-white dark:hover:bg-primary dark:hover:text-black;
+    @apply btn bg-green-dark text-dark dark:hover:bg-primary dark:hover:text-dark;
   }
 
   .btn-tertiary {
@@ -39,7 +39,7 @@
 }
 
 .aw-link-active {
-  @apply underline underline-offset-8 text-white;
+  @apply underline underline-offset-8 decoration-dashed text-white;
 }
 #header.scroll > div:first-child {
   @apply bg-page md:bg-white/90 md:backdrop-blur-md;

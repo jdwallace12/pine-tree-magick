@@ -25,6 +25,7 @@ export interface Props {
   links?: Array<MenuLink>;
   actions?: Array<CallToAction>;
   isSticky?: boolean;
+  useLightLogo?: boolean;
   isDark?: boolean;
   isFullWidth?: boolean;
   showToggleTheme?: boolean;
@@ -38,6 +39,7 @@ const {
   actions = [],
   isSticky = false,
   isDark = false,
+  useLightLogo = false,
   isFullWidth = false,
   showToggleTheme = false,
   showRssFeed = false,
@@ -49,7 +51,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
 
 <header
   class:list={[
-    { sticky: isSticky, relative: !isSticky, dark: isDark },
+    { sticky: isSticky, relative: !isSticky, dark: isDark, useLightLogo: useLightLogo},
     'top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out',
   ]}
   {...isSticky ? { 'data-aw-sticky-header': true } : {}}

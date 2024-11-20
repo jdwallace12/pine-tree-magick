@@ -45,22 +45,21 @@ const metadata = {
   <HeroBackground
     id="hero"
     title="Pine Tree Magick"
-    tagline="Astrology Made Simple, Magic Made Real."
-    actions={[{ variant: 'primary', text: 'Book A Reading', href: getPermalink('/book-a-reading') }]}
+    actions={[{ variant: 'secondary', text: 'Book A Reading', href: getPermalink('/book-a-reading') }]}
     bg={`
       <div class="absolute inset-0 bg-gradient-to-b from-primary to-dark">
-        <div class="absolute inset-0 opacity-75" style="background-image: url('https://images.unsplash.com/photo-1562944634-d309c1b1666e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover;"></div>
+        <div class="absolute inset-0 opacity-55" style="background-image: url('https://images.unsplash.com/photo-1562944634-d309c1b1666e?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover;"></div>
       </div>
     `}
   >
-    <Fragment slot="subtitle"></Fragment>
+    <Fragment slot="subtitle">Astrology Made Simple, Magick Made Real.</Fragment>
   </HeroBackground>
 
   <!-- Content Widget **************** -->
   <ContentBasic
     isReversed
     title="Your Path is Written in the Stars"
-    content="Just like the wonder you feel when you gaze into a night sky filled with stars, the cosmos holds more truth than you could possibly imagine. <br><br>Astrology takes the universal forces that connect us all—the stars, the sky, the elements—and transforms them into practical insights for everyday life.<br><br> As an astrologer, my role is to be your guide and interpreter to the language of the stars. My goal is to help you uncover the patterns of your life, understand your strengths and challenges, and guide you toward fulfillment, ease, and empowerment."
+    content="Just like a night sky filled with stars, the cosmos holds more truth than you could possibly imagine. Astrology combines the universal forces that connect us all—the stars, the sky, the elements—and transforms them into practical insights for everyday life.<br><br> As an astrologer, my role is to be your guide and interpreter to the language of the stars. My goal is to help you uncover the patterns of your life and guide you toward ease and empowerment while navigating your life circumstances."
     image={{
       src: '~/assets/images/wheel-full.svg',
       alt: 'Hand-drawn astrological chart',

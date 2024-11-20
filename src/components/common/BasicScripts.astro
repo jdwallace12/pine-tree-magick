@@ -129,7 +129,6 @@ import { UI } from 'astrowind:config';
       ticking = false;
     }
 
-    applyHeaderStylesOnScroll();
 
     attachEvent([document], 'scroll', function () {
       lastKnownScrollPosition = window.scrollY;
@@ -144,6 +143,7 @@ import { UI } from 'astrowind:config';
 
     // Call swapLogo to ensure the logo is set correctly on load
     swapLogo();
+    applyHeaderStylesOnScroll();
   };
 
   const onPageShow = function () {
