@@ -43,7 +43,6 @@ import { UI } from 'astrowind:config';
   const onLoad = function () {
     let lastKnownScrollPosition = window.scrollY;
     let ticking = false;
-    const logo = document.querySelector('header img');
 
     attachEvent('#header nav', 'click', function () {
       document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
@@ -106,39 +105,39 @@ import { UI } from 'astrowind:config';
     });
 
     const screenSize = window.matchMedia('(max-width: 767px)');
-    screenSize.addEventListener('change', function () {
-      document.querySelector('[data-aw-toggle-menu]')?.classList.remove('expanded');
-      document.body.classList.remove('overflow-hidden');
-      document.getElementById('header')?.classList.remove('h-screen');
-      document.getElementById('header')?.classList.remove('expanded');
-      document.getElementById('header')?.classList.remove('bg-page');
-      document.querySelector('#header nav')?.classList.add('hidden');
-      document.querySelector('#header > div > div:last-child')?.classList.add('hidden');
-    });
+    screenSize.addEventListener('change', swapLogo);
 
     function applyHeaderStylesOnScroll() {
       const header = document.querySelector('#header[data-aw-sticky-header]');
-      if (!header) return;
-      if (header && header.classList.contains('useLightLogo')) {
-      if (lastKnownScrollPosition > 60) {
-        header.classList.add('scroll');
-        logo.src = '/assets/logo/logo-color.svg';
-      } else {
-        header.classList.remove('scroll');
-        logo.src = '/assets/logo/logo-light.svg';
-      }
-    } else {
-      logo.src = '/assets/logo/logo-color.svg';
+      const logo = document.querySelector('header img');
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
 
-      if (lastKnownScrollPosition > 60) {
-        header.classList.add('scroll');
+      if (!header) return;
+
+      if (isMobile) {
+        // Do nothing for logo on mobile during scroll
+        header.classList.add('scroll'); // Optional: Maintain visual consistency
       } else {
-        header.classList.remove('scroll');
+        if (header.classList.contains('useLightLogo')) {
+          if (window.scrollY > 0) {
+            header.classList.add('scroll');
+            logo.src = '/assets/logo/logo-color.svg';
+          } else {
+            header.classList.remove('scroll');
+            logo.src = '/assets/logo/logo-light.svg';
+          }
+        } else {
+          logo.src = '/assets/logo/logo-color.svg';
+
+          if (window.scrollY > 0) {
+            header.classList.add('scroll');
+          } else {
+            header.classList.remove('scroll');
+          }
+        }
       }
-    }
       ticking = false;
     }
-
 
     attachEvent([document], 'scroll', function () {
       lastKnownScrollPosition = window.scrollY;
@@ -151,7 +150,6 @@ import { UI } from 'astrowind:config';
       }
     });
 
-    // Call swapLogo to ensure the logo is set correctly on load
     swapLogo();
     applyHeaderStylesOnScroll();
   };
@@ -167,16 +165,18 @@ import { UI } from 'astrowind:config';
     document.getElementById('header')?.classList.remove('expanded');
     document.querySelector('#header nav')?.classList.add('hidden');
 
-    // Call swapLogo to ensure the logo is set correctly on page show
     swapLogo();
   };
 
   function swapLogo() {
     const logo = document.querySelector('header img');
     const header = document.querySelector('#header[data-aw-sticky-header]');
-    
-    // Only run the logo swapping logic if the useLightLogo class is present
-    if (header && header.classList.contains('useLightLogo')) {
+    const isMobile = window.matchMedia('(max-width: 767px)').matches;
+
+    if (isMobile) {
+      // Always use the color logo on mobile
+      logo.src = '/assets/logo/logo-color.svg';
+    } else if (header && header.classList.contains('useLightLogo')) {
       if (header.classList.contains('scroll')) {
         logo.src = '/assets/logo/logo-color.svg'; // Use color logo if scrolled
       } else {
@@ -189,10 +189,11 @@ import { UI } from 'astrowind:config';
 
   window.onload = onLoad;
   window.onpageshow = onPageShow;
+  window.addEventListener('resize', swapLogo);
 
   document.addEventListener('astro:after-swap', () => {
     initTheme();
-    onLoad(); // Call onLoad to reinitialize scripts
-    onPageShow(); // Call onPageShow to reset the UI
+    onLoad();
+    onPageShow();
   });
 </script>
