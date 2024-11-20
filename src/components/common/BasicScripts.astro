@@ -119,6 +119,7 @@ import { UI } from 'astrowind:config';
     function applyHeaderStylesOnScroll() {
       const header = document.querySelector('#header[data-aw-sticky-header]');
       if (!header) return;
+      if (header && header.classList.contains('useLightLogo')) {
       if (lastKnownScrollPosition > 60) {
         header.classList.add('scroll');
         logo.src = '/assets/logo/logo-color.svg';
@@ -126,6 +127,15 @@ import { UI } from 'astrowind:config';
         header.classList.remove('scroll');
         logo.src = '/assets/logo/logo-light.svg';
       }
+    } else {
+      logo.src = '/assets/logo/logo-color.svg';
+
+      if (lastKnownScrollPosition > 60) {
+        header.classList.add('scroll');
+      } else {
+        header.classList.remove('scroll');
+      }
+    }
       ticking = false;
     }
 
