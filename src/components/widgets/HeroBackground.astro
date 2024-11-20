@@ -25,7 +25,7 @@ const {
     </slot>
   </div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
+    <div class="pt-0 md:pt-[160px] pointer-events-none"></div>
     <div class="py-12 md:py-20">
       <div class="text-center pb-10 md:pb-16 max-w-5xl mx-auto">
         {
@@ -36,13 +36,13 @@ const {
         {
           title && (
             <h1
-              class="text-5xl md:text-6xl font-normal tracking-tight mb-4 font-heading dark:text-gray-200"
+              class="text-5xl md:text-6xl font-normal tracking-tight mb-12 font-heading dark:text-gray-200"
               set:html={title}
             />
           )
         }
         <div class="max-w-3xl mx-auto">
-          {subtitle && <p class="text-muted mb-8 dark:text-secondary text-xl" set:html={subtitle} />}
+          {subtitle && <p class="mb-8 dark:text-secondary text-xl" set:html={subtitle} />}
           {
             actions && (
               <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 mt-4">
