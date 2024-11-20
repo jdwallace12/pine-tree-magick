@@ -164,10 +164,16 @@ import { UI } from 'astrowind:config';
   function swapLogo() {
     const logo = document.querySelector('header img');
     const header = document.querySelector('#header[data-aw-sticky-header]');
-    if (header && header.classList.contains('scroll')) {
-      logo.src = '/assets/logo/logo-color.svg';
+    
+    // Only run the logo swapping logic if the useLightLogo class is present
+    if (header && header.classList.contains('useLightLogo')) {
+      if (header.classList.contains('scroll')) {
+        logo.src = '/assets/logo/logo-color.svg'; // Use color logo if scrolled
+      } else {
+        logo.src = '/assets/logo/logo-light.svg'; // Use light logo if not scrolled
+      }
     } else {
-      logo.src = '/assets/logo/logo-light.svg';
+      logo.src = '/assets/logo/logo-color.svg';
     }
   }
 
