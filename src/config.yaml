@@ -17,7 +17,7 @@ metadata:
   openGraph:
     site_name: Pine Tree Magick
     images:
-      - url: '/public/assets/images/forest.png'
+      - url: '/images/forest.png'
         width: 1200
         height: 628
     type: website
