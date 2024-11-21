@@ -111,7 +111,6 @@ import { UI } from 'astrowind:config';
     });
 
     const applyHeaderStylesOnScroll = function () {
-      const isMobile = window.matchMedia('(max-width: 767px)').matches;
       if (!header) return;
 
       if (lastKnownScrollPosition > 0) {
@@ -120,14 +119,6 @@ import { UI } from 'astrowind:config';
         header.classList.remove('scroll');
       }
 
-      if (!isMobile) {
-        const logo = document.querySelector('header img');
-        if (header.classList.contains('useLightLogo')) {
-          logo.src = lastKnownScrollPosition > 0 ? '/assets/logo/logo-color.svg' : '/assets/logo/logo-light.svg';
-        } else {
-          logo.src = '/assets/logo/logo-color.svg';
-        }
-      }
 
       ticking = false;
     };
@@ -143,7 +134,6 @@ import { UI } from 'astrowind:config';
       }
     });
 
-    swapLogo();
     applyHeaderStylesOnScroll();
   };
 
@@ -157,29 +147,7 @@ import { UI } from 'astrowind:config';
     document.getElementById('header')?.classList.remove('h-screen');
     document.getElementById('header')?.classList.remove('expanded');
     document.querySelector('#header nav')?.classList.add('hidden');
-
-    // Call swapLogo to ensure the logo is set correctly on page show
-    swapLogo();
   };
-
-  function swapLogo() {
-    const logo = document.querySelector('header img');
-    const header = document.querySelector('#header[data-aw-sticky-header]');
-    const isMobile = window.matchMedia('(max-width: 767px)').matches;
-
-    if (isMobile) {
-      // Always use the color logo on mobile
-      logo.src = '/assets/logo/logo-color.svg';
-    } else if (header && header.classList.contains('useLightLogo')) {
-      if (header.classList.contains('scroll')) {
-        logo.src = '/assets/logo/logo-color.svg'; // Use color logo if scrolled
-      } else {
-        logo.src = '/assets/logo/logo-light.svg'; // Use light logo if not scrolled
-      }
-    } else {
-      logo.src = '/assets/logo/logo-color.svg';
-    }
-  }
 
   window.onload = onLoad;
   window.onpageshow = onPageShow;
