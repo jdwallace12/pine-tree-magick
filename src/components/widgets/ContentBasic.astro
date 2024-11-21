@@ -26,7 +26,11 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 ---
-
+<style>
+  .rotating {
+  transition: transform 0.2s ease-in-out;
+}
+</style>
 <WidgetWrapper
   id={id}
   isDark={isDark}
@@ -84,7 +88,7 @@ const {
                 <Fragment set:html={image} />
               ) : (
                 <Image
-                  class="mx-auto w-full"
+                  class="mx-auto w-full rotating-image"
                   width={500}
                   height={500}
                   widths={[400, 768]}
@@ -100,3 +104,18 @@ const {
     </div>
   </div>
 </WidgetWrapper>
+
+<script>
+  let rotation = 0;
+
+  const handleScroll = () => {
+    const scrollPosition = window.scrollY;
+    rotation = scrollPosition * 0.03; // Adjust the multiplier for speed
+    const imageElement = document.querySelector('.rotating-image');
+    if (imageElement) {
+      imageElement.style.transform = `rotate(${rotation}deg)`;
+    }
+  };
+
+  window.addEventListener('scroll', handleScroll);
+</script>
