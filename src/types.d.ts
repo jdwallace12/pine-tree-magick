@@ -46,6 +46,7 @@ export interface Post {
 
 export interface Workshop {
   title: string;
+  description: string;
   excerpt: string;
   image: string;
   date: string;

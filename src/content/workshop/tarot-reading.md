@@ -1,5 +1,6 @@
 ---
 title: 'Tarot Reading'
+description: 'Learn Tarrot'
 slug: 'tarot-reading'
 excerpt: 'Learn tarot'
 image: '/assets/images/tarot.webp'
