@@ -1,7 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 
-import Header from '~/components/widgets/Header.astro';
 import Content from '~/components/widgets/Content.astro';
 import ContentListicle from '~/components/widgets/ContentListicle.astro';
 
@@ -14,23 +13,7 @@ const metadata = {
 ---
 <Layout metadata={metadata}>
     <Fragment slot="announcement"></Fragment>
-    <Fragment slot="header">
-      <Header
-        links={[
-          { text: 'Readings', href: '/readings' },
-          { text: 'About', href: '/about' },
-          { text: 'Substack', href: '#substack' },
-        ]}
-        actions={[
-          {
-            text: 'Book a Reading',
-            href: '/book-a-reading',
-            variant: 'primary',
-          },
-        ]}
-        isSticky
-      />
-    </Fragment>
+
   <!-- Content Widget **************** -->
   <Content
     isReversed

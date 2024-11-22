@@ -1,7 +1,7 @@
 ---
-import Header from '~/components/widgets/Header.astro';
 import Features2 from '~/components/widgets/Features2.astro';
 import Features3 from '~/components/widgets/Features3.astro';
+import Content from '~/components/widgets/Content.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Stats from '~/components/widgets/Stats.astro';
 import Steps2 from '~/components/widgets/Steps2.astro';
@@ -13,23 +13,7 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Fragment slot="header">
-    <Header
-      links={[
-        { text: 'Readings', href: '/readings' },
-        { text: 'About', href: '/about' },
-        { text: 'Substack', href: '#substack' },
-      ]}
-      actions={[
-        // {
-        //   text: 'Hire me',
-        //   href: '#',
-        //   variant: 'primary',
-        // },
-      ]}
-      isSticky
-    />
-  </Fragment>
+
   <!-- Hero Widget ******************* -->
 
   <Hero
@@ -59,6 +43,64 @@ const metadata = {
     ]}
   />
 
+    <!-- Content Widget **************** -->
+    <Content
+    id="about"
+    columns={3}
+    items={[
+      {
+        icon: 'tabler:brand-dribbble',
+        callToAction: {
+          target: '_blank',
+          text: 'Dribbble',
+          href: '#',
+        },
+      },
+      {
+        icon: 'tabler:brand-behance',
+        callToAction: {
+          target: '_blank',
+          text: 'Behance',
+          href: '#',
+        },
+      },
+      {
+        icon: 'tabler:brand-pinterest',
+        callToAction: {
+          target: '_blank',
+          text: 'Pinterest',
+          href: '#',
+        },
+      },
+    ]}
+    image={{
+      src: '/assets/images/headshot-2021.webp',
+      alt: 'Colorful Image',
+      loading: 'lazy',
+      width: 600,
+      height: 400,
+    }}
+    wrapperClass=""
+  >
+    <Fragment slot="content">
+      <h2 class="text-2xl tracking-tight font-heading dark:text-white sm:text-3xl mb-2">About me</h2>
+      <p>
+        Welcome to my creative journey. My work is a testament to my commitment to bringing ideas to life, where each
+        pixel becomes a brushstroke in the canvas of imagination.
+      </p>
+      <br />
+      <p>
+        I find inspiration in the world around me, whether through the pages of a captivating novel, the intricate
+        details of typography, or the vibrant hues of nature during my outdoor escapades.
+      </p>
+      <br />
+      <p>If you're curious to dive deeper into my work, you can follow me:</p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
   <!-- Features3 Widget ************** -->
 
   <Features3

@@ -2,7 +2,6 @@
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import Features2 from '~/components/widgets/Features2.astro';
-import Header from '~/components/widgets/Header.astro';
 
 const metadata = {
   title: 'Readings',
@@ -10,23 +9,7 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Fragment slot="header">
-    <Header
-      links={[
-        { text: 'Readings', href: '/readings' },
-        { text: 'About', href: '/about' },
-        { text: 'Substack', href: '#substack' },
-      ]}
-      actions={[
-        // {
-        //   text: 'Hire me',
-        //   href: '#',
-        //   variant: 'primary',
-        // },
-      ]}
-      isSticky
-    />
-  </Fragment>
+  
   <!-- HeroText Widget ******************* -->
 
   <HeroText tagline="Some Tagline Here" title="Book a Reading" />
