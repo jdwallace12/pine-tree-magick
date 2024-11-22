@@ -4,15 +4,14 @@ import Layout from '~/layouts/PageLayout.astro';
 import Content from '~/components/widgets/Content.astro';
 import ContentListicle from '~/components/widgets/ContentListicle.astro';
 
-
 const metadata = {
-  title: 'Readings',
-  desciption: 'Pine Tree Magick is a something',
-  viewport: 'width=device-width, initial-scale=1.0',
+  title: 'Readings | Pine Tree Magick',
+  description: 'Pinetree Magick Readings',
 };
 ---
+
 <Layout metadata={metadata}>
-    <Fragment slot="announcement"></Fragment>
+  <Fragment slot="announcement"></Fragment>
 
   <!-- Content Widget **************** -->
   <Content
@@ -92,9 +91,9 @@ const metadata = {
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
-    <!-- ContentListicle Widget **************** -->
+  <!-- ContentListicle Widget **************** -->
 
-    <ContentListicle
+  <ContentListicle
     tagline="Listicle Example"
     title="Top 5 Reasons to Use AstroWind"
     subtitle="Discover why developers love this template"

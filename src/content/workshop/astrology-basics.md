@@ -1,5 +1,6 @@
 ---
 title: 'Foundations of Astrology'
+description: 'Learn the fundamentals of astrological charts and interpretations'
 slug: 'astrology-basics'
 excerpt: 'Learn the fundamentals of astrological charts and interpretations'
 image: '/assets/images/zodiac.webp'

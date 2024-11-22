@@ -26,10 +26,11 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 ---
+
 <style>
   .rotating {
-  transition: transform 0.2s ease-in-out;
-}
+    transition: transform 0.2s ease-in-out;
+  }
 </style>
 <WidgetWrapper
   id={id}
@@ -88,7 +89,7 @@ const {
                 <Fragment set:html={image} />
               ) : (
                 <Image
-                  class="mx-auto w-full rotating-image"
+                  class="mx-auto w-full rotating-image will-change-transform"
                   width={500}
                   height={500}
                   widths={[400, 768]}
