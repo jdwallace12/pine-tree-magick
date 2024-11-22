@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
-import Header from '~/components/widgets/Header.astro';
 import { Icon } from 'astro-icon/components';
 
 export async function getStaticPaths() {
@@ -41,20 +40,9 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <Fragment slot="header">
-    <Header
-      links={[
-        { text: 'Readings', href: '/readings' },
-        { text: 'About', href: '/about' },
-        { text: 'Substack', href: '#substack' },
-      ]}
-      isSticky
-    />
-  </Fragment>
   <article class="max-w-2xl mx-auto p-6 space-y-6">
-    <h1 class="text-4xl font-bold">{title}</h1>
+    <h1 class="text-4xl mt-4 font-heading">{title}</h1>
     <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
-    <p class="text-gray-500 text-lg">{excerpt}</p>
     <div class="text-lg">
       <p><strong>Date:</strong> {date}</p>
       <p><strong>Time:</strong> {time}</p>
@@ -62,10 +50,10 @@ const metadata = {
       <p><strong>Price:</strong> ${price}</p>
     </div>
     <div>
-      <h2 class="text-3xl font-semibold mt-4">Workshop Details</h2>
-      <p class="text-base mt-1">{body}</p>
+      <h2 class="text-3xl font-heading pt-6">Workshop Details</h2>
+      <p class="text-lg mt-1">{body}</p>
     </div>
-    <div class="flex justify-between mt-6">
+    <div class="flex justify-between pt-6">
       {
         prevWorkshop && (
           <div class="flex-1">

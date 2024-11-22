@@ -15,9 +15,9 @@ const workshopsWithSlug = workshops.map((workshop) => ({
 
 <Layout>
   <div class="mx-auto max-w-7xl p-4 md:px-8 md:pt-20">
-    <h1 class="text-4xl md:text-5xl mb-4 font-heading">Workshops</h1>
+    <h1 class="text-4xl md:text-5xl font-heading">Workshops</h1>
   </div>
-  <div class="flex flex-wrap gap-6 row-gap-5 md:gap-8 mx-auto max-w-7xl p-4 md:px-8 md:pb-16">
+  <div class="flex flex-wrap gap-6 row-gap-5 md:gap-8 mx-auto max-w-7xl p-4 pt-1 md:px-8">
     {
       workshopsWithSlug.map((workshop) => (
       <div class="relative flex flex-col w-[100%] md:w-[calc(50%-1rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
