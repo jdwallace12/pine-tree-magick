@@ -31,11 +31,12 @@ if (!workshop) {
   throw new Error('Workshop not found');
 }
 
-const { title, excerpt, image, price, date, time, location } = workshop.data;
+const { title, description, image, price, date, time, location } = workshop.data;
 const body = workshop.body;
 
 const metadata = {
   title: title,
+  description: description,
 };
 ---
 

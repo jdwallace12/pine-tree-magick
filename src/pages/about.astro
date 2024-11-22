@@ -8,12 +8,12 @@ import Steps2 from '~/components/widgets/Steps2.astro';
 import Layout from '~/layouts/PageLayout.astro';
 
 const metadata = {
-  title: 'About the Mystic Realm',
+  title: 'About',
+  description: 'Learn more about Pine Tree Magick',
 };
 ---
 
 <Layout metadata={metadata}>
-
   <!-- Hero Widget ******************* -->
 
   <Hero
@@ -43,8 +43,8 @@ const metadata = {
     ]}
   />
 
-    <!-- Content Widget **************** -->
-    <Content
+  <!-- Content Widget **************** -->
+  <Content
     id="about"
     columns={3}
     items={[

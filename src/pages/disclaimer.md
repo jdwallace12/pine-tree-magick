@@ -1,5 +1,6 @@
 ---
 title: 'Disclaimer'
+description: 'Please read the disclaimer before booking a reading'
 layout: '~/layouts/MarkdownLayout.astro'
 ---
 
