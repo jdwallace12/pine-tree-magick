@@ -4,6 +4,7 @@ import Content from '~/components/widgets/Content.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Stats from '~/components/widgets/Stats.astro';
 import Layout from '~/layouts/PageLayout.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
 import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
 
 const metadata = {
@@ -138,6 +139,55 @@ const metadata = {
       src: 'https://images.unsplash.com/photo-1533294455009-a77b7557d2d1?q=80&w=3840&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       alt: 'Mystical Landscape',
     }}
+  />
+
+    <!-- Content Widget **************** -->
+    <Content
+    wrapperClass='mb-0'
+    isReversed
+    id="mystory"
+    image={{
+      src: '/assets/images/northern-lights.webp',
+      alt: 'Colorful Image',
+      loading: 'lazy',
+      width: 600,
+      height: 400,
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="text-2xl tracking-tight font-heading dark:text-white sm:text-3xl mb-2">My Story</h2>
+      <p>
+        My spiritual journey began at 8 years old when I picked up a copy of my mom’s book, Many Lives, Many Masters by Brian Weiss, M.D. Based upon a psychiatrist’s experience with reincarnation, this book spoke to me at a very young age, as did the idea that every soul has several incarnations on Earth. Since then, I’ve grown to understand that life is a series of lessons, and that we’re all here to continue learning, evolving, and growing as best we can.
+      </p>
+      <br />
+      <p>I’ve also learned that growth is never linear, as every human is continually tested by relationships, lessons, hardships, and our own limitations. My personal journey to healing has been informed by several different modalities, including earning my 200-hour yoga certification, a meditation practice, IFS therapy, Tarot, and herbalism. Through these studies, I’ve cultivated my own intentional magickal practice, which is guided by astrology, the lunar cycles, and a deep love of the natural world.</p>
+      <br />
+      <p>
+        Of all the practices I’ve studied, astrology has been the most profound. Studying astrology has connected me to my calling, and helped me better understand myself and my place in the world. Having my natal chart professionally read years ago was the first time I truly felt seen, and since then, unlocking my chart’s potential has helped me live with purpose, intention, and greater ease. I’ve grown from someone dominated by fear and worry to someone who leads an intentional life guided by trust.
+      </p>
+      <br />
+      <p>
+        As a healer, I feel called to help others on their own journey to healing—whether by exploring their unique potential in a natal chart reading, preparing them for the year ahead, or leading workshops that allow them to align with their own magickal blueprint. 
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+    <!-- CallToAction Widget *********** -->
+
+    <CallToAction
+    title="Align with the Stars"
+    subtitle="Ready to discover what the cosmos has in store for you?"
+    wrapperClass=""
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Book a Reading',
+        href: '/book-a-reading',
+      },
+    ]}
   />
 
     <!--  Latest Workshops -->
