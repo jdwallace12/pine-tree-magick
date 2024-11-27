@@ -53,8 +53,7 @@ export const footerData = {
   ],
   socialLinks: [
     { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: '#' },
-    { ariaLabel: 'Facebook', icon: 'tabler:brand-facebook', href: '#' },
-    { ariaLabel: 'RSS', icon: 'tabler:rss', href: getAsset('/rss.xml') },
+    { ariaLabel: 'TikTok', icon: 'tabler:brand-tiktok', href: '#' },
   ],
   footNote: `Pine Tree Magick All rights reserved.
   `,
