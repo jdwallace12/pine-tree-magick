@@ -1,11 +1,11 @@
 ---
-import Features2 from '~/components/widgets/Features2.astro';
 import Features3 from '~/components/widgets/Features3.astro';
 import Content from '~/components/widgets/Content.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Stats from '~/components/widgets/Stats.astro';
 import Steps2 from '~/components/widgets/Steps2.astro';
 import Layout from '~/layouts/PageLayout.astro';
+import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
 
 const metadata = {
   title: 'About',
@@ -17,58 +17,39 @@ const metadata = {
   <!-- Hero Widget ******************* -->
 
   <Hero
-    tagline="Welcome to the Mystic Realm"
+    tagline="About Pine Tree Magick"
     image={{
       src: 'https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       alt: 'Mystical Image',
     }}
   >
-    <Fragment slot="title"> Unveil the secrets of the universe with our Enchanting Astrological Templates </Fragment>
+    <Fragment slot="title"><span class="capitalize">I’m passionate about helping others through the lens of mysticism</span></Fragment>
 
     <Fragment slot="subtitle">
-      Explore the cosmos, align your energies, and manifest your dreams. Our templates guide you through the mystical
-      journey of self-discovery and empowerment.
+      Pine Tree Magick is a small business rooted in astrology and intentional magick. My work aims to empower individuals by blending the wisdom of astrology with the rhythms of the natural world. With over a decade of experience as a healer, I offer thoughtful and practical guidance, with a mission to help others find ease and empowerment in their personal lives.
     </Fragment>
   </Hero>
 
-  <!-- Stats Widget ****************** -->
-
-  <Stats
-    title="Cosmic Statistics"
-    stats={[
-      { title: 'Zodiac Signs', amount: '12' },
-      { title: 'Planets', amount: '8' },
-      { title: 'Tarot Cards', amount: '78' },
-      { title: 'Crystals', amount: '50+' },
-    ]}
-  />
 
   <!-- Content Widget **************** -->
   <Content
+    wrapperClass='mb-0'
     id="about"
     columns={3}
     items={[
       {
-        icon: 'tabler:brand-dribbble',
+        icon: 'tabler:brand-instagram',
         callToAction: {
           target: '_blank',
-          text: 'Dribbble',
+          text: 'Instagram',
           href: '#',
         },
       },
       {
-        icon: 'tabler:brand-behance',
+        icon: 'tabler:brand-tiktok',
         callToAction: {
           target: '_blank',
-          text: 'Behance',
-          href: '#',
-        },
-      },
-      {
-        icon: 'tabler:brand-pinterest',
-        callToAction: {
-          target: '_blank',
-          text: 'Pinterest',
+          text: 'TikTok',
           href: '#',
         },
       },
@@ -80,27 +61,33 @@ const metadata = {
       width: 600,
       height: 400,
     }}
-    wrapperClass=""
   >
     <Fragment slot="content">
       <h2 class="text-2xl tracking-tight font-heading dark:text-white sm:text-3xl mb-2">About me</h2>
       <p>
-        Welcome to my creative journey. My work is a testament to my commitment to bringing ideas to life, where each
-        pixel becomes a brushstroke in the canvas of imagination.
+        Hi there!  I’m Jersey Griggs, the creator of Pine Tree Magick. I’m a Maine-based writer and professional astrologer, with a grounded approach to the mystical world. I’m passionate about helping others through the lens of mysticism—whether through personalized astrology readings, captivating storytelling, or intentional workshops.
       </p>
+      <br />
+      <p>I offer written astrology readings, one-on-one astrology sessions, and group events that incorporate my extensive knowledge, including astrology workshops, moon circles, and manifestation classes. I also work with clients to help them understand the timing of their lives, and how they can achieve their dreams with guidance from the cosmos.</p>
       <br />
       <p>
-        I find inspiration in the world around me, whether through the pages of a captivating novel, the intricate
-        details of typography, or the vibrant hues of nature during my outdoor escapades.
+        Explore my offerings on my readings page, check out my upcoming events, or follow along on Instagram and TikTok @pinetreemagick to stay connected.
       </p>
-      <br />
-      <p>If you're curious to dive deeper into my work, you can follow me:</p>
     </Fragment>
 
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
+      <!-- Stats Widget ****************** -->
+
+      <Stats
+      stats={[
+        { title: 'Rising', amount: 'Gemini', icon: 'tabler:sunrise'},
+        { title: 'Sun', amount: 'Leo', icon: 'tabler:sun'},
+        { title: 'Moon', amount: 'Scorpio', icon: 'tabler:moon'},
+      ]}
+    />
   <!-- Features3 Widget ************** -->
 
   <Features3
@@ -200,80 +187,7 @@ const metadata = {
     ]}
   />
 
-  <!-- Steps2 Widget ****************** -->
+    <!--  Latest Workshops -->
+    <LatestWorkshops />
 
-  <Steps2
-    title="Achievements"
-    subtitle="Celebrating our journey through the mystical realm. Join us as we honor our milestones."
-    isReversed={true}
-    callToAction={{
-      text: 'Explore More',
-      href: '/',
-    }}
-    items={[
-      {
-        title: 'Global Community',
-        description: 'Connecting souls from all corners of the world through shared wisdom and practices.',
-        icon: 'tabler:globe',
-      },
-      {
-        title: 'Positive Feedback',
-        description:
-          'Our templates have helped countless individuals on their spiritual journeys. Join the testimonials.',
-        icon: 'tabler:message-star',
-      },
-      {
-        title: 'Recognition',
-        description: 'Honored as a trusted source for spiritual guidance and resources in the community.',
-        icon: 'tabler:award',
-      },
-    ]}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Our Locations"
-    tagline="Find Us in the Cosmic Realm"
-    columns={4}
-    items={[
-      {
-        title: 'Mystic Valley',
-        description: '1234 Enchanted Way, 12345, Dreamland',
-      },
-      {
-        title: 'Witchwood',
-        description: '5678 Spellbound St, 56789, Enchantment City',
-      },
-      {
-        title: 'Celestial Heights',
-        description: '9012 Starry Lane, 90123, Universe Town',
-      },
-      {
-        title: 'Crystal Cove',
-        description: '3456 Gemstone Rd, 34567, Mystic Shores',
-      },
-    ]}
-  />
-
-  <!-- Features2 Widget ************** -->
-
-  <Features2
-    title="Mystical Support"
-    tagline="Contact Us for Guidance"
-    columns={2}
-    items={[
-      {
-        title: 'Chat with our Oracles',
-        description: 'Connect with our team of spiritual guides for insights and support. We are here to help you.',
-        icon: 'tabler:messages',
-      },
-      {
-        title: 'Call our Mystic Line',
-        description:
-          'Reach out for personalized guidance and support on your spiritual journey. We are just a call away.',
-        icon: 'tabler:headset',
-      },
-    ]}
-  />
 </Layout>
