@@ -3,7 +3,6 @@ import Features3 from '~/components/widgets/Features3.astro';
 import Content from '~/components/widgets/Content.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Stats from '~/components/widgets/Stats.astro';
-import Steps2 from '~/components/widgets/Steps2.astro';
 import Layout from '~/layouts/PageLayout.astro';
 import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
 
@@ -23,7 +22,7 @@ const metadata = {
       alt: 'Mystical Image',
     }}
   >
-    <Fragment slot="title"><span class="capitalize">I’m passionate about helping others through the lens of mysticism</span></Fragment>
+    <Fragment slot="title"><span class="capitalize">Passionate about helping others through the lens of mysticism</span></Fragment>
 
     <Fragment slot="subtitle">
       Pine Tree Magick is a small business rooted in astrology and intentional magick. My work aims to empower individuals by blending the wisdom of astrology with the rhythms of the natural world. With over a decade of experience as a healer, I offer thoughtful and practical guidance, with a mission to help others find ease and empowerment in their personal lives.
@@ -81,7 +80,7 @@ const metadata = {
   </Content>
       <!-- Stats Widget ****************** -->
 
-      <Stats
+    <Stats
       stats={[
         { title: 'Rising', amount: 'Gemini', icon: 'tabler:sunrise'},
         { title: 'Sun', amount: 'Leo', icon: 'tabler:sun'},
@@ -91,28 +90,27 @@ const metadata = {
   <!-- Features3 Widget ************** -->
 
   <Features3
-    title="Our Enchanted Templates"
-    subtitle="Discover templates that resonate with your soul's journey, designed to enhance your spiritual practice."
+    wrapperClass='pt-0'
     columns={3}
     isBeforeContent={true}
     items={[
       {
-        title: 'Astrology',
+        title: 'I believe in',
         description:
-          'Dive deep into the stars and uncover your astrological chart. Our templates help you interpret celestial influences.',
+          'The natal promise, astrology as a life hack, reincarnation, spirit guides, ancestral work, manifestation, signs from loved ones, living with intention, working with nature’s cycles, animism',
         icon: 'tabler:star',
       },
       {
-        title: 'Tarot',
+        title: 'You can find me',
         description:
-          'Harness the power of tarot to gain insights and guidance. Our templates provide a framework for your readings.',
-        icon: 'tabler:star',
+          'Gardening, exploring new places, devouring books, hiking up mountains, mountain biking, cooking dinner, swimming in the ocean, listening to podcasts, watching the sunset, working on my YA novel',
+        icon: 'tabler:search',
       },
       {
-        title: 'Crystals',
+        title: 'My favorite things',
         description:
-          'Learn about the healing properties of crystals and how to incorporate them into your life with our beautifully designed templates.',
-        icon: 'tabler:star',
+          'Good books, snuggly dogs, hot mugs of tea, skiing powder, watching the sunset, going for a swim, picking flowers, a cozy evening by the fire, reaching a mountain summit',
+        icon: 'tabler:heart',
       },
     ]}
   />
@@ -124,67 +122,22 @@ const metadata = {
     isAfterContent={true}
     items={[
       {
-        title: 'Moon Phases',
+        title: 'Daily rituals',
         description:
-          'Align your intentions with the lunar cycle. Our templates guide you through the phases of the moon for optimal manifestation.',
+          'A journaling, meditation, Tarot, walks in nature, drinking tea, chatting on Marco Polo, connecting to my parts through IFS therapy, EFT',
         icon: 'tabler:moon',
       },
       {
-        title: 'Rituals',
+        title: 'Books That Have Changed Me',
         description:
-          'Create sacred space and perform rituals that resonate with your intentions. Our templates provide step-by-step guidance.',
-        icon: 'tabler:wand',
-      },
-      {
-        title: 'Meditation',
-        description:
-          'Enhance your meditation practice with templates designed to deepen your connection to the universe.',
-        icon: 'tabler:star',
-      },
-      {
-        title: 'Herbalism',
-        description:
-          'Explore the magical properties of herbs and how to use them in your practice with our informative templates.',
-        icon: 'tabler:leaf',
-      },
-      {
-        title: 'Astrological Events',
-        description:
-          'Stay informed about upcoming astrological events and how they affect your life with our event tracking templates.',
-        icon: 'tabler:calendar',
-      },
-      {
-        title: 'Spiritual Growth',
-        description:
-          'Embark on a journey of self-discovery and spiritual growth with our templates designed to support your path.',
-        icon: 'tabler:growth',
+          'Many Lives, Many Masters by Brian Weiss, M.D., The Four Agreements by Don Miguel Ruiz Ask and It is Given by Esther and Jerry Hicks, Astrology and the Authentic Self by Demetra George, Psychic Witch by Mat Auryn, The Artist’s Way by Julia Cameron, You are a Badass by Jen Sincero, The Secret Language of Your Body by Inna Segal, Ancestral Healing Made Easy by Natalia and Terry O’Sullivan, Fearless Tarot by Elliot Adam, Llewellyn’s Magickal Almanac',
+        icon: 'tabler:book',
       },
     ]}
     image={{
       src: 'https://images.unsplash.com/photo-1533294455009-a77b7557d2d1?q=80&w=3840&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
       alt: 'Mystical Landscape',
     }}
-  />
-
-  <!-- Steps2 Widget ****************** -->
-
-  <Steps2
-    title="Our Values"
-    subtitle="Embrace the magic within and connect with the universe. Our values guide our practice and offerings."
-    items={[
-      {
-        title: 'Intuition',
-        description: 'Trust your inner voice and let it guide you on your spiritual journey.',
-      },
-      {
-        title: 'Community',
-        description: 'We believe in the power of connection and support within our mystical community.',
-      },
-      {
-        title: 'Empowerment',
-        description: 'Our templates are designed to empower you to take charge of your spiritual path.',
-      },
-    ]}
   />
 
     <!--  Latest Workshops -->
