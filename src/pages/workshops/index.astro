@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
+import Content from '~/components/widgets/Content.astro';
 
 const workshops = await getCollection('workshop');
 
@@ -19,8 +20,52 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <div class="mx-auto max-w-7xl p-4 md:px-8 md:pt-20">
-    <h1 class="text-4xl md:text-5xl font-heading">Workshops</h1>
+  <div class="mx-auto max-w-7xl p-4 md:px-8">
+    <h1 class="font-normal tracking-tighter font-heading text-heading text-3xl md:text-5xl text-center mt-12">Workshops and Events</h1>
+<!-- Content Widget **************** -->
+<Content
+isReversed
+image={{
+  src: 'https://images.unsplash.com/photo-1515355318844-9717e2575853?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  alt: 'Hand-drawn botanical moon phases',
+}}
+>
+<Fragment slot="content">
+  <h2 class="tracking-tight dark:text-white sm:text-4xl mb-2 font-heading">Monthly Moon Circles</h2>
+  <p>
+    Working with the lunar cycles is a powerful way to manifest intentions. Each month, the new moon invites us to embrace new beginnings, while the full moon encourages us to release what no longer serves us. When practiced consistently, aligning with lunar rhythms can foster positive change into our daily lives.
+  </p>
+  <br/>
+  <p>
+    Every monthly moon circle aligns with the current lunation and astrological chart, creating a unique and meaningful experience tailored specifically by Jersey. Through divination, guided meditation, reflective journaling, and a manifestation ritual, Jersey guides participants to connect deeply with themselves to set clear intentions and align themselves with their purpose.
+  </p>
+</Fragment>
+
+<Fragment slot="bg">
+  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+</Fragment>
+</Content>
+<!-- Content Widget **************** -->
+<Content
+image={{
+  src: 'https://images.unsplash.com/photo-1515355318844-9717e2575853?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+  alt: 'Hand-drawn botanical moon phases',
+}}
+>
+<Fragment slot="content">
+  <h2 class="tracking-tight dark:text-white sm:text-4xl mb-2 font-heading">Manifestation Workshops</h2>
+  <p>
+    Join a manifestation workshop and discover that magick is real! Magick is best achieved by setting clear, grounded intentions that align with your authentic self. In these workshops, Jersey guides participants in connecting to their inner power to create meaningful changes in their external world. Blending practical techniques with magickal practices, Jersey’s workshops cover topics such as money manifestation, candle magick, plant magick, and other manifestation rituals designed to inspire transformation and initiate lasting change.
+  </p>
+
+</Fragment>
+
+<Fragment slot="bg">
+  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+</Fragment>
+</Content>
+
+    <h2 class="text-3xl md:text-4xl font-heading">All Workshops</h2>
   </div>
   <div class="flex flex-wrap gap-6 row-gap-5 md:gap-8 mx-auto max-w-7xl p-4 pt-1 md:px-8">
     {
