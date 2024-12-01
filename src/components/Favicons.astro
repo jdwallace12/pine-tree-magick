@@ -1,10 +1,18 @@
 ---
-import favIcon from '~/assets/favicons/favicon.ico';
-import favIconSvg from '~/assets/favicons/favicon.svg';
-import appleTouchIcon from '~/assets/favicons/apple-touch-icon.png';
+import favIconDark from '~/assets/favicons/favicon-dark.ico';
+import favIconSvgDark from '~/assets/favicons/favicon-dark.svg';
+import appleTouchIconDark from '~/assets/favicons/apple-touch-icon-dark.png';
+import favIconLight from '~/assets/favicons/favicon-light.ico';
+import favIconSvgLight from '~/assets/favicons/favicon-light.svg';
+import appleTouchIconLight from '~/assets/favicons/apple-touch-icon-light.png';
 ---
 
-<link rel="shortcut icon" href={favIcon} />
-<link rel="icon" type="image/svg+xml" href={favIconSvg.src} />
-<link rel="mask-icon" href={favIconSvg.src} color="#8D46E7" />
-<link rel="apple-touch-icon" sizes="180x180" href={appleTouchIcon.src} />
+<link rel="shortcut icon" href={favIconDark} media="(prefers-color-scheme: light)" />
+<link rel="icon" type="image/svg+xml" href={favIconSvgDark.src} media="(prefers-color-scheme: light)" />
+<link rel="mask-icon" href={favIconSvgDark.src} color="#8D46E7" media="(prefers-color-scheme: light)" />
+<link rel="apple-touch-icon" sizes="180x180" href={appleTouchIconDark.src} media="(prefers-color-scheme: light)" />
+
+<link rel="shortcut icon" href={favIconLight} media="(prefers-color-scheme: dark)" />
+<link rel="icon" type="image/svg+xml" href={favIconSvgLight.src} media="(prefers-color-scheme: dark)" />
+<link rel="mask-icon" href={favIconSvgLight.src} color="#8D46E7" media="(prefers-color-scheme: dark)" />
+<link rel="apple-touch-icon" sizes="180x180" href={appleTouchIconLight.src} media="(prefers-color-scheme: dark)" />
