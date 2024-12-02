@@ -10,8 +10,8 @@ export const headerData = {
           href: getPermalink('/readings'),
         },
         {
-          text: 'Live Session',
-          href: getPermalink('/live-session'),
+          text: 'Private Sessions',
+          href: getPermalink('/private-sessions'),
         },
       ],
     },
@@ -29,8 +29,8 @@ export const headerData = {
     },
   ],
   actions: [{          
-    text: 'Book a Reading',
-    href: '/book-a-reading',
+    text: 'Book a Private Session',
+    href: '/private-sessions',
     variant: 'primary', 
   }],
 };
@@ -41,6 +41,7 @@ export const footerData = {
       title: 'Explore',
       links: [
         { text: 'Readings', href: '/readings' },
+        { text: 'Private Sessions', href: '/private-sessions' },
         { text: 'About', href: '/about' },
         { text: 'Workshops', href: '/workshops' },
         { text: 'Substack', href: '#' },
