@@ -112,7 +112,7 @@ const {
   const handleScroll = () => {
     const scrollPosition = window.scrollY;
     rotation = scrollPosition * 0.03; // Adjust the multiplier for speed
-    const imageElement = document.querySelector('.rotating-image');
+    const imageElement = document.querySelector('.rotating-image') as HTMLElement;
     if (imageElement) {
       imageElement.style.transform = `rotate(${rotation}deg)`;
     }
