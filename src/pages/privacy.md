@@ -51,6 +51,4 @@ We may update this Privacy Policy from time to time. Any changes will be posted 
 
 ## 8. Contact Us
 If you have any questions or concerns about this Privacy Policy or our practices, please contact us at:
-
-Pine Tree Magic
 Email: jersey.griggs.writes@gmail.com
