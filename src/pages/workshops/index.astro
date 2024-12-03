@@ -109,7 +109,7 @@ image={{
     {
       workshopsWithSlug.map((workshop) => (
         <div class="relative flex flex-col w-[100%] md:w-[calc(50%-1rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
-          <a href={`/workshops/${workshop.slug}`} class="block">
+          <a href={`/workshops/${workshop.data.slug}`} class="block">
             <img src={workshop.data.image} alt={workshop.data.title} class="w-full flex h-48 object-cover" />
             <div class="p-4">
               <h3 class="text-xl font-bold mb-2">{workshop.data.title}</h3>
