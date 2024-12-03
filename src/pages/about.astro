@@ -3,6 +3,7 @@ import Features3 from '~/components/widgets/Features3.astro';
 import Content from '~/components/widgets/Content.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Stats from '~/components/widgets/Stats.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
 import Layout from '~/layouts/PageLayout.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
@@ -208,6 +209,42 @@ const metadata = {
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
+
+  <!-- FAQs Widget ******************* -->
+  <FAQs
+    title="Frequently Asked Questions"
+    id="faq"
+    items={[
+      {
+        title: 'Why do I need my birth time for an astrology reading?',
+        description:
+          'Your birth time is essential for an astrology reading because it determines the exact placement of the four angles in astrology, including your Ascendent (or rising sign) which determines the rest of your chart. Even a small difference in birth time can significantly change the chart, so having the correct time ensures the insights are correct.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Can astrology predict my future?',
+        description:
+          'Astrology doesn’t predict the future in a fixed or fatalistic way but instead provides insights into the energetic cycles and patterns that might influence your life. It highlights opportunities, challenges, and themes you’re likely to experience, helping you make informed decisions and align with the flow of these cosmic energies. Ultimately, your free will plays a central role in shaping your future, and astrology serves as a guide to empower you along the way.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'What can astrology help me with?',
+        description:
+          'Astrology can help you understand yourself better, including your strengths, challenges, and life patterns. It can offer insight into relationships, career, personal growth, and timing for important life decisions. By understanding your natal chart and the timing of your life, astrology empowers you to navigate challenges, recognize opportunities, and live with more intention.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'How often should I get an astrology reading?',
+        description:
+          'This depends on your needs and goals. A full natal chart reading is typically a one-time session, offering deep insights into your life’s patterns, strengths, and purpose. After that, you might choose to have follow-up readings for transits, solar return charts, or electional astrology. Ultimately, it’s about what feels supportive and beneficial for you. Regular readings can help you stay aligned with the cosmic flow and make the most of the cycles in your life.',
+        icon: 'tabler:chevrons-right',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </FAQs>
   <!-- CallToAction Widget *********** -->
 
   <CallToAction
