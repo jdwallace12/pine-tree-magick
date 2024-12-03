@@ -39,7 +39,7 @@
 }
 
 .aw-link-active {
-  @apply underline underline-offset-8 decoration-dashed text-white;
+  @apply text-primary;
 }
 #header.scroll > div:first-child {
   @apply bg-page md:bg-white/90 md:backdrop-blur-md;
