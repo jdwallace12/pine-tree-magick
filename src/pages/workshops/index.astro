@@ -3,15 +3,29 @@ import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
 import Content from '~/components/widgets/Content.astro';
 
+// Define the type for a workshop
+interface Workshop {
+  id: string;
+  data: {
+    title: string;
+    slug: string;
+    date: string;
+    excerpt: string;
+    location: string;
+    price: number;
+    image: string;
+  };
+}
+
 const workshops = await getCollection('workshop');
 
-const workshopsWithSlug = workshops.map((workshop) => ({
+const workshopsWithSlug = workshops.map((workshop: any) => ({
   ...workshop,
   data: {
     ...workshop.data,
     slug: (workshop.data.slug as string) || workshop.id.replace(/\.md$/, ''),
   },
-}));
+})) as Workshop[];
 
 const metadata = {
   title: 'Workshops | Pine Tree Magick',
