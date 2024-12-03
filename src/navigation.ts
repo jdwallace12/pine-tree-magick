@@ -7,7 +7,7 @@ export const headerData = {
       links: [
         {
           text: 'Written Readings',
-          href: getPermalink('/readings'),
+          href: getPermalink('/written-readings'),
         },
         {
           text: 'Private Sessions',
@@ -23,10 +23,10 @@ export const headerData = {
       text: 'Workshops',
       href: getPermalink('/workshops'),
     },
-    {
-      text: 'Substack',
-      href: getPermalink('#substack'),
-    },
+    // {
+    //   text: 'Substack',
+    //   href: getPermalink('#substack'),
+    // },
   ],
   actions: [{          
     text: 'Book a Private Session',
@@ -40,11 +40,11 @@ export const footerData = {
     {
       title: 'Explore',
       links: [
-        { text: 'Readings', href: '/readings' },
+        { text: 'Written Readings', href: '/written-readings' },
         { text: 'Private Sessions', href: '/private-sessions' },
         { text: 'About', href: '/about' },
         { text: 'Workshops', href: '/workshops' },
-        { text: 'Substack', href: '#' },
+        // { text: 'Substack', href: '#' },
       ],
     },
   ],
