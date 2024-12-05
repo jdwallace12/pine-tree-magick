@@ -6,7 +6,6 @@ import ContentBasic from '~/components/widgets/ContentBasic.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import Testimonials from '~/components/widgets/Testimonials.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
-import Features from '~/components/widgets/Features.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
 import { getPermalink } from '~/utils/permalinks';
@@ -89,51 +88,6 @@ const metadata = {
       alt: 'Steps image',
     }}
     wrapperClass="pt-0"
-  />
-
-  <!-- Features Widget *************** -->
-
-  <Features
-    id="features"
-    tagline="Sacred Services"
-    title="Celestial Guidance Offerings"
-    subtitle="Discover the ancient wisdom of the stars through personalized astrological readings and cosmic guidance."
-    items={[
-      {
-        title: 'Natal Chart Readings',
-        description:
-          'Your cosmic blueprint revealed through careful analysis of planetary positions at your time of birth.',
-        icon: 'tabler:star',
-      },
-      {
-        title: 'Transit Forecasting',
-        description: 'Understanding how current planetary movements affect your personal chart and life journey.',
-        icon: 'tabler:moon',
-      },
-      {
-        title: 'Synastry Readings',
-        description: 'Exploring relationship dynamics through the lens of planetary interactions between charts.',
-        icon: 'tabler:hearts',
-      },
-      {
-        title: 'Solar Return Analysis',
-        description:
-          'Mapping out your personal year ahead using the powerful moment the Sun returns to its natal position.',
-        icon: 'tabler:sun',
-      },
-      {
-        title: 'Electional Astrology',
-        description: 'Selecting auspicious dates for important events by working with favorable planetary alignments.',
-        icon: 'tabler:calendar-star',
-      },
-      {
-        title: 'Ongoing Cosmic Support',
-        description:
-          'Regular guidance and updates about how current astrological events are affecting your chart and life path.',
-        icon: 'tabler:infinity',
-      },
-    ]}
-    wrapperClass=""
   />
 
   <!--  Latest Workshops -->
