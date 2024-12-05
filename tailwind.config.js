@@ -9,7 +9,7 @@ module.exports = {
         primary: 'var(--aw-color-primary)',
         secondary: 'var(--aw-color-secondary)',
         accent: 'var(--aw-color-accent)',
-        dark: 'var(  --aw-color-bg-page)',
+        dark: 'var(--aw-color-bg-page)',
         default: 'var(--aw-color-text-default)',
         muted: 'var(--aw-color-text-muted)',
         green: {
@@ -25,6 +25,15 @@ module.exports = {
       },
     },
   },
-  plugins: [typographyPlugin],
+  plugins: [
+    typographyPlugin,
+    function ({ addUtilities }) {
+      addUtilities({
+        '.curved-hero': {
+          clipPath: 'ellipse(100% 100% at 50% 0%)',
+        },
+      });
+    },
+  ],
   darkMode: 'class',
 };
