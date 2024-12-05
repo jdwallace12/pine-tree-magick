@@ -30,12 +30,7 @@ module.exports = {
     function ({ addUtilities }) {
       addUtilities({
         '.curved-hero': {
-          clipPath: 'ellipse(100% 100% at 50% 0%)',
-        },
-        '@screen sm': {
-          '.curved-hero': {
-            clipPath: 'ellipse(50% 100% at 50% 0%)', // Mobile-specific
-          },
+          clipPath: 'ellipse(100% 100% at 50% 0%)', // Default for larger screens
         },
       });
     },
