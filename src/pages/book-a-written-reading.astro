@@ -24,16 +24,3 @@ const metadata = {
     Loading…
   </iframe>
   </Layout>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const iframe = document.querySelector('iframe');
-
-        iframe.addEventListener('load', () => {
-            const iframeDoc = iframe.contentWindow || iframe.contentDocument;
-            if (iframeDoc.location.href.includes('formResponse')) {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        });
-    });
-</script>
