@@ -20,8 +20,8 @@ export const headerData = {
     // },
   ],
   actions: [{          
-    text: 'Book a Private Session',
-    href: '/private-sessions',
+    text: 'Book a Reading',
+    href: '/readings',
     variant: 'primary', 
   }],
 };
