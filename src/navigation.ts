@@ -31,8 +31,9 @@ export const footerData = {
     {
       title: 'Explore',
       links: [
-        { text: 'Readings', href: '/eadings' },
+        { text: 'Readings', href: '/readings' },
         { text: 'Private Sessions', href: '/private-sessions' },
+        { text: 'Book a Written Reading', href: 'book-a-written-reading' },
         { text: 'About', href: '/about' },
         { text: 'Workshops', href: '/workshops' },
         // { text: 'Substack', href: '#' },
