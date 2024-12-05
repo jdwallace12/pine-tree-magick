@@ -32,6 +32,11 @@ module.exports = {
         '.curved-hero': {
           clipPath: 'ellipse(100% 100% at 50% 0%)',
         },
+        '@screen sm': {
+          '.curved-hero': {
+            clipPath: 'ellipse(50% 100% at 50% 0%)', // Adjusted for mobile screens
+          },
+        },
       });
     },
   ],
