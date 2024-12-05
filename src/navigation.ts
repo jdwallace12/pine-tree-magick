@@ -4,16 +4,7 @@ export const headerData = {
   links: [
     {
       text: 'Readings',
-      links: [
-        {
-          text: 'Written Readings',
-          href: getPermalink('/written-readings'),
-        },
-        {
-          text: 'Private Sessions',
-          href: getPermalink('/private-sessions'),
-        },
-      ],
+      href: getPermalink('/readings')
     },
     {
       text: 'About',
@@ -40,7 +31,7 @@ export const footerData = {
     {
       title: 'Explore',
       links: [
-        { text: 'Written Readings', href: '/written-readings' },
+        { text: 'Readings', href: '/eadings' },
         { text: 'Private Sessions', href: '/private-sessions' },
         { text: 'About', href: '/about' },
         { text: 'Workshops', href: '/workshops' },

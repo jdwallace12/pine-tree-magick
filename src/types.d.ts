@@ -207,6 +207,13 @@ export interface CallToAction extends Omit<HTMLAttributes<'a'>, 'slot'> {
   type?: 'button' | 'submit' | 'reset';
 }
 
+export interface CallToAction2 extends Omit<HTMLAttributes<'a'>, 'slot'> {
+  variant?: 'primary' | 'secondary' | 'tertiary' | 'link';
+  text?: string;
+  icon?: string;
+  classes?: Record<string, string>;
+  type?: 'button' | 'submit' | 'reset';
+}
 export interface ItemGrid {
   items?: Array<Item>;
   columns?: number;
@@ -303,6 +310,7 @@ export interface Content extends Omit<Headline, 'classes'>, Widget {
   isReversed?: boolean;
   isAfterContent?: boolean;
   callToAction?: CallToAction;
+  callToAction2?: CallToAction;
   wrapperClass?: string;
 }
 

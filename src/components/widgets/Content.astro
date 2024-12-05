@@ -13,6 +13,7 @@ const {
   tagline,
   content = await Astro.slots.render('content'),
   callToAction,
+  callToAction2,
   items = [],
   columns,
   image = await Astro.slots.render('image'),
@@ -51,12 +52,30 @@ const {
         {content && <div class="mb-12 text-lg dark:text-slate-400" set:html={content} />}
 
         {
-          callToAction && (
-            <div class=" mb-8 text-primary">
+          callToAction && callToAction2 ? (
+            // If both callToAction and callToAction2 are present, show two buttons with "Or"
+            <div class="flex lg:items-center justify-between mb-8 text-primary flex-col lg:flex-row">
+              <div>
+                <Button class="hover:underline hover:underline-offset-8" variant="link" {...callToAction} />
+              </div>
+              <div class="flex items-center mx-2">
+                <span class="border-t border-dashed border-white flex-grow"></span>
+                <p class="mx-4 text-white">Or</p>
+                <span class="border-t border-dashed border-white flex-grow"></span>
+              </div>
+              <div>
+                <Button class="hover:underline hover:underline-offset-8" variant="link" {...callToAction2} />
+              </div>
+            </div>
+          ) : callToAction ? (
+            // If only callToAction is present, show one button
+            <div class="mb-8 text-primary">
               <Button class="hover:underline hover:underline-offset-8" variant="link" {...callToAction} />
             </div>
-          )
+          ) : null
         }
+        
+        
 
         <ItemGrid
           items={items}

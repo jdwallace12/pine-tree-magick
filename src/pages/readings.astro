@@ -4,7 +4,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import Content from '~/components/widgets/Content.astro';
 
 const metadata = {
-  title: 'Written Readings | Pine Tree Magick',
+  title: 'Readings | Pine Tree Magick',
   description: 'Pinetree Magick Readings',
 };
 ---
@@ -13,8 +13,8 @@ const metadata = {
   <Fragment slot="announcement"></Fragment>
   <div class="mx-auto max-w-3xl p-4 md:px-8">
     <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Book A Written Reading</p> -->
-    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">Written Readings</h1>
-    <p class="text-xl mb-6 text-muted text-center ">These thorough written reports are sent in PDF form via email. Many clients appreciate having a written report to refer to as time passes. These offerings are tiered, with clients able to add-on additional readings as needed. Very popular as gifts!.</p>
+    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">Readings</h1>
+    <p class="text-xl mb-6 text-muted text-center ">Astrological readings can either be written reports that are sent in PDF via email or discussed in a private session. 60 minute sessions usually allows for one topic and questions. 90 Minute seesions allows for two topics and questions. </p>
   </div>
   <!-- Content Widget **************** -->
   <Content
@@ -28,9 +28,14 @@ const metadata = {
       icon: 'tabler:chevron-right',
       href: '/book-a-written-reading',
     }}
+    callToAction2={{
+      text: 'Book a Private Session',
+      icon: 'tabler:chevron-right',
+      href: '/private-sessions',
+    }}
   >
     <Fragment slot="content">
-      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">$75 as solo reading</p>
+      <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">$75 as solo written reading or apart of a private session</p> -->
       <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Unlock Your Natal Chart</h2>
       <p>
         This comprehensive written report offers key insights into your personality, desires, strengths, and challenges,
@@ -60,12 +65,17 @@ const metadata = {
       icon: 'tabler:chevron-right',
       href: '/book-a-written-reading',
     }}
+    callToAction2={{
+      text: 'Book a Private Session',
+      icon: 'tabler:chevron-right',
+      href: '/private-sessions',
+    }}
     wrapperClass=""
   >
     <Fragment slot="content">
-      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">
+      <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">
         $50 as add on, $75 as solo reading
-      </p>
+      </p> -->
       <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">
         Cosmic Snapshot: Transits + Predictions
       </h2>
@@ -92,11 +102,16 @@ const metadata = {
       icon: 'tabler:chevron-right',
       href: '/book-a-written-reading',
     }}
+    callToAction2={{
+      text: 'Book a Private Session',
+      icon: 'tabler:chevron-right',
+      href: '/private-sessions',
+    }}
   >
     <Fragment slot="content">
-      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">
+      <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">
         $50 as add on, $75 as solo reading
-      </p>
+      </p> -->
       <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Solar Return: Your Year Ahead</h2>
       <p>
         This detailed written report offers insight into the upcoming year, predicting key themes for your next “solar
@@ -121,9 +136,14 @@ const metadata = {
       icon: 'tabler:chevron-right',
       href: '/book-a-written-reading',
     }}
+    callToAction2={{
+      text: 'Book a Private Session',
+      icon: 'tabler:chevron-right',
+      href: '/private-sessions',
+    }}
   >
     <Fragment slot="content">
-      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">$75 as solo reading</p>
+      <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">$50 as add on, $75 as solo reading</p> -->
       <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Your Best Places</h2>
       <p>
         Curious about how the energy of different places affects your life? Astrocartography maps the planets' influence
