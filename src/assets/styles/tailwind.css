@@ -102,8 +102,8 @@
 .vertical-line::before {
   content: '';
   position: absolute;
-  border-left: 1px solid #94a3b8;
-  top: -6px;
+  border-left: 1px solid #596a82;
+  top: -12px;
   left: 50%;
   height: 8px;
   display: none;
@@ -114,8 +114,8 @@
 .vertical-line::after {
   content: '';
   position: absolute;
-  border-left: 1px solid #94a3b8;
-  top: 24px;
+  border-left: 1px solid #596a82;
+  top: 30px;
   left: 50%;
   height: 8px;
   display: none;
