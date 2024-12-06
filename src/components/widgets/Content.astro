@@ -56,15 +56,15 @@ const {
             // If both callToAction and callToAction2 are present, show two buttons with "Or"
             <div class="flex lg:items-center justify-between mb-8 text-primary flex-col lg:flex-row gap-2 lg:gap-0">
               <div>
-                <Button class="hover:underline hover:underline-offset-8" variant="link" {...callToAction} />
+                <Button class="hover:underline hover:underline-offset-8 whitespace-nowrap" variant="link" {...callToAction} />
               </div>
               <div class="flex items-center mx-2">
-                <span class="border-t border-dashed border-white flex-grow"></span>
-                <p class="mx-4 text-white">or</p>
-                <span class="border-t border-dashed border-white flex-grow"></span>
+                <span class="border-t border-solid border-muted flex-grow"></span>
+                <p class="mx-4 text-muted vertical-line">or</p>
+                <span class="border-t border-solid border-muted flex-grow"></span>
               </div>
               <div>
-                <Button class="hover:underline hover:underline-offset-8" variant="link" {...callToAction2} />
+                <Button class="hover:underline hover:underline-offset-8 whitespace-nowrap" variant="link" {...callToAction2} />
               </div>
             </div>
           ) : callToAction ? (

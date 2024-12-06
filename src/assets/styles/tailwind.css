@@ -93,3 +93,33 @@
 .dd *:first-child {
   margin-top: 0;
 }
+
+.vertical-line {
+  position: relative;
+
+}
+
+.vertical-line::before {
+  content: '';
+  position: absolute;
+  border-left: 1px solid #94a3b8;
+  top: -10px;
+  left: 50%;
+  height: 12px;
+  display: none;
+  @media (min-width: 1024px) {
+    display: block;
+  }
+}
+.vertical-line::after {
+  content: '';
+  position: absolute;
+  border-left: 1px solid #94a3b8;
+  top: 25px;
+  left: 50%;
+  height: 12px;
+  display: none;
+  @media (min-width: 1024px) {
+    display: block;
+  }
+}
