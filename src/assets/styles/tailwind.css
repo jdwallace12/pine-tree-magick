@@ -103,9 +103,9 @@
   content: '';
   position: absolute;
   border-left: 1px solid #94a3b8;
-  top: -10px;
+  top: -6px;
   left: 50%;
-  height: 12px;
+  height: 8px;
   display: none;
   @media (min-width: 1024px) {
     display: block;
@@ -115,9 +115,9 @@
   content: '';
   position: absolute;
   border-left: 1px solid #94a3b8;
-  top: 25px;
+  top: 24px;
   left: 50%;
-  height: 12px;
+  height: 8px;
   display: none;
   @media (min-width: 1024px) {
     display: block;
