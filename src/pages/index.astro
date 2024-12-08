@@ -9,6 +9,9 @@ import FAQs from '~/components/widgets/FAQs.astro';
 import Steps from '~/components/widgets/Steps.astro';
 import LatestWorkshops from '~/components/widgets/LatestWorkshops.astro';
 import { getPermalink } from '~/utils/permalinks';
+import client1Image from '~/assets/icons/moon-stars.svg';
+import client2Image from '~/assets/icons/gem.svg';
+import client3Image from '~/assets/icons/heart.svg';
 
 const metadata = {
   title: 'Pine Tree Magick',
@@ -104,35 +107,41 @@ const metadata = {
           'Wow. This couldn’t be more spot-on. I’m blown away. It’s 100% where I’m at right now. How amazing that you can use this tool to make sense of the world around you. Thank you. Thank you. Thank you. I really needed this.',
         name: 'Client Testimonial',
         job: 'Cosmic Snapshot: Transits and Predictions',
+        image: { src: client1Image, alt: 'Client 1' },
       },
       {
         testimonial: 'You are gifted beyond belief. This reading was just what I needed to get my head back on track!',
         name: 'Client Testimonial',
         job: 'Solar Return Chart',
+        image: { src: client3Image, alt: 'Client 2' },
       },
       {
         testimonial:
           'WOW! WOW! WOW! This reading brought tears to my eyes. I’m in awe of how well written and how accurate it feels. I love the addition of the current transits as well. I just cannot thank you enough.',
         name: 'Client Testimonial',
-        job: 'Natal Return Chart and Cosmic Snapshot Add On',
+        job: 'Natal Return Chart and Cosmic Snapshot',
+        image: { src: client2Image, alt: 'Client 3' },
       },
       {
         testimonial:
           'A lot of themes you brought up are themes I really need to talk about. I am going to listen {to my reading} again and again. This is a huge gift. Thank you.',
         name: 'Client Testimonial',
         job: 'Solar Return Chart',
+        image: { src: client3Image, alt: 'Client 4' },
       },
       {
         testimonial:
           'Thank you so much!! This is so great! I will come back to you for future readings and refer you to my friends as well!',
         name: 'Client Testimonial',
         job: 'Unlock Your Natal Chart',
+        image: { src: client2Image, alt: 'Client 5' },
       },
       {
         testimonial:
           '{Redacted’s} natal chart reading was spot on! It was so well done and kind and lovely…I loved how personal you made it. She is going to love it!',
         name: 'Client Testimonial',
         job: 'Gifted Unlock Your Natal Chart',
+        image: { src: client1Image, alt: 'Client 6' },
       },
       // {
       //   testimonial:
