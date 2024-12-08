@@ -110,8 +110,12 @@ image={{
     {
       workshopsWithSlug.map((workshop) => (
         <div class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
-          <a href={`/workshops/${workshop.data.slug}`} class="block">
-            <img src={workshop.data.image} alt={workshop.data.title} class="w-full flex h-48 object-cover" />
+          <a href={`/workshops/${workshop.data.slug}`} class="block group">
+            <img 
+              src={workshop.data.image} 
+              alt={workshop.data.title} 
+              class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-105"
+            />
             <div class="p-4">
               <h3 class="text-xl font-bold mb-2">{workshop.data.title}</h3>
               <span class="text-gray-600 dark:text-gray-400">{workshop.data.date}</span>
@@ -125,5 +129,5 @@ image={{
         </div>
       ))
     }
-  </div>
+  </div>  
 </Layout>
