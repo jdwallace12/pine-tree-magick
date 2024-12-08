@@ -18,7 +18,7 @@ const sortedWorkshops = workshops.sort((a, b) => new Date(a.data.date).valueOf()
 ---
 <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>
   <Headline title={title} subtitle={subtitle} />
-  <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mb-16 mx-auto max-w-7xl px-8 md:px-12">
+  <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mb-16 mx-auto max-w-7xl px-2 md:px-12">
     {
       sortedWorkshops.map((workshop) => (
         <div class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
