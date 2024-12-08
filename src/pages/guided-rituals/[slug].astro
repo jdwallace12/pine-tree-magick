@@ -1,0 +1,59 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+
+export async function getStaticPaths() {
+  const rituals = await getCollection('ritual');
+  return rituals.map((ritual) => ({
+    // @ts-ignore
+    params: { slug: ritual.data.slug || ritual.id.replace(/\.md$/, '') || 'default-slug' },
+  }));
+}
+
+const { slug } = Astro.params as { slug: string };
+const rituals = await getCollection('ritual');
+
+// Find the ritual based on the slug
+const ritual = rituals.find((ritual) => (ritual.data.slug || ritual.id.replace(/\.md$/, '')) === slug);
+
+if (!ritual) {
+  throw new Error('Ritual not found');
+}
+
+// Destructure relevant data
+const { title, description, image, price, payPalButtonId } = ritual.data;
+const body = ritual.body;
+
+const metadata = {
+  title,
+  description,
+};
+---
+
+<Layout metadata={metadata}>
+  <article class="max-w-2xl mx-auto p-6 space-y-6">
+    <h1 class="text-4xl mt-4 font-heading">{title}</h1>
+    <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
+    <div class="text-lg">
+      <p><strong>Price:</strong> ${price}</p>
+    </div>
+    <div class="text-lg mt-1">{body}</div>
+
+    <!-- PayPal Button -->
+    <div class="mt-6 text-center">
+      <form
+        action={`https://www.paypal.com/ncp/payment/${payPalButtonId}`}
+        method="post"
+        target="_top"
+        style="display: inline-grid; justify-items: center; align-content: start; gap: 0.5rem;"
+      >
+        <input
+          class={`pp-${payPalButtonId}`}
+          type="submit"
+          value="Buy Now"
+          style="text-align: center; border: none; border-radius: 1.5rem; min-width: 11.625rem; padding: 0 2rem; height: 2.625rem; font-weight: bold; background-color: #f59bbb; color: #000000; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 1rem; line-height: 1.25rem; cursor: pointer;"
+        />
+      </form>
+    </div>
+  </article>
+</Layout>
