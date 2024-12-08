@@ -14,10 +14,10 @@ export const headerData = {
       text: 'Workshops',
       href: getPermalink('/workshops'),
     },
-    // {
-    //   text: 'Substack',
-    //   href: getPermalink('#substack'),
-    // },
+    {
+      text: 'Shop',
+      href: getPermalink('/shop'),
+    },
   ],
   actions: [{          
     text: 'Book a Reading',
@@ -36,7 +36,7 @@ export const footerData = {
         { text: 'Book a Written Reading', href: 'book-a-written-reading' },
         { text: 'About', href: '/about' },
         { text: 'Workshops', href: '/workshops' },
-        // { text: 'Substack', href: '#' },
+        { text: 'Shop', href: '/shop' },
       ],
     },
   ],

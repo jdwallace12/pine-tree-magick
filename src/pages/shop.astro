@@ -1,0 +1,39 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Rituals from '~/components/widgets/Rituals.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+
+const metadata = {
+  title: 'Shop | Pine Tree Magick',
+  description: 'Shop Pine Tree Magick',
+};
+---
+
+<Layout metadata={metadata}>
+    <div class="mx-auto max-w-3xl p-4 md:px-8">
+        <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Book A Written Reading</p> -->
+        <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">Pine Tree Magick Shop</h1>
+        <p class="text-xl mb-6 text-muted text-center">Some description goes here.</p>
+      </div>
+
+    <Rituals 
+      title="Guided Rituals"
+      tagline="Buy Guided Rituals"
+    />
+  <!-- CallToAction Widget *********** -->
+
+  <CallToAction
+    title="Take the Next Step"
+    subtitle="Ready to live with more ease and empowerment?"
+    wrapperClass=""
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Book a Reading',
+        href: '/readings',
+      },
+    ]}
+  />
+
+</Layout>

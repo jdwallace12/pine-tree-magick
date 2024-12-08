@@ -59,6 +59,14 @@ export interface Workshop {
   tags?: string[];
   body: string;
 } 
+export interface Rtual {
+  title: string;
+  description: string;
+  image: string;
+  price: number;
+  slug: string;
+  body: string;
+} 
 
 export interface Taxonomy {
   slug: string;
