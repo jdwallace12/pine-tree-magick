@@ -4,8 +4,9 @@ import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Headline from '~/components/ui/Headline.astro';
 
 const {
-  title = 'Guided Rituals',
-  subtitle = 'Join our transformative learning experiences',
+  title,
+  subtitle,
+  tagline,
   id,
   isDark = false,
   classes = {},
@@ -16,7 +17,7 @@ const rituals = await getCollection('ritual');
 
 ---
 <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>
-  <Headline title={title} subtitle={subtitle} />
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
   <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mb-16 mx-auto max-w-7xl px-8 md:px-12">
     {
       rituals.map((ritual) => (

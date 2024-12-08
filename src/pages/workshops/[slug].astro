@@ -33,6 +33,7 @@ if (!workshop) {
 
 const { title, description, image, price, date, time, location } = workshop.data;
 const body = workshop.body;
+const { Content } = await workshop.render();
 
 const metadata = {
   title: title,
@@ -53,7 +54,9 @@ const metadata = {
     </div>
     <div>
       <h2 class="text-3xl font-heading pt-6">Workshop Details</h2>
-      <p class="text-lg mt-1">{body}</p>
+      <div class="prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
+        <Content />
+      </div>
     </div>
     <div class="flex justify-between pt-6">
       {
