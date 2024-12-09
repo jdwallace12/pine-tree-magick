@@ -37,7 +37,7 @@ const rituals = await getCollection('ritual');
             class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-105"
           />
           <div class="px-6 py-6 overflow-hidden">
-            <h3 class="text-2xl font-bold mb-2 group-hover:text-primary transition-colors">{ritual.data.title}</h3>
+            <h3 class="text-2xl md:text-3xl mb-2 font-heading group-hover:text-primary transition-colors">{ritual.data.title}</h3>
             <p class="text-muted dark:text-slate-400 mb-4">{ritual.data.description}</p>
             <div class="mb-4">
               {ritual.body.split('\n').filter(line => line.trim().startsWith('-')).map(line => (
