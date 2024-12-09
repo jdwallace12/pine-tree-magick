@@ -1,7 +1,6 @@
 ---
 import { SITE } from 'astrowind:config';
 import logoLight from '~/assets/global/logo/logo-light-horizontal.svg';
-import logoColor from '~/assets/global/logo/logo-color-horizontal.svg';
 ---
 
 <span
@@ -11,32 +10,6 @@ import logoColor from '~/assets/global/logo/logo-color-horizontal.svg';
     src={logoLight.src} 
     alt={SITE?.name} 
     class="h-12 scale-[1.2] translate-x-0 lg:translate-x-6 lg:scale-[1.4] header-logo" 
-    data-color-logo={logoColor.src} 
-    data-light-logo={logoLight.src} 
   />
 </span>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const headerLogoWrapper = document.querySelector('.header-logo-wrapper');
-    const headerLogo = document.querySelector('.header-logo');
-
-    if (headerLogoWrapper && headerLogo) {
-      // Change to colored logo on hover
-      headerLogoWrapper.addEventListener('mouseover', () => {
-        headerLogo.src = headerLogo.getAttribute('data-color-logo');
-      });
-
-      // Revert to light logo on mouse out
-      headerLogoWrapper.addEventListener('mouseout', () => {
-        headerLogo.src = headerLogo.getAttribute('data-light-logo');
-      });
-    }
-  });
-</script>
-
-<style>
-  .header-logo {
-    transition: opacity 0.3s ease-in-out;
-  }
-</style>

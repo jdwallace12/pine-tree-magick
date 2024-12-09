@@ -2,7 +2,6 @@
 import { Icon } from 'astro-icon/components';
 import { SITE } from 'astrowind:config';
 import { getHomePermalink } from '~/utils/permalinks';
-import logoColor from '~/assets/global/logo/logo-color-vert.svg';
 import logoLight from '~/assets/global/logo/logo-light-vert.svg';
 
 interface Link {
@@ -40,8 +39,6 @@ const currentYear = new Date().getFullYear()
               src={logoLight.src} 
               alt={SITE?.name} 
               class="h-28 logo" 
-              data-color-logo={logoColor.src} 
-              data-light-logo={logoLight.src} 
             />
           </a>
         </div>
@@ -113,26 +110,3 @@ const currentYear = new Date().getFullYear()
     </div>
   </div>
 </footer>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const logoWrapper = document.querySelector('.logo-wrapper');
-    const logo = document.querySelector('.logo');
-
-    if (logoWrapper && logo) {
-      logoWrapper.addEventListener('mouseover', () => {
-        logo.src = logo.getAttribute('data-color-logo');
-      });
-
-      logoWrapper.addEventListener('mouseout', () => {
-        logo.src = logo.getAttribute('data-light-logo');
-      });
-    }
-  });
-</script>
-
-<style>
-  .logo {
-    transition: opacity 0.3s ease-in-out;
-  }
-</style>
