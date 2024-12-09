@@ -36,9 +36,14 @@ export const footerData = {
         { text: 'Book a Written Reading', href: 'book-a-written-reading' },
         { text: 'About', href: '/about' },
         { text: 'Workshops', href: '/workshops' },
-        // { text: 'Shop', href: '/shop' },
       ],
     },
+    // {
+    //   title: 'Shop',
+    //   links: [
+    //     { text: 'Guided Rituals', href: '/shop#guidedrituals' },
+    //   ],
+    // },
   ],
   secondaryLinks: [
     { text: 'Disclaimer', href: getPermalink('/disclaimer') },
