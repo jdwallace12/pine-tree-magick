@@ -2,7 +2,8 @@
 import { Icon } from 'astro-icon/components';
 import { SITE } from 'astrowind:config';
 import { getHomePermalink } from '~/utils/permalinks';
-import logoColor from '~/assets/global/logo/logo-light-vert.svg';
+import logoColor from '~/assets/global/logo/logo-color-vert.svg';
+import logoLight from '~/assets/global/logo/logo-light-vert.svg';
 
 interface Link {
   text?: string;
@@ -28,16 +29,21 @@ const { socialLinks = [], secondaryLinks = [], links = [], footNote = '', theme 
 
 const currentYear = new Date().getFullYear()
 ---
-
 <footer class:list={[{ dark: theme === 'dark' }, 'relative border-t border-gray-200 dark:border-slate-800 not-prose']}>
   <div class="dark:bg-dark absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 dark:text-slate-300">
     <div class="grid grid-cols-12 gap-4 gap-y-8 sm:gap-8 py-8 md:py-12">
       <div class="col-span-12 lg:col-span-4">
         <div class="mb-2">
-          <a class="inline-block font-bold text-xl" href={getHomePermalink()}>
-            <img src={logoColor.src} alt={SITE?.name} class="h-28" /></a
-          >
+          <a class="inline-block font-bold text-xl logo-wrapper" href={getHomePermalink()}>
+            <img 
+              src={logoLight.src} 
+              alt={SITE?.name} 
+              class="h-28 logo" 
+              data-color-logo={logoColor.src} 
+              data-light-logo={logoLight.src} 
+            />
+          </a>
         </div>
         <div class="text-sm text-muted flex gap-1">
           {
@@ -107,3 +113,26 @@ const currentYear = new Date().getFullYear()
     </div>
   </div>
 </footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const logoWrapper = document.querySelector('.logo-wrapper');
+    const logo = document.querySelector('.logo');
+
+    if (logoWrapper && logo) {
+      logoWrapper.addEventListener('mouseover', () => {
+        logo.src = logo.getAttribute('data-color-logo');
+      });
+
+      logoWrapper.addEventListener('mouseout', () => {
+        logo.src = logo.getAttribute('data-light-logo');
+      });
+    }
+  });
+</script>
+
+<style>
+  .logo {
+    transition: opacity 0.3s ease-in-out;
+  }
+</style>
