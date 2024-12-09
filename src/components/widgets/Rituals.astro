@@ -22,12 +22,12 @@ const rituals = await getCollection('ritual');
     subtitle={subtitle} 
     tagline={tagline} 
     classes={{
-      container: 'sm:mx-0 lg:max-w-none text-left',
+      container: 'sm:mx-0 lg:max-w-none text-left md:mb-12',
       title: 'text-left',
       subtitle: 'text-left'
     }}
   />
-  <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mb-16 mx-auto max-w-7xl px-0">
+  <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mx-auto max-w-7xl px-0">
     {
       rituals.map((ritual) => (
         <a href={`/guided-rituals/${ritual.id.replace(/\.md$/, '')}`} class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
