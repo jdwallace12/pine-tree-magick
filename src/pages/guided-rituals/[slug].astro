@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
 
 export async function getStaticPaths() {
   const rituals = await getCollection('ritual');
@@ -32,17 +33,41 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <article class="max-w-2xl mx-auto p-6 space-y-6">
-    <h1 class="text-4xl mt-4 font-heading">{title}</h1>
-    <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
-    <div class="prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
+    <a href="/shop" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop</a>
+    <div class="flex flex-col gap-8">
+      <div>
+        <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-8">Guided Rituals</p>
+        <h1 class="text-4xl md:text-5xl mt-2 font-heading text-center">{title}</h1>
+        <p class="text-xl text-muted text-center mt-2">{description}</p>
+      </div>
+      <div class="flex items-center gap-4 justify-center">
+        <div>
+          <p class="text-lg">${price}</p>
+        </div>
+        <div>
+          <form
+          action={`https://www.paypal.com/ncp/payment/${payPalButtonId}`}
+          method="post"
+          target="_top"
+          style="display: inline-grid; justify-items: center; align-content: start; gap: 0.5rem;"
+        >
+          <input
+            class={`pp-${payPalButtonId}`}
+            type="submit"
+            value="Buy Now"
+             style="text-align: center; border: none; border-radius: 1.5rem; min-width: 11.625rem; padding: 0 2rem; height: 2.625rem; font-weight: bold; background-color: #f59bbb; color: #1a263a; font-family: 'Merriweather Sans Variable', Arial, sans-serif; font-size: 1rem; line-height: 1.25rem; cursor: pointer;"
+          />
+        </form>
+      </div>
+    </div>
+    <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md mt-6" />
+    
+    <div class="mb-4 prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
       <Content />
     </div>
 
     <!-- PayPal Button -->
-    <div class="text-lg">
-      <p><strong>Price:</strong> ${price}</p>
-    </div>
-    <div class="mt-6 text-center">
+    <div class="text-center">
       <form
         action={`https://www.paypal.com/ncp/payment/${payPalButtonId}`}
         method="post"
@@ -53,9 +78,12 @@ const metadata = {
           class={`pp-${payPalButtonId}`}
           type="submit"
           value="Buy Now"
-          style="text-align: center; border: none; border-radius: 1.5rem; min-width: 11.625rem; padding: 0 2rem; height: 2.625rem; font-weight: bold; background-color: #f59bbb; color: #000000; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 1rem; line-height: 1.25rem; cursor: pointer;"
+          style="text-align: center; border: none; border-radius: 1.5rem; min-width: 11.625rem; padding: 0 2rem; height: 2.625rem; font-weight: bold; background-color: #f59bbb; color: #1a263a; font-family: 'Merriweather Sans Variable', Arial, sans-serif; font-size: 1rem; line-height: 1.25rem; cursor: pointer;"
         />
       </form>
+      <div class="text-lg mt-2">
+        <p>${price}</p>
+      </div>
     </div>
   </article>
 </Layout>
