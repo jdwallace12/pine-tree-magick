@@ -100,10 +100,10 @@ image={{
 </Content>
 <p id="workshops" class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-8 md:mt-12">All Future, Past, and Present Workshops</p>
   <h2 class="text-3xl md:text-4xl font-heading text-center mb-12">All Workshops</h2>
-  <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-16 mb-16 mx-auto max-w-7xl px-8 md:px-12">
+  <div class=" grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 mx-auto max-w-7xl px-8 md:px-12">
     {
       sortedWorkshops.map((workshop) => (
-        <div class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
+        <div class="relative w-[100%] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
           <a href={`/workshops/${workshop.data.slug}`} class="block group">
             <img 
               src={workshop.data.image} 
