@@ -14,7 +14,17 @@ const {
 
 const workshops = await getCollection('workshop');
 
-const sortedWorkshops = workshops.sort((a, b) => new Date(a.data.date).valueOf() - new Date(b.data.date).valueOf());
+// Filter workshops to exclude past events
+const filteredWorkshops = workshops.filter((workshop) => {
+  const workshopDate = new Date(workshop.data.date);
+  const currentDate = new Date();
+  return workshopDate >= currentDate;
+});
+
+// Sort the filtered workshops by date
+const sortedWorkshops = filteredWorkshops.sort(
+  (a, b) => new Date(a.data.date).valueOf() - new Date(b.data.date).valueOf()
+);
 ---
 <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>
   <Headline title={title} subtitle={subtitle} />
