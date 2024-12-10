@@ -27,7 +27,7 @@ const {
               <div class="mb-6">
                 {label && (
                   <label for={name} class="block text-sm font-medium mb-2">
-                    {label} <span class="text-red-600">*</span>
+                    {label} <span class="text-primary">*</span>
                   </label>
                 )}
                 <input
@@ -39,7 +39,7 @@ const {
                   required
                   minlength={type === 'text' ? "2" : undefined}
                   pattern={type === 'email' ? "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" : undefined}
-                  class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark"
+                  class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
                 />
               </div>
             )
@@ -50,7 +50,7 @@ const {
       textarea && (
         <div>
           <label for="textarea" class="block text-sm font-medium mb-2">
-            {textarea.label} <span class="text-red-600">*</span>
+            {textarea.label} <span class="text-primary">*</span>
           </label>
           <textarea
             id="textarea"
@@ -59,7 +59,7 @@ const {
             placeholder={textarea.placeholder}
             required
             minlength="10"
-            class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-dark"
+            class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
         </div>
       )
