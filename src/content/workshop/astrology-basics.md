@@ -7,6 +7,7 @@ image: '/assets/images/zodiac.webp'
 date: 'January 10, 2025'
 time: '6:30pm - 8pm'
 price: 50
+signupLink: 'https://www.spiritwiseherbs.com/classes-workshops/chartyourownpath'
 location: 'Spirit Wise Herbs'
 maxParticipants: 20
 category: 'Astrology'

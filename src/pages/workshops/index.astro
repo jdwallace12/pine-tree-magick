@@ -19,7 +19,15 @@ interface Workshop {
 
 const workshops = await getCollection('workshop');
 
-const sortedWorkshops = workshops.sort((a, b) => new Date(a.data.date).valueOf() - new Date(b.data.date).valueOf());
+const workshopsWithSlug = workshops.map((workshop) => ({
+  ...workshop,
+  data: {
+    ...workshop.data,
+    slug: workshop.data.slug || workshop.id.replace(/\.md$/, ''), // Use id as slug if missing
+  },
+}));
+
+const sortedWorkshops = workshopsWithSlug.sort((a, b) => new Date(a.data.date).valueOf() - new Date(b.data.date).valueOf());
 
 const metadata = {
   title: 'Workshops | Pine Tree Magick',

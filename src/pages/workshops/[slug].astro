@@ -31,7 +31,7 @@ if (!workshop) {
   throw new Error('Workshop not found');
 }
 
-const { title, description, image, price, date, time, location } = workshop.data;
+const { title, description, image, price, date, time, location, signupLink } = workshop.data;
 const body = workshop.body;
 const { Content } = await workshop.render();
 
@@ -43,7 +43,13 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <article class="max-w-2xl mx-auto p-6 space-y-6">
+    <div class="flex justify-between items-center sticky top-[4.5rem] bg-dark py-4">
     <a href="/workshops#workshops" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to All Workshops</a>
+    { signupLink && (
+      <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href={signupLink}>Sign Up</a>
+      )
+    }
+  </div>
     <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
     <h1 class="text-4xl mt-4 font-heading">{title}</h1>
     <div class="text-lg">
@@ -55,6 +61,10 @@ const metadata = {
     <div>
       <div class="prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
         <Content />
+        { signupLink && (
+          <a class="btn-primary py-2.5 px-5.5 md:px-6 font-semibold shadow-none no-underline text-sm w-36 block mx-auto" href={signupLink} target="_blank">Sign Up</a>
+          )
+        }
       </div>
     </div>
     <div class="flex justify-between pt-6">

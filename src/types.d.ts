@@ -52,6 +52,7 @@ export interface Workshop {
   date: string;
   time: string;
   price: number;
+  signupLink?: string;
   location: string;
   slug: string;
   maxParticipants: number;
