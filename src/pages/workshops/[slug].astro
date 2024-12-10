@@ -44,8 +44,8 @@ const metadata = {
 <Layout metadata={metadata}>
   <article class="max-w-2xl mx-auto p-6 space-y-6">
     <a href="/workshops#workshops" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to All Workshops</a>
-    <h1 class="text-4xl mt-4 font-heading">{title}</h1>
     <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
+    <h1 class="text-4xl mt-4 font-heading">{title}</h1>
     <div class="text-lg">
       <p><strong>Date:</strong> {date}</p>
       <p><strong>Time:</strong> {time}</p>
@@ -53,7 +53,6 @@ const metadata = {
       <p><strong>Price:</strong> ${price}</p>
     </div>
     <div>
-      <h2 class="text-3xl font-heading pt-6">Workshop Details</h2>
       <div class="prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
         <Content />
       </div>
