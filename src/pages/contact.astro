@@ -11,12 +11,11 @@ const metadata = {
 <Layout metadata={metadata}>
   <!-- HeroText Widget ******************* -->
 
-  <HeroText tagline="Contact" title="Let's Connect!" />
+  <HeroText tagline="<strong class='text-secondary'>Contact Us</strong>" title="Let's Connect!" />
 
   <ContactUs
     id="form"
-    title="Drop us a message today!"
-    subtitle="For quicker answers, explore our FAQs section. You may find the solution you're looking  for right there! If not, our support team is delighted to help you."
+    subtitle="Fill out the form and we will get back to you as soon as possible "
     inputs={[
       {
         type: 'text',
@@ -32,8 +31,6 @@ const metadata = {
     textarea={{
       label: 'Message',
     }}
-
-    description="Our support team typically responds within 24 business hours."
   />
 
 </Layout>

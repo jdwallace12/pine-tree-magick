@@ -44,6 +44,14 @@ export const footerData = {
     //     { text: 'Guided Rituals', href: '/shop#guidedrituals' },
     //   ],
     // },
+    {
+      title: 'Get In Touch',
+      links: [
+        { text: 'Contact Us', href: '/contact' },
+        { text: 'Instagram', href: 'https://www.instagram.com/pinetreemagick/' },
+        { text: 'TikTok', href: 'https://www.tiktok.com/@pinetreemagick?lang=en' },
+      ],
+    },
   ],
   secondaryLinks: [
     { text: 'Disclaimer', href: getPermalink('/disclaimer') },
