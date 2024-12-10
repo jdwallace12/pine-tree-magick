@@ -14,10 +14,10 @@ export const headerData = {
       text: 'Workshops',
       href: getPermalink('/workshops'),
     },
-    // {
-    //   text: 'Shop',
-    //   href: getPermalink('/shop'),
-    // },
+    {
+      text: 'Shop',
+      href: getPermalink('/shop'),
+    },
   ],
   actions: [{          
     text: 'Book a Reading',
@@ -38,12 +38,12 @@ export const footerData = {
         { text: 'Workshops', href: '/workshops' },
       ],
     },
-    // {
-    //   title: 'Shop',
-    //   links: [
-    //     { text: 'Guided Rituals', href: '/shop#guidedrituals' },
-    //   ],
-    // },
+    {
+      title: 'Shop',
+      links: [
+        { text: 'Guided Rituals', href: '/shop#guidedrituals' },
+      ],
+    },
     {
       title: 'Get In Touch',
       links: [
