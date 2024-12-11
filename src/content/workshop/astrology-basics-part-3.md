@@ -3,7 +3,7 @@ title: 'Chart Your Own Path: Decode Your Personal Planets'
 description: 'Learn the fundamentals of astrological charts and interpretations'
 slug: 'astrology-basics-part-3'
 excerpt: 'Gain a Deeper Understanding of Your Cosmic Blueprint'
-image: '/assets/images/zodiac.webp'
+image: '/assets/images/transit-reading.webp'
 date: 'March 7, 2025'
 time: '6:30pm - 8pm'
 price: 50

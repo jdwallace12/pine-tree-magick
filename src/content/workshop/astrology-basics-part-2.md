@@ -3,7 +3,7 @@ title: 'Chart Your Own Path: Tracking the Luminaries'
 description: 'Learn the fundamentals of astrological charts and interpretations'
 slug: 'astrology-basics-part-2'
 excerpt: 'Track the Sun and Moon Through Your Natal Chart'
-image: '/assets/images/zodiac.webp'
+image: '/assets/images/moon.webp'
 date: 'February 7, 2025'
 time: '6:30pm - 8pm'
 price: 50
