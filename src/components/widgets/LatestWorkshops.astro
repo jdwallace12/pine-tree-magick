@@ -24,7 +24,7 @@ const filteredWorkshops = workshops.filter((workshop) => {
 const getColumnClass = (totalItems) => {
   if (totalItems === 1) return 'w-full md:w-2/3 lg:w-1/2';
   if (totalItems === 2) return 'w-full md:w-[calc(50%-2rem)]';
-  return 'w-full md:w-[calc(32.86%-2rem)]';
+  return 'w-full lg:w-[calc(32%-2rem)] lg:w-[calc(32.86%-2rem)]';
 };
 
 // Sort the filtered workshops by date
