@@ -21,6 +21,12 @@ const filteredWorkshops = workshops.filter((workshop) => {
   return workshopDate >= currentDate;
 });
 
+const getColumnClass = (totalItems) => {
+  if (totalItems === 1) return 'w-full md:w-2/3 lg:w-1/2';
+  if (totalItems === 2) return 'w-full md:w-[calc(50%-2rem)]';
+  return 'w-full md:w-[calc(32.86%-2rem)]';
+};
+
 // Sort the filtered workshops by date
 const sortedWorkshops = filteredWorkshops.sort(
   (a, b) => new Date(a.data.date).valueOf() - new Date(b.data.date).valueOf()
@@ -31,7 +37,7 @@ const sortedWorkshops = filteredWorkshops.sort(
   <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mb-16 mx-auto max-w-7xl px-2 md:px-12">
     {
       sortedWorkshops.map((workshop) => (
-        <div class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
+      <div class={`relative flex flex-col ${getColumnClass(sortedWorkshops.length)} dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300`}>
           <a href={`/workshops/${workshop.slug}`} class="block group">
             <img 
               src={workshop.data.image} 
