@@ -14,17 +14,7 @@ export async function getStaticPaths() {
 const { slug } = Astro.params as { slug: string };
 const workshops = await getCollection('workshop');
 // @ts-ignore
-const workshopIndex = workshops.findIndex((w) => (w.data.slug || w.id.replace(/\.md$/, '')) === slug);
 
-// Check if the workshopIndex is valid
-if (workshopIndex === -1) {
-  throw new Error('Workshop not found');
-}
-
-const nextWorkshop = workshops[workshopIndex + 1] || null; // Ensure it's null if out of bounds
-const prevWorkshop = workshops[workshopIndex - 1] || null; // Ensure it's null if out of bounds
-
-// @ts-ignore
 const workshop = workshops.find((workshop) => (workshop.data.slug || workshop.id.replace(/\.md$/, '')) === slug);
 
 if (!workshop) {
@@ -66,28 +56,6 @@ const metadata = {
           )
         }
       </div>
-    </div>
-    <div class="flex justify-between pt-12">
-      {
-        prevWorkshop && (
-          <div class="flex-1">
-            <a href={`/workshops/${prevWorkshop.slug}`} class="btn">
-              <Icon name="tabler:chevron-left" class="w-5 h-5 mr-1" />
-              Previous Workshop
-            </a>
-          </div>
-        )
-      }
-      {
-        nextWorkshop && (
-          <div class="flex-1 text-right">
-            <a href={`/workshops/${nextWorkshop.slug}`} class="btn">
-              Next Workshop
-              <Icon name="tabler:chevron-right" class="w-5 h-5 mr-1" />
-            </a>
-          </div>
-        )
-      }
     </div>
   </article>
 </Layout>
