@@ -88,6 +88,7 @@ const ritualCollection = defineCollection({
     image: z.string(),
     price: z.number(),
     payPalButtonId: z.string(),
+    expirationDate: z.string().optional(),
     metadata: metadataDefinition(),
   }),
 });

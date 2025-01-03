@@ -60,12 +60,14 @@ export interface Workshop {
   tags?: string[];
   body: string;
 } 
-export interface Rtual {
+export interface Ritual {
   title: string;
   description: string;
   image: string;
   price: number;
   slug: string;
+  expirationDate?: string;
+  payPalButtonId: string;
   body: string;
 } 
 
@@ -324,3 +326,14 @@ export interface Content extends Omit<Headline, 'classes'>, Widget {
 }
 
 export interface Contact extends Omit<Headline, 'classes'>, Form, Widget {}
+
+export interface RitualFrontmatter {
+  title: string;
+  image: string;
+  description: string;
+  price: number;
+  payPalButtonId: string;
+  expirationDate?: string;
+  metadata?: MetaData;
+  slug?: string;
+}

@@ -1,7 +1,7 @@
 ---
 title: 'Winter Solstice Ritual'
-description: 'Winter Solstice, also known as Yule, is on Saturday, December 21 at 4:19 AM EST. Celebrated worldwide as both a Pagan holiday and a solar event, Winter Solstice is an important day for ritual and celebration. 
-  '
+description: 'Winter Solstice, also known as Yule, is on Saturday, December 21 at 4:19 AM EST. Celebrated worldwide as both a Pagan holiday and a solar event, Winter Solstice is an important day for ritual and celebration.'
+expirationDate: '12/23/2024'
 slug: 'winter-solstice-ritual'
 image: '/assets/images/winter-solstice.webp'
 price: 11.11
