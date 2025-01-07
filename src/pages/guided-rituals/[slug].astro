@@ -28,6 +28,19 @@ const { Content } = await ritual.render();
 const metadata = {
   title,
   description,
+  openGraph: {
+    basic: {
+      title,
+      type: "website",
+      image: image,
+    },
+    image: {
+      url: image,
+      width: 1200,
+      height: 630,
+      alt: title,
+    },
+  },
 };
 
 // Add expiration check
