@@ -40,8 +40,7 @@ const activeRituals = rituals.filter((ritual) => {
     />
   )}
   <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mx-auto max-w-7xl px-0">
-    {
-      activeRituals.length > 0 ? (
+    {activeRituals.length > 0 ? (
         activeRituals.map((ritual) => (
           <a href={`/guided-rituals/${ritual.id.replace(/\.md$/, '')}`} class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
             <img 
