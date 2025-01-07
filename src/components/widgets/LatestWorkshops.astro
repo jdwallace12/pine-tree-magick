@@ -38,7 +38,7 @@ const sortedWorkshops = filteredWorkshops.sort(
     {
       sortedWorkshops.map((workshop) => (
         <div class={`relative flex flex-col ${getColumnClass(sortedWorkshops.length)} dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300`}>
-          <a href={`/workshops/${workshop.data.slug}`} class="block group">
+          <a href={`/workshops/${workshop.slug}`} class="block group">
             <div class="overflow-hidden">
               <img 
                 src={workshop.data.image} 
