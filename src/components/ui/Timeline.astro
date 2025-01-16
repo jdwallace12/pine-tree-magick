@@ -39,10 +39,10 @@ const {
             {index !== items.length - 1 && <div class="w-px h-full bg-black/10 dark:bg-slate-400/50" />}
           </div>
           <div class={`pt-1 ${index !== items.length - 1 ? 'pb-8' : ''}`}>
-            {title && <p class={twMerge('text-xl font-bold', titleClass, itemClasses?.title)} set:html={title} />}
+            {title && <p class={twMerge('text-xl font-bold fade-in', titleClass, itemClasses?.title)} set:html={title} />}
             {description && (
               <p
-                class={twMerge('text-muted mt-2', descriptionClass, itemClasses?.description)}
+                class={twMerge('text-muted mt-2 fade-in-delay', descriptionClass, itemClasses?.description)}
                 set:html={description}
               />
             )}
@@ -52,3 +52,26 @@ const {
     </div>
   )
 }
+<script src="https://unpkg.com/scrollreveal"></script>
+<script>
+  window.addEventListener('load', () => {
+    if (typeof ScrollReveal !== 'undefined') {
+      // First reveal headings
+      ScrollReveal().reveal('.fade-in', {
+        duration: 1000,
+        distance: '20px',
+        origin: 'bottom'
+      });
+
+      ScrollReveal().reveal('.fade-in-delay', {
+        duration: 1000,
+        distance: '40px',
+        origin: 'bottom',
+        delay: 200
+      });
+      
+    } else {
+      console.error('ScrollReveal is not loaded');
+    }
+  });
+</script>
