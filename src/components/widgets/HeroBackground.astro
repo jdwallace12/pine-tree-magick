@@ -86,3 +86,33 @@ const {
     </div>
   </div>
 </section>
+<script src="https://unpkg.com/scrollreveal"></script>
+<script>
+  window.addEventListener('load', () => {
+    if (typeof ScrollReveal !== 'undefined') {
+      // First reveal headings
+      ScrollReveal().reveal('.curved-hero .font-heading', {
+        duration: 1000,
+        distance: '20px',
+        origin: 'bottom'
+      });
+      
+      // Then reveal paragraphs with a delay
+      ScrollReveal().reveal('.curved-hero p', {
+        duration: 1000,
+        distance: '40px',
+        origin: 'bottom',
+        delay: 200,  // 200ms delay after headings
+      });
+
+      ScrollReveal().reveal('.curved-hero .btn-secondary', {
+        duration: 1000,
+        distance: '20px',
+        origin: 'bottom',
+        delay: 400,  // 200ms delay after headings
+      });
+    } else {
+      console.error('ScrollReveal is not loaded');
+    }
+  });
+</script>
