@@ -34,7 +34,6 @@ const metadata = {
   description: 'Pinetree Magick Workshops',
 };
 ---
-
 <Layout metadata={metadata}>
   <div class="mx-auto max-w-7xl p-4 md:px-8">
     <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Join our Live Workshops</p>
@@ -135,3 +134,26 @@ image={{
     }
   </div>  
 </Layout>
+<script src="https://unpkg.com/scrollreveal"></script>
+<script>
+  window.addEventListener('load', () => {
+    if (typeof ScrollReveal !== 'undefined') {
+      // First reveal headings
+      ScrollReveal().reveal('.font-heading', {
+        duration: 1000,
+        distance: '20px',
+        origin: 'bottom'
+      });
+      
+      // Then reveal paragraphs with a delay
+      ScrollReveal().reveal('p', {
+        duration: 1000,
+        distance: '20px',
+        origin: 'bottom',
+        delay: 200,  // 200ms delay after headings
+      });
+    } else {
+      console.error('ScrollReveal is not loaded');
+    }
+  });
+</script>
