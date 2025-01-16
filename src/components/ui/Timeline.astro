@@ -52,26 +52,23 @@ const {
     </div>
   )
 }
-<script src="https://unpkg.com/scrollreveal"></script>
 <script>
-  window.addEventListener('load', () => {
-    if (typeof ScrollReveal !== 'undefined') {
-      // First reveal headings
-      ScrollReveal().reveal('.fade-in', {
-        duration: 1000,
-        distance: '20px',
-        origin: 'bottom'
-      });
+  import ScrollReveal from 'scrollreveal';
 
-      ScrollReveal().reveal('.fade-in-delay', {
-        duration: 1000,
-        distance: '40px',
-        origin: 'bottom',
-        delay: 200
-      });
-      
-    } else {
-      console.error('ScrollReveal is not loaded');
-    }
+  window.addEventListener('load', () => {
+    const sr = ScrollReveal();
+    
+    sr.reveal('.fade-in', {
+      duration: 1000,
+      distance: '20px',
+      origin: 'bottom'
+    });
+
+    sr.reveal('.fade-in-delay', {
+      duration: 1000,
+      distance: '40px',
+      origin: 'bottom',
+      delay: 200
+    });
   });
 </script>
