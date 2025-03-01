@@ -27,52 +27,49 @@ const activeBundles = bundles.filter((bundle) => {
 
 ---
 <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>
-  {activeBundles.length > 0 && (
-    <Headline 
-      title={title} 
-      subtitle={subtitle} 
-      tagline={tagline} 
-      classes={{
-        container: 'sm:mx-0 lg:max-w-none text-left md:mb-8',
-        title: 'text-left',
-        subtitle: 'text-left'
-      }}
-    />
+  <Headline 
+    title={title} 
+    subtitle={subtitle} 
+    tagline={tagline} 
+    classes={{
+      container: 'sm:mx-0 lg:max-w-none text-left md:mb-8',
+      title: 'text-left',
+      subtitle: 'text-left'
+    }}
+  />
+  {activeBundles.length > 0 ? (
+    <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mx-auto max-w-7xl px-0">
+      {activeBundles.map((bundle) => (
+        <a href={`/bundles/${bundle.id.replace(/\.md$/, '')}`} class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
+          <div class="overflow-hidden">
+            <img 
+              src={bundle.data.image} 
+              alt={bundle.data.title} 
+              class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-110"
+            />
+          </div>
+          <div class="px-6 py-6 overflow-hidden">
+            <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{bundle.data.title}</h3>
+            <p class="text-muted dark:text-slate-400 mb-4">{bundle.data.description}</p>
+            <div class="mb-4">
+              {bundle.body.split('\n').filter(line => line.trim().startsWith('-')).map(line => (
+                <div class="flex items-start mb-2">
+                  <span class="text-primary dark:text-primary mr-2">•</span>
+                  <span class="text-sm">{line.replace('-', '').trim()}</span>
+                </div>
+              ))}
+            </div>
+            <div class="flex justify-between items-center mt-6">
+              <span class="text-base font-heading text-gray-200 uppercase tracking-wide">Bundles</span>
+              <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded font-bold">${bundle.data.price}</span>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+  ) : (
+    <div class="w-full text-center py-12">
+      <p class="text-xl text-muted dark:text-slate-400">No current bundles but more are coming, check back soon!</p>
+    </div>
   )}
-  <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mx-auto max-w-7xl px-0">
-    {activeBundles.length > 0 ? (
-        activeBundles.map((bundle) => (
-          <a href={`/bundles/${bundle.id.replace(/\.md$/, '')}`} class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
-            <div class="overflow-hidden">
-              <img 
-                src={bundle.data.image} 
-                alt={bundle.data.title} 
-                class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-110"
-              />
-            </div>
-            <div class="px-6 py-6 overflow-hidden">
-              <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{bundle.data.title}</h3>
-              <p class="text-muted dark:text-slate-400 mb-4">{bundle.data.description}</p>
-              <div class="mb-4">
-                {bundle.body.split('\n').filter(line => line.trim().startsWith('-')).map(line => (
-                  <div class="flex items-start mb-2">
-                    <span class="text-primary dark:text-primary mr-2">•</span>
-                    <span class="text-sm">{line.replace('-', '').trim()}</span>
-                  </div>
-                ))}
-              </div>
-              <div class="flex justify-between items-center mt-6">
-                <span class="text-base font-heading text-gray-200 uppercase tracking-wide">Bundles</span>
-                <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded font-bold">${bundle.data.price}</span>
-              </div>
-            </div>
-          </a>
-        ))
-      ) : (
-        <div class="w-full text-center py-12">
-          <p class="text-xl text-muted dark:text-slate-400">No current bundles but more are coming, check back soon!</p>
-        </div>
-      )
-    }
-  </div>
 </WidgetWrapper>

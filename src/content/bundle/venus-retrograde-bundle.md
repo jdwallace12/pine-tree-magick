@@ -1,7 +1,7 @@
 ---
 title: 'Venus Retrograde Bundle'
 description: 'Review your relationships, self-worth, money mindset and values with this Venus Rx Bundle.'
-expirationDate: '12/23/2025'
+expirationDate: '4/12/2025'
 slug: 'venus-retrograde-bundle'
 image: '/assets/images/venus.webp'
 price: 17
