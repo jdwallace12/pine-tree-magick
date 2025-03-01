@@ -71,6 +71,17 @@ export interface Ritual {
   body: string;
 } 
 
+export interface Bundle {
+  title: string;
+  description: string;
+  image: string;
+  price: number;
+  slug: string;
+  expirationDate?: string;
+  payPalButtonId: string;
+  body: string;
+} 
+
 export interface Taxonomy {
   slug: string;
   title: string;
@@ -328,6 +339,17 @@ export interface Content extends Omit<Headline, 'classes'>, Widget {
 export interface Contact extends Omit<Headline, 'classes'>, Form, Widget {}
 
 export interface RitualFrontmatter {
+  title: string;
+  image: string;
+  description: string;
+  price: number;
+  payPalButtonId: string;
+  expirationDate?: string;
+  metadata?: MetaData;
+  slug?: string;
+}
+
+export interface BundleFrontmatter {
   title: string;
   image: string;
   description: string;

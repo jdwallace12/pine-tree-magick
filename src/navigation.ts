@@ -42,6 +42,7 @@ export const footerData = {
       title: 'Shop',
       links: [
         { text: 'Guided Rituals', href: '/shop#guidedrituals' },
+        { text: 'Bundles', href: '/shop#bundles' },
       ],
     },
     {

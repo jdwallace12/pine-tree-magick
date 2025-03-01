@@ -1,0 +1,63 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+
+// Define the type for a bundle
+interface Bundle {
+  id: string;
+  data: {
+    title: string;
+    slug: string;
+    date: string;
+    excerpt: string;
+    location: string;
+    price: number;
+    image: string;
+  };
+}
+
+const bundles = await getCollection('bundle');
+
+const bundlesWithSlug = bundles.map((bundle: any) => ({
+  ...bundle,
+  data: {
+    ...bundle.data,
+    slug: (bundle.data.slug as string) || bundle.id.replace(/\.md$/, ''),
+  },
+})) as Bundle[];
+
+const metadata = {
+  title: 'Bundles | Pine Tree Magick',
+  description: 'Pinetree Magick Bundles',
+};
+---
+
+<Layout metadata={metadata}>
+  <div class="mx-auto max-w-7xl p-4 md:px-8">
+    <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Some heading</p>
+    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center">Bundles</h1>
+  </div>
+
+  <h2 class="text-3xl md:text-4xl font-heading text-center mb-12">All Bundles</h2>
+  <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-16 mb-16 mx-auto max-w-7xl px-8 md:px-12">
+    {
+      bundlesWithSlug.map((bundle) => (
+        <div class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
+          <a href={`/guided-bundles/${bundle.data.slug}`} class="block group">
+            <img 
+              src={bundle.data.image} 
+              alt={bundle.data.title} 
+              class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-105"
+            />
+            <div class="px-4 py-6 overflow-hidden">
+              <h3 class="text-xl font-bold mb-2">{bundle.data.title}</h3>
+              <div class="flex justify-between items-center text-sm">
+                <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded">${bundle.data.price}</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      ))
+    }
+  </div>  
+</Layout>

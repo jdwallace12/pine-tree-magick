@@ -93,8 +93,22 @@ const ritualCollection = defineCollection({
   }),
 });
 
+const bundleCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    image: z.string(),
+    price: z.number(),
+    payPalButtonId: z.string(),
+    expirationDate: z.string().optional(),
+    metadata: metadataDefinition(),
+  }),
+});
+
+
 export const collections = {
   post: postCollection,
   workshop: workshopCollection,
   ritual: ritualCollection,
+  bundle: bundleCollection,
 };
