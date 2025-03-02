@@ -1,4 +1,39 @@
 import { getPermalink, getAsset } from './utils/permalinks';
+import { getCollection } from 'astro:content';
+
+async function getActiveShopLinks() {
+  const currentDate = new Date();
+  
+  // Get collections
+  const bundles = await getCollection('bundle');
+  const rituals = await getCollection('ritual');
+
+  // Check for active items
+  const hasActiveBundles = bundles.some(bundle => {
+    if (!bundle.data.expirationDate) return true;
+    const [month, day, year] = bundle.data.expirationDate.split('/');
+    const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return currentDate <= expirationDate;
+  });
+
+  const hasActiveRituals = rituals.some(ritual => {
+    if (!ritual.data.expirationDate) return true;
+    const [month, day, year] = ritual.data.expirationDate.split('/');
+    const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return currentDate <= expirationDate;
+  });
+
+  // Build links array based on active items
+  const shopLinks = [];
+  if (hasActiveRituals) {
+    shopLinks.push({ text: 'Guided Rituals', href: '/shop#guidedrituals' });
+  }
+  if (hasActiveBundles) {
+    shopLinks.push({ text: 'Bundles', href: '/shop#bundles' });
+  }
+
+  return shopLinks;
+}
 
 export const headerData = {
   links: [
@@ -26,42 +61,42 @@ export const headerData = {
   }],
 };
 
-export const footerData = {
-  links: [
-    {
-      title: 'Explore',
-      links: [
-        { text: 'Readings', href: '/readings' },
-        { text: 'Private Sessions', href: '/private-sessions' },
-        { text: 'Book a Written Reading', href: 'book-a-written-reading' },
-        { text: 'About', href: '/about' },
-        { text: 'Workshops', href: '/workshops' },
-      ],
-    },
-    {
-      title: 'Shop',
-      links: [
-        { text: 'Guided Rituals', href: '/shop#guidedrituals' },
-        { text: 'Bundles', href: '/shop#bundles' },
-      ],
-    },
-    {
-      title: 'Get In Touch',
-      links: [
-        { text: 'Contact Us', href: '/contact' },
-        { text: 'Instagram', href: 'https://www.instagram.com/pinetreemagick/' },
-        { text: 'TikTok', href: 'https://www.tiktok.com/@pinetreemagick?lang=en' },
-      ],
-    },
-  ],
-  secondaryLinks: [
-    { text: 'Disclaimer', href: getPermalink('/disclaimer') },
-    { text: 'Privacy Policy', href: getPermalink('/privacy') },
-  ],
-  socialLinks: [
-    { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: 'https://www.instagram.com/pinetreemagick/'},
-    { ariaLabel: 'TikTok', icon: 'tabler:brand-tiktok', href: 'https://www.tiktok.com/@pinetreemagick?lang=en'},
-  ],
-  footNote: `Pine Tree Magick All rights reserved.
-  `,
+export const getFooterData = async () => {
+  const shopLinks = await getActiveShopLinks();
+  
+  return {
+    links: [
+      {
+        title: 'Explore',
+        links: [
+          { text: 'Readings', href: '/readings' },
+          { text: 'Private Sessions', href: '/private-sessions' },
+          { text: 'Book a Written Reading', href: 'book-a-written-reading' },
+          { text: 'About', href: '/about' },
+          { text: 'Workshops', href: '/workshops' },
+        ],
+      },
+      ...(shopLinks.length > 0 ? [{
+        title: 'Shop',
+        links: shopLinks,
+      }] : []),
+      {
+        title: 'Get In Touch',
+        links: [
+          { text: 'Contact Us', href: '/contact' },
+          { text: 'Instagram', href: 'https://www.instagram.com/pinetreemagick/' },
+          { text: 'TikTok', href: 'https://www.tiktok.com/@pinetreemagick?lang=en' },
+        ],
+      },
+    ],
+    secondaryLinks: [
+      { text: 'Disclaimer', href: getPermalink('/disclaimer') },
+      { text: 'Privacy Policy', href: getPermalink('/privacy') },
+    ],
+    socialLinks: [
+      { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: 'https://www.instagram.com/pinetreemagick/'},
+      { ariaLabel: 'TikTok', icon: 'tabler:brand-tiktok', href: 'https://www.tiktok.com/@pinetreemagick?lang=en'},
+    ],
+    footNote: `Pine Tree Magick All rights reserved.`,
+  };
 };

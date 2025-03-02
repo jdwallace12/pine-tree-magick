@@ -3,12 +3,20 @@ import Layout from '~/layouts/PageLayout.astro';
 import Rituals from '~/components/widgets/Rituals.astro';
 import Bundles from '~/components/widgets/Bundles.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
-
+import { getCollection } from 'astro:content';
+import { getShopComponents } from '~/utils/shopHelpers';
 
 const metadata = {
   title: 'Shop | Pine Tree Magick',
   description: 'Shop Pine Tree Magick',
 };
+
+// Get collections
+const bundles = await getCollection('bundle');
+const rituals = await getCollection('ritual');
+
+// Get sorted components with content
+const shopComponents = await getShopComponents(bundles, rituals);
 ---
 
 <Layout metadata={metadata}>
@@ -18,18 +26,13 @@ const metadata = {
         <p class="text-xl text-muted text-center">Shop guided rituals, meditations, and bundles</p>
       </div>
 
-
-    <Bundles
-      id="bundles"
-      title="Bundles"
-      tagline="Buy Bundles"
-  />
-
-    <Rituals 
-      id="guidedrituals"
-      title="Guided Rituals"
-      tagline="Buy Guided Rituals"
-    />
+  {shopComponents.map(component => {
+    if (component.type === 'bundles') {
+      return <Bundles {...component.data} />;
+    } else if (component.type === 'rituals') {
+      return <Rituals {...component.data} />;
+    }
+  })}
 
   <!-- CallToAction Widget *********** -->
 
