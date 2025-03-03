@@ -8,16 +8,19 @@ const {
   disclaimer, 
   button = 'Contact us', 
   description = '',
+  redirectUrl = '',
+  formName = 'contact'
 } = Astro.props;
 ---
 
   <form 
-    name="contact" 
+    name={formName}
     data-netlify="true"
     method="POST"
-    action="/success"
-    >
-    <input type="hidden" name="form-name" value="contact" />
+    action={redirectUrl || '/success'}
+  >
+    <input type="hidden" name="form-name" value={formName} />
+    <input type="hidden" name="subject" value="New contact form submission" />
 
     {
       inputs &&

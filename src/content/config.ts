@@ -105,10 +105,22 @@ const bundleCollection = defineCollection({
   }),
 });
 
+const freebieCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    image: z.string(),
+    expirationDate: z.string().optional(),
+    pdfUrl: z.string(),
+    metadata: metadataDefinition(),
+  }),
+});
+
 
 export const collections = {
   post: postCollection,
   workshop: workshopCollection,
   ritual: ritualCollection,
   bundle: bundleCollection,
+  freebie: freebieCollection,
 };

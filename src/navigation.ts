@@ -7,6 +7,7 @@ async function getActiveShopLinks() {
   // Get collections
   const bundles = await getCollection('bundle');
   const rituals = await getCollection('ritual');
+  const freebies = await getCollection('freebie');
 
   // Check for active items
   const hasActiveBundles = bundles.some(bundle => {
@@ -23,6 +24,13 @@ async function getActiveShopLinks() {
     return currentDate <= expirationDate;
   });
 
+  const hasActiveFreebies = freebies.some(freebie => {
+    if (!freebie.data.expirationDate) return true;
+    const [month, day, year] = freebie.data.expirationDate.split('/');
+    const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return currentDate <= expirationDate;
+  });
+
   // Build links array based on active items
   const shopLinks = [];
   if (hasActiveRituals) {
@@ -31,6 +39,10 @@ async function getActiveShopLinks() {
   if (hasActiveBundles) {
     shopLinks.push({ text: 'Bundles', href: '/shop#bundles' });
   }
+  if (hasActiveFreebies) {
+    shopLinks.push({ text: 'Freebies', href: '/shop#freebies' });
+  }
+
 
   return shopLinks;
 }

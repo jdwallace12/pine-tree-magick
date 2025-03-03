@@ -1,9 +1,9 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
-import { Icon } from 'astro-icon/components';
 
 const metadata = {
-  title: 'Message Sent Successfully',
+  title: 'Message Sent | Pine Tree Magick',
+  description: 'Thank you for your message'
 };
 ---
 
@@ -11,18 +11,14 @@ const metadata = {
   <section class="flex items-center h-full p-16">
     <div class="container flex flex-col items-center justify-center px-5 mx-auto my-8">
       <div class="max-w-md text-center">
-        <div class="text-primary mb-8">
-          <Icon name="tabler:circle-check" class="w-32 h-32 mx-auto" />
-        </div>
-        <h2 class="mb-8 font-bold text-4xl">Thank You!</h2>
-        <p class="text-lg mt-4 mb-8 text-muted">
-          Your message has been sent successfully. We'll get back to you soon.
+        <h2 class="mb-8 font-bold text-9xl">
+          <span class="text-primary">Thank You!</span>
+        </h2>
+        <p class="text-3xl font-semibold md:text-3xl">Message Received</p>
+        <p class="mt-4 mb-8 text-lg text-muted dark:text-slate-400">
+          We'll get back to you as soon as possible.
         </p>
-        <a
-          rel="noopener noreferrer"
-          href="/"
-          class="btn btn-primary"
-        >Back to Homepage</a>
+        <a rel="noopener noreferrer" href="/" class="btn ml-4">Back to homepage</a>
       </div>
     </div>
   </section>
