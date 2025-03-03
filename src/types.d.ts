@@ -82,6 +82,15 @@ export interface Bundle {
   body: string;
 } 
 
+export interface Freebie {
+  title: string;
+  description: string;
+  image: string;
+  pdfUrl: string;
+  slug: string;
+  body: string;
+} 
+
 export interface Taxonomy {
   slug: string;
   title: string;
@@ -359,3 +368,12 @@ export interface BundleFrontmatter {
   metadata?: MetaData;
   slug?: string;
 }
+
+export interface FreebieFrontmatter {
+  title: string;
+  image: string;
+  description: string;
+  metadata?: MetaData;
+  slug?: string;
+}
+

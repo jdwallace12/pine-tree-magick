@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
+import Form from '~/components/ui/Form.astro';
+
+export async function getStaticPaths() {
+  const freebies = await getCollection('freebie');
+  return freebies.map((freebie) => ({
+    params: { slug: freebie.data.slug || freebie.id.replace(/\.md$/, '') || 'default-slug' },
+  }));
+}
+
+const { slug } = Astro.params as { slug: string };
+const freebies = await getCollection('freebie');
+
+const freebie = freebies.find((freebie) => (freebie.id.replace(/\.md$/, '')) === slug);
+
+if (!freebie) {
+  throw new Error('freebie not found');
+}
+
+const { title, description, image, expirationDate, pdfUrl } = freebie.data;
+const { Content } = await freebie.render();
+
+const metadata = {
+  title,
+  description,
+  openGraph: {
+    url: image,
+    siteName: title,
+    images: [{
+      url: image,
+      width: 1200,
+      height: 630
+    }],
+    type: "website"
+  }
+};
+
+const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false;
+---
+
+<Layout metadata={metadata}>
+  <article class="max-w-2xl mx-auto p-6 space-y-6 mb-12">
+    <div class="flex gap-8 justify-between items-center sticky top-16 bg-dark py-2">
+      <a href="/shop" class="flex underline w-max">
+        <Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop
+      </a>
+    </div>
+    
+    <div class="flex flex-col gap-8">
+      <div>
+        <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">
+          Freebies
+        </p>
+        <h1 class="text-4xl md:text-5xl font-heading text-center">{title}</h1>
+        <p class="text-xl text-muted text-center mt-2">{description}</p>
+      </div>
+   
+      <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
+    
+      <div class="mb-2 prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
+        <Content />
+        {isExpired ? (
+          <div class="bg-red-900/50 text-red-200 p-4 rounded-lg text-center mb-6">
+            This freebie has expired and is no longer available.
+          </div>
+        ) : (
+          <div class="bg-primary/10 p-8 rounded-lg">
+            <Form
+              inputs={[
+                {
+                  type: 'text',
+                  name: 'name',
+                  label: 'Name',
+                  placeholder: 'Your name',
+                },
+                {
+                  type: 'email',
+                  name: 'email',
+                  label: 'Email',
+                  placeholder: 'your@email.com',
+                }
+              ]}
+              disclaimer={{
+                label: 'I agree to receive the free download and subscribe to the newsletter'
+              }}
+              button="Get Free Download"
+              description="You'll be redirected to your download after submitting"
+              redirectUrl={`/download/${slug}`}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  </article>
+</Layout>

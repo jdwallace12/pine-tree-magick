@@ -2,6 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Rituals from '~/components/widgets/Rituals.astro';
 import Bundles from '~/components/widgets/Bundles.astro';
+import Freebies from '~/components/widgets/Freebies.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import { getCollection } from 'astro:content';
 import { getShopComponents } from '~/utils/shopHelpers';
@@ -14,9 +15,10 @@ const metadata = {
 // Get collections
 const bundles = await getCollection('bundle');
 const rituals = await getCollection('ritual');
+const freebies = await getCollection('freebie');
 
 // Get sorted components with content
-const shopComponents = await getShopComponents(bundles, rituals);
+const shopComponents = await getShopComponents(bundles, rituals, freebies);
 ---
 
 <Layout metadata={metadata}>
@@ -31,6 +33,8 @@ const shopComponents = await getShopComponents(bundles, rituals);
       return <Bundles {...component.data} />;
     } else if (component.type === 'rituals') {
       return <Rituals {...component.data} />;
+    } else if (component.type === 'freebies') {
+      return <Freebies {...component.data} />;
     }
   })}
 

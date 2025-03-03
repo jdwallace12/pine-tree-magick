@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '~/layouts/PageLayout.astro';
+
+export async function getStaticPaths() {
+  const freebies = await getCollection('freebie');
+  return freebies.map((freebie) => ({
+    params: { slug: freebie.data.slug || freebie.id.replace(/\.md$/, '') || 'default-slug' },
+    props: { pdfUrl: freebie.data.pdfUrl },
+  }));
+}
+
+const { pdfUrl } = Astro.props;
+---
+<Layout metadata={{ title: 'Downloading...', description: 'Your download is starting' }}>
+  <div class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <h1 class="text-2xl mb-4">Your download is starting...</h1>
+      <p class="mb-4">If your download doesn't start automatically, <a href={pdfUrl} class="text-primary hover:underline">click here</a></p>
+    </div>
+  </div>
+</Layout>
+
+<script define:vars={{ pdfUrl }}>
+  // Delay the redirect slightly to ensure the page loads
+  setTimeout(() => {
+    window.location.href = pdfUrl;
+  }, 1500);
+</script> 
