@@ -16,9 +16,9 @@ const {
 <form 
   name={formName}
   method="POST"
-  netlify
   data-netlify="true"
   netlify-honeypot="bot-field"
+  class="needs-validation form-component"
 >
   <input type="hidden" name="form-name" value={formName} />
   <p class="hidden">
@@ -43,7 +43,6 @@ const {
           placeholder={placeholder}
           required
           minlength={type === 'text' ? "2" : undefined}
-          pattern={type === 'email' ? "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}" : undefined}
           class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           value={value}
         />
@@ -108,4 +107,75 @@ const {
       </div>
     )
   }
+
+  <!-- Add these elements for messages -->
+  <div class="mt-4 hidden text-center" data-form-message>
+    <p class="text-green-600 dark:text-green-400 hidden" data-success-message>
+      {formName === 'freebie-download' 
+        ? 'Form submitted successfully! Your download will begin shortly...'
+        : 'Message sent successfully! We\'ll get back to you soon.'}
+    </p>
+    <p class="text-red-600 dark:text-red-400 hidden" data-error-message>
+      There was an error submitting the form. Please try again.
+    </p>
+  </div>
 </form>
+
+<script define:vars={{ redirectUrl, formName }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const forms = document.querySelectorAll('.form-component');
+    
+    forms.forEach(form => {
+      const messageContainer = form.querySelector('[data-form-message]');
+      const successMessage = form.querySelector('[data-success-message]');
+      const errorMessage = form.querySelector('[data-error-message]');
+
+      const showMessage = (type) => {
+        messageContainer.classList.remove('hidden');
+        if (type === 'success') {
+          successMessage.classList.remove('hidden');
+          errorMessage.classList.add('hidden');
+        } else {
+          errorMessage.classList.remove('hidden');
+          successMessage.classList.add('hidden');
+        }
+      };
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Hide any existing messages
+        messageContainer.classList.add('hidden');
+        
+        const formData = new FormData(e.target);
+        formData.append('form-name', formName);
+        
+        try {
+          const response = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(formData).toString()
+          });
+          
+          if (response.ok) {
+            showMessage('success');
+            
+            // Wait a moment before redirecting
+            setTimeout(() => {
+              if (redirectUrl) {
+                window.open(redirectUrl, '_blank');
+              }
+            }, 1500);
+            
+            e.target.reset();
+          } else {
+            showMessage('error');
+          }
+        } catch (error) {
+          console.error('Error submitting form:', error);
+          showMessage('error');
+        }
+      });
+    });
+  });
+</script>
