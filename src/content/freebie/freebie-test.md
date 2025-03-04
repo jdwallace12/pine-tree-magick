@@ -1,7 +1,7 @@
 ---
 title: 'Freebie Test'
 description: 'Review your relationships, self-worth, money mindset and values with this Venus Rx Bundle.'
-expirationDate: '4/12/2025'
+expirationDate: '4/12/2024'
 slug: 'freebie-test'
 image: '/assets/images/venus.webp'
 pdfUrl: 'https://drive.google.com/uc?export=download&id=1Y6iJ8IOistj_JDPwC0_Qk0mR-11HojZe'
