@@ -27,7 +27,7 @@ const {
     </label>
   </p>
 
-  {inputs && inputs.map(({ type = 'text', name, label = '', autocomplete = 'on', placeholder = '' }) =>
+  {inputs && inputs.map(({ type = 'text', name, label = '', autocomplete = 'on', placeholder = '', value }) =>
     name && (
       <div class="mb-6">
         {label && (
@@ -43,8 +43,9 @@ const {
           placeholder={placeholder}
           required
           minlength={type === 'text' ? "2" : undefined}
-          pattern={type === 'email' ? "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" : undefined}
+          pattern={type === 'email' ? "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}" : undefined}
           class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+          value={value}
         />
       </div>
     )

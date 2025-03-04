@@ -81,6 +81,11 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
                   name: 'email',
                   label: 'Email',
                   placeholder: 'your@email.com',
+                },
+                {
+                  type: 'hidden',
+                  name: 'freebie',
+                  value: title,
                 }
               ]}
               disclaimer={{
@@ -89,6 +94,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
               button="Get Free Download"
               description="You'll be redirected to your download after submitting"
               redirectUrl={`/download/${slug}`}
+              formName="freebie-download"
             />
           </div>
         )}
