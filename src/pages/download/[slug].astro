@@ -12,38 +12,34 @@ export async function getStaticPaths() {
 
 const { pdfUrl } = Astro.props;
 
-// Convert Google Drive view URL to direct download URL
-const getDirectDownloadUrl = (url: string) => {
+// Convert Google Drive URL to preview URL
+const getPreviewUrl = (url: string) => {
   if (url.includes('drive.google.com')) {
-    // Handle different Google Drive URL formats
-    if (url.includes('/view')) {
-      // Convert /view URLs
-      return url.replace('/view', '/uc?export=download&');
-    } else if (url.includes('/file/d/')) {
-      // Handle /file/d/ URLs
-      const fileId = url.match(/\/file\/d\/([^/]+)/)?.[1];
-      if (fileId) {
-        return `https://drive.google.com/uc?export=download&id=${fileId}`;
-      }
+    // Extract file ID
+    const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (fileIdMatch && fileIdMatch[1]) {
+      const fileId = fileIdMatch[1];
+      // Return the preview URL format
+      return `https://drive.google.com/file/d/${fileId}/preview`;
     }
   }
   return url;
 };
 
-const downloadUrl = getDirectDownloadUrl(pdfUrl);
+const previewUrl = getPreviewUrl(pdfUrl);
 ---
-<Layout metadata={{ title: 'Downloading...', description: 'Your download is starting' }}>
+<Layout metadata={{ title: 'Opening PDF...', description: 'Opening your PDF' }}>
   <div class="flex items-center justify-center min-h-screen">
     <div class="text-center">
-      <h1 class="text-2xl mb-4">Your download is starting...</h1>
-      <p class="mb-4">If your download doesn't start automatically, <a href={downloadUrl} class="text-primary hover:underline">click here</a></p>
+      <h1 class="text-2xl mb-4">Opening your PDF...</h1>
+      <p class="mb-4">If it doesn't open automatically, <a href={previewUrl} class="text-primary hover:underline">click here</a></p>
     </div>
   </div>
 </Layout>
 
-<script define:vars={{ downloadUrl }}>
-  // Redirect to the download URL after a short delay
+<script define:vars={{ previewUrl }}>
+  // Redirect to preview URL after a short delay
   setTimeout(() => {
-    window.location.href = downloadUrl;
+    window.location.href = previewUrl;
   }, 1500);
 </script> 

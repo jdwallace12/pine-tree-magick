@@ -267,6 +267,7 @@ export interface Form {
   disclaimer?: Disclaimer;
   button?: string;
   description?: string;
+  redirectUrl?: string;
   formName?: string;
 }
 
