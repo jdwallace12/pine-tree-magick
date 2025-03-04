@@ -19,6 +19,7 @@ const {
   data-netlify="true"
   netlify-honeypot="bot-field"
   class="needs-validation form-component"
+  action={formName === 'contact' ? '/success' : '/download/' + redirectUrl.split('/').pop()}
 >
   <input type="hidden" name="form-name" value={formName} />
   <p class="hidden">
@@ -130,64 +131,47 @@ const {
       const successMessage = form.querySelector('[data-success-message]');
       const errorMessage = form.querySelector('[data-error-message]');
 
-      const showMessage = (type) => {
-        messageContainer.classList.remove('hidden');
-        if (type === 'success') {
-          successMessage.classList.remove('hidden');
-          errorMessage.classList.add('hidden');
-        } else {
-          errorMessage.classList.remove('hidden');
-          successMessage.classList.add('hidden');
-        }
-      };
-
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         messageContainer.classList.add('hidden');
         
-        const formData = new FormData(e.target);
-        
         try {
-          // Create a hidden form to submit
-          const hiddenForm = document.createElement('form');
-          hiddenForm.method = 'POST';
-          hiddenForm.style.display = 'none';
-          hiddenForm.setAttribute('data-netlify', 'true');
-          hiddenForm.setAttribute('name', formName);
+          const formData = new FormData(e.target);
+          
+          // Submit to Netlify Forms
+          const response = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams(formData).toString()
+          });
 
-          // Add all form data to hidden form
-          for (const [key, value] of formData.entries()) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            hiddenForm.appendChild(input);
+          if (response.ok) {
+            // Show success message
+            messageContainer.classList.remove('hidden');
+            successMessage.classList.remove('hidden');
+            errorMessage.classList.add('hidden');
+            
+            // For freebie downloads, redirect after successful form submission
+            if (formName === 'freebie-download' && redirectUrl) {
+              setTimeout(() => {
+                window.location.href = redirectUrl;
+              }, 1500);
+            } else {
+              // For contact form, redirect to success page
+              setTimeout(() => {
+                window.location.href = '/success';
+              }, 1500);
+            }
+            
+            e.target.reset();
+          } else {
+            throw new Error('Form submission failed');
           }
-
-          // Add form name input
-          const formNameInput = document.createElement('input');
-          formNameInput.type = 'hidden';
-          formNameInput.name = 'form-name';
-          formNameInput.value = formName;
-          hiddenForm.appendChild(formNameInput);
-
-          // Append to body, submit, and remove
-          document.body.appendChild(hiddenForm);
-          hiddenForm.submit();
-          
-          showMessage('success');
-          
-          // Handle redirect for downloads
-          if (redirectUrl) {
-            setTimeout(() => {
-              window.open(redirectUrl, '_blank');
-            }, 1500);
-          }
-          
-          e.target.reset();
         } catch (error) {
           console.error('Error submitting form:', error);
-          showMessage('error');
+          messageContainer.classList.remove('hidden');
+          errorMessage.classList.remove('hidden');
+          successMessage.classList.add('hidden');
         }
       });
     });
