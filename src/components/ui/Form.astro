@@ -143,34 +143,48 @@ const {
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
-        // Hide any existing messages
         messageContainer.classList.add('hidden');
         
         const formData = new FormData(e.target);
-        formData.append('form-name', formName);
         
         try {
-          const response = await fetch('/', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData).toString()
-          });
-          
-          if (response.ok) {
-            showMessage('success');
-            
-            // Wait a moment before redirecting
-            setTimeout(() => {
-              if (redirectUrl) {
-                window.open(redirectUrl, '_blank');
-              }
-            }, 1500);
-            
-            e.target.reset();
-          } else {
-            showMessage('error');
+          // Create a hidden form to submit
+          const hiddenForm = document.createElement('form');
+          hiddenForm.method = 'POST';
+          hiddenForm.style.display = 'none';
+          hiddenForm.setAttribute('data-netlify', 'true');
+          hiddenForm.setAttribute('name', formName);
+
+          // Add all form data to hidden form
+          for (const [key, value] of formData.entries()) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = key;
+            input.value = value;
+            hiddenForm.appendChild(input);
           }
+
+          // Add form name input
+          const formNameInput = document.createElement('input');
+          formNameInput.type = 'hidden';
+          formNameInput.name = 'form-name';
+          formNameInput.value = formName;
+          hiddenForm.appendChild(formNameInput);
+
+          // Append to body, submit, and remove
+          document.body.appendChild(hiddenForm);
+          hiddenForm.submit();
+          
+          showMessage('success');
+          
+          // Handle redirect for downloads
+          if (redirectUrl) {
+            setTimeout(() => {
+              window.open(redirectUrl, '_blank');
+            }, 1500);
+          }
+          
+          e.target.reset();
         } catch (error) {
           console.error('Error submitting form:', error);
           showMessage('error');
