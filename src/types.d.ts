@@ -261,10 +261,18 @@ export interface Collapse {
   classes?: Record<string, string>;
 }
 
+export interface FormDisclaimer {
+  label: {
+    text: string;
+    html: string;
+    link: string;
+  };
+}
+
 export interface Form {
-  inputs?: Array<Input>;
-  textarea?: Textarea;
-  disclaimer?: Disclaimer;
+  inputs?: FormInput[];
+  textarea?: FormTextarea;
+  disclaimer?: FormDisclaimer;
   button?: string;
   description?: string;
   redirectUrl?: string;

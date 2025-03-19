@@ -13,6 +13,43 @@ const {
 } = Astro.props;
 ---
 
+<style>
+  /* Custom checkbox styles */
+  .custom-checkbox {
+    @apply relative flex items-start;
+  }
+
+  .custom-checkbox input[type="checkbox"] {
+    @apply absolute opacity-0 w-5 h-5 cursor-pointer;
+  }
+
+  .custom-checkbox .checkbox-label {
+    @apply pl-7 relative select-none;
+  }
+
+  .custom-checkbox .checkbox-label::before {
+    content: '';
+    @apply absolute left-0 top-1 w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded transition-all duration-200;
+  }
+
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::before {
+    @apply bg-primary border-primary;
+  }
+
+  .custom-checkbox .checkbox-label::after {
+    content: '';
+    @apply absolute left-[6px] top-[9px] w-2.5 h-1.5 border-gray-900 dark:border-gray-100 border-l-2 border-b-2 transform -rotate-45 opacity-0 transition-all duration-200;
+  }
+
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::after {
+    @apply opacity-100;
+  }
+
+  .custom-checkbox input[type="checkbox"]:focus + .checkbox-label::before {
+    @apply ring-2 ring-opacity-50 ring-primary;
+  }
+</style>
+
 <form 
   name={formName}
   method="POST"
@@ -72,21 +109,23 @@ const {
 
   {
     disclaimer && (
-      <div class="mt-3 flex items-start">
-        <div class="flex mt-0.5">
+      <div class="mb-6">
+        <label class="custom-checkbox">
           <input
-            id="disclaimer"
-            name="disclaimer"
             type="checkbox"
+            name="disclaimer"
             required
-            class="cursor-pointer mt-1 py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-900"
           />
-        </div>
-        <div class="ml-3">
-          <label for="disclaimer" class="cursor-pointer select-none text-sm text-gray-600 dark:text-gray-400">
-            {disclaimer.label} <span class="text-red-600">*</span>
-          </label>
-        </div>
+          <span class="checkbox-label">
+            {disclaimer?.label?.text || 'I agree to the '}
+            <a 
+              href={disclaimer?.label?.link || '/privacy'} 
+              class="text-primary hover:underline"
+            >
+              {disclaimer?.label?.html || 'privacy policy'}
+            </a>
+          </span>
+        </label>
       </div>
     )
   }
