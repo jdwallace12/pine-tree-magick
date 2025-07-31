@@ -1,0 +1,448 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { Image } from 'astro:assets';
+
+const metadata = {
+  title: 'Astrology Quiz - Discover Your Zodiac Sign',
+  description: 'Take our mystical astrology quiz to discover your true zodiac sign through the alignment of the stars.',
+  canonical: '/astrology-quiz'
+};
+---
+
+<Layout metadata={metadata}>
+  <div class="min-h-screen bg-dark relative overflow-hidden">
+    <!-- Background with night sky -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary to-dark opacity-90"></div>
+      <div class="absolute inset-0 opacity-55" style="background-image: url('/assets/images/night-sky.webp'); background-size: cover; background-position: center;"></div>
+      <!-- Animated background stars -->
+      <div class="absolute inset-0">
+        <div class="stars"></div>
+        <div class="stars2"></div>
+        <div class="stars3"></div>
+      </div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-8">
+      <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-12 animate-fade-in">
+          <h1 class="text-5xl md:text-7xl font-normal tracking-tight text-gray-200 mb-4 font-heading">
+            ✨ Astrology Quiz ✨
+          </h1>
+          <p class="text-2xl bg-gradient-to-r from-secondary via-primary to-primary bg-clip-text text-transparent mb-8">
+            Discover your true zodiac sign through the mystical alignment of the stars
+          </p>
+        </div>
+
+        <!-- Quiz Container -->
+        <div id="quiz-container" class="bg-page/20 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-500/20 animate-slide-up">
+          <!-- Step 1: Birth Date Input -->
+          <div id="step-1" class="quiz-step active">
+            <div class="text-center mb-8">
+              <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-secondary to-primary rounded-full flex items-center justify-center animate-pulse">
+                <span class="text-3xl">🌙</span>
+              </div>
+              <h2 class="text-3xl font-normal tracking-tight text-gray-200 mb-4 font-heading">When were you born?</h2>
+              <p class="text-muted">Enter your birth date to reveal your zodiac sign</p>
+            </div>
+
+            <div class="max-w-md mx-auto">
+              <div class="mb-6">
+                <label for="birth-date" class="block text-gray-200 text-lg font-medium mb-3">Birth Date</label>
+                <input 
+                  type="date" 
+                  id="birth-date" 
+                  class="w-full px-6 py-4 bg-page/20 border border-gray-500/30 rounded-xl text-gray-200 text-lg focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm"
+                  placeholder="Select your birth date"
+                >
+              </div>
+
+              <button 
+                id="next-btn" 
+                class="btn-primary w-full font-semibold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled
+              >
+                Discover My Sign ✨
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Loading Animation -->
+          <div id="step-2" class="quiz-step hidden">
+            <div class="text-center">
+              <div class="w-32 h-32 mx-auto mb-8">
+                <div class="zodiac-wheel animate-spin-slow"></div>
+              </div>
+              <h2 class="text-3xl font-normal tracking-tight text-gray-200 mb-4 font-heading">Reading the stars...</h2>
+              <p class="text-muted">Aligning your cosmic energy with the universe</p>
+            </div>
+          </div>
+
+          <!-- Step 3: Result -->
+          <div id="step-3" class="quiz-step hidden">
+            <div class="text-center">
+              <div id="zodiac-icon" class="w-32 h-32 mx-auto mb-8 text-6xl animate-bounce"></div>
+              <h2 id="zodiac-name" class="text-4xl font-normal tracking-tight text-gray-200 mb-4 font-heading"></h2>
+              <p id="zodiac-dates" class="text-xl text-muted mb-6"></p>
+              
+              <div class="bg-page/20 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-500/20">
+                <h3 class="text-2xl font-normal tracking-tight text-gray-200 mb-4 font-heading">Your Cosmic Profile</h3>
+                <div id="zodiac-traits" class="text-muted space-y-2"></div>
+              </div>
+
+              <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button 
+                  id="restart-btn" 
+                  class="btn-secondary font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Take Quiz Again
+                </button>
+                <button 
+                  id="share-btn" 
+                  class="btn-primary font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  Share Result
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Animated Stars Background */
+    .stars {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      background: transparent;
+      box-shadow: 
+        1744px 122px #fff,
+        134px 1321px #fff,
+        1626px 1566px #fff,
+        1823px 1966px #fff,
+        1178px 1988px #fff,
+        1994px 1998px #fff,
+        1998px 1999px #fff,
+        2000px 2000px #fff;
+      animation: animateStars 50s linear infinite;
+    }
+
+    .stars2 {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: transparent;
+      box-shadow: 
+        1744px 122px #fff,
+        134px 1321px #fff,
+        1626px 1566px #fff,
+        1823px 1966px #fff,
+        1178px 1988px #fff,
+        1994px 1998px #fff,
+        1998px 1999px #fff,
+        2000px 2000px #fff;
+      animation: animateStars 100s linear infinite;
+    }
+
+    .stars3 {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: transparent;
+      box-shadow: 
+        1744px 122px #fff,
+        134px 1321px #fff,
+        1626px 1566px #fff,
+        1823px 1966px #fff,
+        1178px 1988px #fff,
+        1994px 1998px #fff,
+        1998px 1999px #fff,
+        2000px 2000px #fff;
+      animation: animateStars 150s linear infinite;
+    }
+
+    @keyframes animateStars {
+      from {
+        transform: translateY(0px);
+      }
+      to {
+        transform: translateY(-2000px);
+      }
+    }
+
+    /* Zodiac Wheel Animation */
+    .zodiac-wheel {
+      width: 100%;
+      height: 100%;
+      border: 4px solid transparent;
+      border-top: 4px solid var(--aw-color-secondary);
+      border-right: 4px solid var(--aw-color-primary);
+      border-bottom: 4px solid var(--aw-color-accent);
+      border-left: 4px solid var(--ptm-dark-green);
+      border-radius: 50%;
+      animation: spin 3s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .animate-spin-slow {
+      animation: spin 3s linear infinite;
+    }
+
+    /* Quiz Step Transitions */
+    .quiz-step {
+      transition: all 0.5s ease-in-out;
+    }
+
+    .quiz-step.hidden {
+      opacity: 0;
+      transform: translateY(20px);
+      display: none;
+    }
+
+    .quiz-step.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Custom Animations */
+    .animate-fade-in {
+      animation: fadeIn 1s ease-out;
+    }
+
+    .animate-slide-up {
+      animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      h1 {
+        font-size: 3rem;
+      }
+    }
+  </style>
+
+  <script>
+    // Zodiac data
+    const zodiacSigns = {
+      'aries': {
+        name: 'Aries',
+        icon: '♈',
+        dates: 'March 21 - April 19',
+        traits: ['Courageous', 'Energetic', 'Willful', 'Pioneering', 'Independent']
+      },
+      'taurus': {
+        name: 'Taurus',
+        icon: '♉',
+        dates: 'April 20 - May 20',
+        traits: ['Patient', 'Reliable', 'Devoted', 'Persistent', 'Determined']
+      },
+      'gemini': {
+        name: 'Gemini',
+        icon: '♊',
+        dates: 'May 21 - June 20',
+        traits: ['Adaptable', 'Versatile', 'Communicative', 'Witty', 'Intellectual']
+      },
+      'cancer': {
+        name: 'Cancer',
+        icon: '♋',
+        dates: 'June 21 - July 22',
+        traits: ['Nurturing', 'Protective', 'Sympathetic', 'Moody', 'Emotional']
+      },
+      'leo': {
+        name: 'Leo',
+        icon: '♌',
+        dates: 'July 23 - August 22',
+        traits: ['Creative', 'Passionate', 'Generous', 'Warm-hearted', 'Cheerful']
+      },
+      'virgo': {
+        name: 'Virgo',
+        icon: '♍',
+        dates: 'August 23 - September 22',
+        traits: ['Loyal', 'Analytical', 'Kind', 'Hardworking', 'Practical']
+      },
+      'libra': {
+        name: 'Libra',
+        icon: '♎',
+        dates: 'September 23 - October 22',
+        traits: ['Diplomatic', 'Gracious', 'Fair-minded', 'Peaceful', 'Idealistic']
+      },
+      'scorpio': {
+        name: 'Scorpio',
+        icon: '♏',
+        dates: 'October 23 - November 21',
+        traits: ['Passionate', 'Determined', 'Magnetic', 'Mysterious', 'Strategic']
+      },
+      'sagittarius': {
+        name: 'Sagittarius',
+        icon: '♐',
+        dates: 'November 22 - December 21',
+        traits: ['Optimistic', 'Adventurous', 'Independent', 'Honest', 'Philosophical']
+      },
+      'capricorn': {
+        name: 'Capricorn',
+        icon: '♑',
+        dates: 'December 22 - January 19',
+        traits: ['Responsible', 'Disciplined', 'Self-controlled', 'Ambitious', 'Patient']
+      },
+      'aquarius': {
+        name: 'Aquarius',
+        icon: '♒',
+        dates: 'January 20 - February 18',
+        traits: ['Progressive', 'Original', 'Independent', 'Humanitarian', 'Intellectual']
+      },
+      'pisces': {
+        name: 'Pisces',
+        icon: '♓',
+        dates: 'February 19 - March 20',
+        traits: ['Compassionate', 'Artistic', 'Intuitive', 'Gentle', 'Musical']
+      }
+    };
+
+    // Get zodiac sign based on birth date
+    function getZodiacSign(month: number, day: number): string {
+      if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) return 'aries';
+      if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) return 'taurus';
+      if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) return 'gemini';
+      if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) return 'cancer';
+      if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) return 'leo';
+      if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) return 'virgo';
+      if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) return 'libra';
+      if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) return 'scorpio';
+      if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) return 'sagittarius';
+      if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) return 'capricorn';
+      if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) return 'aquarius';
+      if ((month === 2 && day >= 19) || (month === 3 && day <= 20)) return 'pisces';
+      return 'aries'; // fallback
+    }
+
+    // Quiz functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const birthDateInput = document.getElementById('birth-date') as HTMLInputElement;
+      const nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
+      const restartBtn = document.getElementById('restart-btn') as HTMLButtonElement;
+      const shareBtn = document.getElementById('share-btn') as HTMLButtonElement;
+
+      if (!birthDateInput || !nextBtn || !restartBtn || !shareBtn) {
+        console.error('Required elements not found');
+        return;
+      }
+
+      // Enable/disable next button based on date input
+      birthDateInput.addEventListener('change', function() {
+        nextBtn.disabled = !this.value;
+      });
+
+      // Next button click handler
+      nextBtn.addEventListener('click', function() {
+        const birthDate = new Date(birthDateInput.value);
+        const month = birthDate.getMonth() + 1;
+        const day = birthDate.getDate();
+        
+        const zodiacKey = getZodiacSign(month, day);
+        const zodiacData = zodiacSigns[zodiacKey as keyof typeof zodiacSigns];
+
+        // Show loading step
+        showStep(2);
+
+        // Simulate loading time
+        setTimeout(() => {
+          // Display result
+          const zodiacIcon = document.getElementById('zodiac-icon');
+          const zodiacName = document.getElementById('zodiac-name');
+          const zodiacDates = document.getElementById('zodiac-dates');
+          const traitsContainer = document.getElementById('zodiac-traits');
+
+          if (zodiacIcon && zodiacName && zodiacDates && traitsContainer) {
+            zodiacIcon.textContent = zodiacData.icon;
+            zodiacName.textContent = zodiacData.name;
+            zodiacDates.textContent = zodiacData.dates;
+            
+            traitsContainer.innerHTML = zodiacData.traits.map(trait => 
+              `<div class="flex items-center">
+                <span class="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                <span>${trait}</span>
+              </div>`
+            ).join('');
+          }
+
+          showStep(3);
+        }, 3000);
+      });
+
+      // Restart button click handler
+      restartBtn.addEventListener('click', function() {
+        birthDateInput.value = '';
+        nextBtn.disabled = true;
+        showStep(1);
+      });
+
+      // Share button click handler
+      shareBtn.addEventListener('click', function() {
+        const zodiacName = document.getElementById('zodiac-name');
+        const zodiacIcon = document.getElementById('zodiac-icon');
+        
+        if (zodiacName && zodiacIcon) {
+          const nameText = zodiacName.textContent || '';
+          const iconText = zodiacIcon.textContent || '';
+          
+          if (navigator.share) {
+            navigator.share({
+              title: 'My Zodiac Sign',
+              text: `I just discovered I'm a ${nameText} ${iconText}! Take the astrology quiz to find your sign too!`,
+              url: window.location.href
+            });
+          } else {
+            // Fallback: copy to clipboard
+            const text = `I just discovered I'm a ${nameText} ${iconText}! Take the astrology quiz to find your sign too! ${window.location.href}`;
+            navigator.clipboard.writeText(text).then(() => {
+              alert('Result copied to clipboard!');
+            });
+          }
+        }
+      });
+
+      function showStep(stepNumber: number) {
+        // Hide all steps
+        document.querySelectorAll('.quiz-step').forEach(step => {
+          step.classList.add('hidden');
+          step.classList.remove('active');
+        });
+
+        // Show target step
+        const targetStep = document.getElementById(`step-${stepNumber}`);
+        if (targetStep) {
+          targetStep.classList.remove('hidden');
+          targetStep.classList.add('active');
+        }
+      }
+    });
+  </script>
+</Layout> 
