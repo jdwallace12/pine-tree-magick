@@ -24,43 +24,68 @@ const metadata = {
     </div>
 
     <div class="relative z-10 container mx-auto px-4 py-8">
-      <div class="max-w-4xl mx-auto">
+      <div class="max-w-3xl mx-auto">
         <!-- Header -->
-        <div class="text-center mb-12 animate-fade-in">
-          <h1 class="text-5xl md:text-7xl font-normal tracking-tight text-gray-200 mb-4 font-heading">
+        <div class="text-center mb-8 animate-fade-in">
+          <h1 class="text-4xl md:text-6xl font-normal tracking-tight text-gray-200 mb-3 font-heading">
             ✨ Astrology Quiz ✨
           </h1>
-          <p class="text-2xl bg-gradient-to-r from-secondary via-primary to-primary bg-clip-text text-transparent mb-8">
+          <p class="text-xl bg-gradient-to-r from-secondary via-primary to-primary bg-clip-text text-transparent">
             Discover your true zodiac sign through the mystical alignment of the stars
           </p>
         </div>
 
         <!-- Quiz Container -->
-        <div id="quiz-container" class="bg-page/20 backdrop-blur-lg rounded-3xl p-8 md:p-12 shadow-2xl border border-gray-500/20 animate-slide-up">
-          <!-- Step 1: Birth Date Input -->
+        <div id="quiz-container" class="bg-page/20 backdrop-blur-lg rounded-2xl p-6 md:p-8 shadow-2xl border border-gray-500/20 animate-slide-up">
+          <!-- Step 1: Email Capture -->
           <div id="step-1" class="quiz-step active">
-            <div class="text-center mb-8">
-              <div class="w-24 h-24 mx-auto mb-6 bg-gradient-to-r from-secondary to-primary rounded-full flex items-center justify-center animate-pulse">
-                <span class="text-3xl">🌙</span>
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-normal tracking-tight text-gray-200 mb-2 font-heading">Get Your Sacred Flower Reading</h2>
+              <p class="text-muted">Enter your email to receive your personalized flower reading and cosmic insights</p>
+            </div>
+
+            <div class="max-w-sm mx-auto">
+              <div class="mb-6">
+                <label for="email-input" class="block text-gray-200 text-base font-medium mb-2">Email Address</label>
+                <input 
+                  type="email" 
+                  id="email-input" 
+                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
+                  placeholder="Enter your email address"
+                >
               </div>
-              <h2 class="text-3xl font-normal tracking-tight text-gray-200 mb-4 font-heading">When were you born?</h2>
+
+              <button 
+                id="email-next-btn" 
+                class="btn-primary w-full font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled
+              >
+                Continue to Quiz ✨
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Birth Date Input -->
+          <div id="step-2" class="quiz-step hidden">
+            <div class="text-center mb-6">
+              <h2 class="text-2xl font-normal tracking-tight text-gray-200 mb-2 font-heading">When were you born?</h2>
               <p class="text-muted">Enter your birth date to reveal your zodiac sign</p>
             </div>
 
-            <div class="max-w-md mx-auto">
+            <div class="max-w-sm mx-auto">
               <div class="mb-6">
-                <label for="birth-date" class="block text-gray-200 text-lg font-medium mb-3">Birth Date</label>
+                <label for="birth-date" class="block text-gray-200 text-base font-medium mb-2">Birth Date</label>
                 <input 
                   type="date" 
                   id="birth-date" 
-                  class="w-full px-6 py-4 bg-page/20 border border-gray-500/30 rounded-xl text-gray-200 text-lg focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm"
+                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
                   placeholder="Select your birth date"
                 >
               </div>
 
               <button 
                 id="next-btn" 
-                class="btn-primary w-full font-semibold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="btn-primary w-full font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled
               >
                 Discover My Sign ✨
@@ -68,39 +93,36 @@ const metadata = {
             </div>
           </div>
 
-          <!-- Step 2: Loading Animation -->
-          <div id="step-2" class="quiz-step hidden">
+          <!-- Step 3: Loading Animation -->
+          <div id="step-3" class="quiz-step hidden">
             <div class="text-center">
-              <div class="w-32 h-32 mx-auto mb-8">
+              <div class="w-24 h-24 mx-auto mb-6">
                 <div class="zodiac-wheel animate-spin-slow"></div>
               </div>
-              <h2 class="text-3xl font-normal tracking-tight text-gray-200 mb-4 font-heading">Reading the stars...</h2>
+              <h2 class="text-2xl font-normal tracking-tight text-gray-200 mb-3 font-heading">Reading the stars...</h2>
               <p class="text-muted">Aligning your cosmic energy with the universe</p>
             </div>
           </div>
 
-          <!-- Step 3: Result -->
-          <div id="step-3" class="quiz-step hidden">
+          <!-- Step 4: Result -->
+          <div id="step-4" class="quiz-step hidden">
             <div class="text-center">
-              <div id="zodiac-icon" class="w-32 h-32 mx-auto mb-8 text-6xl animate-bounce"></div>
-              <h2 id="zodiac-name" class="text-4xl font-normal tracking-tight text-gray-200 mb-4 font-heading"></h2>
-              <p id="zodiac-dates" class="text-xl text-muted mb-6"></p>
-              
-              <div class="bg-page/20 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-gray-500/20">
-                <h3 class="text-2xl font-normal tracking-tight text-gray-200 mb-4 font-heading">Your Cosmic Profile</h3>
-                <div id="zodiac-traits" class="text-muted space-y-2"></div>
+              <!-- Flower Section -->
+              <div class="bg-page/20 backdrop-blur-sm rounded-xl p-6 border border-gray-500/20">
+                <h3 class="text-xl font-normal tracking-tight text-gray-200 mb-4 font-heading">🌸 Your Sacred Flower</h3>
+                <div id="flower-info" class="text-muted"></div>
               </div>
 
-              <div class="flex flex-col sm:flex-row gap-4 justify-center">
+              <div class="flex flex-col sm:flex-row gap-3 justify-center mt-6">
                 <button 
                   id="restart-btn" 
-                  class="btn-secondary font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+                  class="btn-secondary font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
                 >
                   Take Quiz Again
                 </button>
                 <button 
                   id="share-btn" 
-                  class="btn-primary font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+                  class="btn-primary font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
                 >
                   Share Result
                 </button>
@@ -244,85 +266,142 @@ const metadata = {
       }
       
       h1 {
-        font-size: 3rem;
+        font-size: 2.5rem;
       }
+    }
+
+    /* Flower image styling */
+    .flower-image {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
   </style>
 
   <script>
-    // Zodiac data
+    // Zodiac data with flowers
     const zodiacSigns = {
       'aries': {
         name: 'Aries',
         icon: '♈',
         dates: 'March 21 - April 19',
-        traits: ['Courageous', 'Energetic', 'Willful', 'Pioneering', 'Independent']
+        flower: {
+          name: 'Honeysuckle',
+          image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop&crop=center',
+          reason: 'Like the honeysuckle that blooms early in spring, Aries represents <strong>new beginnings</strong> and the <strong>courage to be the first to bloom</strong>. The flower\'s sweet fragrance and <strong>vibrant energy</strong> mirror Aries\' <strong>bold and passionate nature</strong>.'
+        }
       },
       'taurus': {
         name: 'Taurus',
         icon: '♉',
         dates: 'April 20 - May 20',
-        traits: ['Patient', 'Reliable', 'Devoted', 'Persistent', 'Determined']
+        flower: {
+          name: 'Rose',
+          image: 'https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=400&fit=crop&crop=center',
+          reason: 'The rose symbolizes Taurus\' love for <strong>beauty and luxury</strong>. Like the rose that takes time to bloom but creates the most stunning display, Taurus is <strong>patient and steady</strong>, building <strong>lasting relationships</strong> and creating beautiful, stable foundations.'
+        }
       },
       'gemini': {
         name: 'Gemini',
         icon: '♊',
         dates: 'May 21 - June 20',
-        traits: ['Adaptable', 'Versatile', 'Communicative', 'Witty', 'Intellectual']
+        flower: {
+          name: 'Lavender',
+          image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop&crop=center',
+          reason: 'Lavender represents Gemini\'s <strong>dual nature</strong> and <strong>intellectual curiosity</strong>. The flower\'s calming scent and healing properties reflect Gemini\'s ability to <strong>communicate and connect</strong> with others, while its <strong>versatility</strong> mirrors Gemini\'s <strong>adaptable personality</strong>.'
+        }
       },
       'cancer': {
         name: 'Cancer',
         icon: '♋',
         dates: 'June 21 - July 22',
-        traits: ['Nurturing', 'Protective', 'Sympathetic', 'Moody', 'Emotional']
+        flower: {
+          name: 'White Lily',
+          image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center',
+          reason: 'The white lily represents Cancer\'s <strong>pure, nurturing heart</strong> and <strong>protective nature</strong>. Like the lily that grows in water and symbolizes motherhood, Cancer is deeply connected to <strong>home, family, and emotional security</strong>, offering <strong>unconditional love and care</strong>.'
+        }
       },
       'leo': {
         name: 'Leo',
         icon: '♌',
         dates: 'July 23 - August 22',
-        traits: ['Creative', 'Passionate', 'Generous', 'Warm-hearted', 'Cheerful']
+        flower: {
+          name: 'Sunflower',
+          image: 'https://images.unsplash.com/photo-1597848212624-a19eb35e2651?w=400&h=400&fit=crop&crop=center',
+          reason: 'The sunflower perfectly represents Leo\'s <strong>sunny disposition</strong> and <strong>natural leadership</strong>. Like the sunflower that always faces the sun and stands tall and proud, Leo radiates <strong>warmth, creativity, and confidence</strong>, drawing others to their <strong>magnetic personality</strong>.'
+        }
       },
       'virgo': {
         name: 'Virgo',
         icon: '♍',
         dates: 'August 23 - September 22',
-        traits: ['Loyal', 'Analytical', 'Kind', 'Hardworking', 'Practical']
+        flower: {
+          name: 'Chrysanthemum',
+          image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center',
+          reason: 'The chrysanthemum symbolizes Virgo\'s <strong>attention to detail</strong> and <strong>practical wisdom</strong>. Like this flower that blooms in autumn and represents perfection and longevity, Virgo is <strong>methodical, reliable</strong>, and creates beauty through <strong>careful planning and hard work</strong>.'
+        }
       },
       'libra': {
         name: 'Libra',
         icon: '♎',
         dates: 'September 23 - October 22',
-        traits: ['Diplomatic', 'Gracious', 'Fair-minded', 'Peaceful', 'Idealistic']
+        flower: {
+          name: 'Pink Rose',
+          image: 'https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=400&fit=crop&crop=center',
+          reason: 'The pink rose represents Libra\'s love for <strong>harmony, beauty, and relationships</strong>. Like the rose that symbolizes love and balance, Libra seeks to create <strong>peace and beauty</strong> in all aspects of life, valuing <strong>fairness</strong> and maintaining <strong>harmonious connections</strong>.'
+        }
       },
       'scorpio': {
         name: 'Scorpio',
         icon: '♏',
         dates: 'October 23 - November 21',
-        traits: ['Passionate', 'Determined', 'Magnetic', 'Mysterious', 'Strategic']
+        flower: {
+          name: 'Dark Orchid',
+          image: 'https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=400&fit=crop&crop=center',
+          reason: 'The dark orchid represents Scorpio\'s <strong>mysterious and intense nature</strong>. Like the orchid that grows in hidden places and has deep, complex beauty, Scorpio possesses <strong>profound emotional depth, magnetic attraction</strong>, and <strong>transformative power</strong>.'
+        }
       },
       'sagittarius': {
         name: 'Sagittarius',
         icon: '♐',
         dates: 'November 22 - December 21',
-        traits: ['Optimistic', 'Adventurous', 'Independent', 'Honest', 'Philosophical']
+        flower: {
+          name: 'Carnation',
+          image: 'https://plus.unsplash.com/premium_photo-1677178629088-ba7d3a23049a?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D?w=400&h=400&fit=crop&crop=center',
+          reason: 'The carnation represents Sagittarius\' <strong>adventurous spirit</strong> and <strong>optimistic outlook</strong>. Like the carnation that comes in many colors and symbolizes fascination and distinction, Sagittarius is <strong>curious, philosophical</strong>, and always seeking <strong>new experiences and knowledge</strong>.'
+        }
       },
       'capricorn': {
         name: 'Capricorn',
         icon: '♑',
         dates: 'December 22 - January 19',
-        traits: ['Responsible', 'Disciplined', 'Self-controlled', 'Ambitious', 'Patient']
+        flower: {
+          name: 'Ivy',
+          image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop&crop=center',
+          reason: 'Ivy represents Capricorn\'s <strong>determination</strong> and ability to <strong>climb to great heights</strong>. Like ivy that grows steadily and persistently, Capricorn is <strong>ambitious, disciplined</strong>, and builds <strong>lasting success</strong> through <strong>patience and hard work</strong>.'
+        }
       },
       'aquarius': {
         name: 'Aquarius',
         icon: '♒',
         dates: 'January 20 - February 18',
-        traits: ['Progressive', 'Original', 'Independent', 'Humanitarian', 'Intellectual']
+        flower: {
+          name: 'Orchid',
+          image: 'https://images.unsplash.com/photo-1562690868-60bbe7293e94?w=400&h=400&fit=crop&crop=center',
+          reason: 'The orchid represents Aquarius\' <strong>unique and innovative nature</strong>. Like the orchid that is rare and distinctive, Aquarius is <strong>original, independent</strong>, and <strong>ahead of their time</strong>, bringing <strong>new ideas and humanitarian values</strong> to the world.'
+        }
       },
       'pisces': {
         name: 'Pisces',
         icon: '♓',
         dates: 'February 19 - March 20',
-        traits: ['Compassionate', 'Artistic', 'Intuitive', 'Gentle', 'Musical']
+        flower: {
+          name: 'Water Lily',
+          image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop&crop=center',
+          reason: 'The water lily represents Pisces\' <strong>dreamy and intuitive nature</strong>. Like the water lily that floats on water and connects the spiritual and physical worlds, Pisces is <strong>deeply intuitive, artistic</strong>, and has a natural connection to the <strong>mystical and creative realms</strong>.'
+        }
       }
     };
 
@@ -349,8 +428,10 @@ const metadata = {
       const nextBtn = document.getElementById('next-btn') as HTMLButtonElement;
       const restartBtn = document.getElementById('restart-btn') as HTMLButtonElement;
       const shareBtn = document.getElementById('share-btn') as HTMLButtonElement;
+      const emailInput = document.getElementById('email-input') as HTMLInputElement;
+      const emailNextBtn = document.getElementById('email-next-btn') as HTMLButtonElement;
 
-      if (!birthDateInput || !nextBtn || !restartBtn || !shareBtn) {
+      if (!birthDateInput || !nextBtn || !restartBtn || !shareBtn || !emailInput || !emailNextBtn) {
         console.error('Required elements not found');
         return;
       }
@@ -358,6 +439,18 @@ const metadata = {
       // Enable/disable next button based on date input
       birthDateInput.addEventListener('change', function() {
         nextBtn.disabled = !this.value;
+      });
+
+      // Enable/disable email next button based on email input
+      emailInput.addEventListener('input', function() {
+        emailNextBtn.disabled = !this.value;
+      });
+
+      // Email next button click handler
+      emailNextBtn.addEventListener('click', function() {
+        // In a real application, you would send the email to your backend
+        // For now, we'll just show the birth date step
+        showStep(2);
       });
 
       // Next button click handler
@@ -370,58 +463,53 @@ const metadata = {
         const zodiacData = zodiacSigns[zodiacKey as keyof typeof zodiacSigns];
 
         // Show loading step
-        showStep(2);
+        showStep(3);
 
         // Simulate loading time
         setTimeout(() => {
-          // Display result
-          const zodiacIcon = document.getElementById('zodiac-icon');
-          const zodiacName = document.getElementById('zodiac-name');
-          const zodiacDates = document.getElementById('zodiac-dates');
-          const traitsContainer = document.getElementById('zodiac-traits');
+          // Display flower information with image
+          const flowerInfo = document.getElementById('flower-info');
 
-          if (zodiacIcon && zodiacName && zodiacDates && traitsContainer) {
-            zodiacIcon.textContent = zodiacData.icon;
-            zodiacName.textContent = zodiacData.name;
-            zodiacDates.textContent = zodiacData.dates;
-            
-            traitsContainer.innerHTML = zodiacData.traits.map(trait => 
-              `<div class="flex items-center">
-                <span class="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                <span>${trait}</span>
-              </div>`
-            ).join('');
+          if (flowerInfo) {
+            // Display flower section
+            flowerInfo.innerHTML = `
+              <div class="text-center mb-4">
+                <img src="${zodiacData.flower.image}" alt="${zodiacData.flower.name}" class="flower-image mx-auto mb-4">
+                <h4 class="text-lg font-medium text-gray-200 mb-3">${zodiacData.flower.name}</h4>
+              </div>
+              <p class="text-sm leading-relaxed text-center">${zodiacData.flower.reason}</p>
+            `;
           }
 
-          showStep(3);
+          showStep(4);
         }, 3000);
       });
 
       // Restart button click handler
       restartBtn.addEventListener('click', function() {
         birthDateInput.value = '';
+        emailInput.value = '';
         nextBtn.disabled = true;
+        emailNextBtn.disabled = true;
         showStep(1);
       });
 
       // Share button click handler
       shareBtn.addEventListener('click', function() {
-        const zodiacName = document.getElementById('zodiac-name');
-        const zodiacIcon = document.getElementById('zodiac-icon');
+        const flowerName = document.querySelector('#flower-info h4');
         
-        if (zodiacName && zodiacIcon) {
-          const nameText = zodiacName.textContent || '';
-          const iconText = zodiacIcon.textContent || '';
+        if (flowerName) {
+          const nameText = flowerName.textContent || '';
           
           if (navigator.share) {
             navigator.share({
-              title: 'My Zodiac Sign',
-              text: `I just discovered I'm a ${nameText} ${iconText}! Take the astrology quiz to find your sign too!`,
+              title: 'My Sacred Flower',
+              text: `I just discovered my sacred flower is the ${nameText}! Take the astrology quiz to find your flower too!`,
               url: window.location.href
             });
           } else {
             // Fallback: copy to clipboard
-            const text = `I just discovered I'm a ${nameText} ${iconText}! Take the astrology quiz to find your sign too! ${window.location.href}`;
+            const text = `I just discovered my sacred flower is the ${nameText}! Take the astrology quiz to find your flower too! ${window.location.href}`;
             navigator.clipboard.writeText(text).then(() => {
               alert('Result copied to clipboard!');
             });
