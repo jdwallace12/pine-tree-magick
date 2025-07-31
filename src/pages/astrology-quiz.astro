@@ -3,7 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import { Image } from 'astro:assets';
 
 const metadata = {
-  title: 'Astrology Quiz - Discover Your Zodiac Sign',
+  title: 'Astrology Quiz - Sacred Flower Reading',
   description: 'Take our mystical astrology quiz to discover your true zodiac sign through the alignment of the stars.',
   canonical: '/astrology-quiz'
 };
@@ -26,12 +26,12 @@ const metadata = {
     <div class="relative z-10 container mx-auto px-4 py-8">
       <div class="max-w-3xl mx-auto">
         <!-- Header -->
-        <div class="text-center mb-8 animate-fade-in">
+        <div class="text-center mb-16 mt-10 animate-fade-in">
           <h1 class="text-4xl md:text-6xl font-normal tracking-tight text-gray-200 mb-3 font-heading">
-            ✨ Astrology Quiz ✨
+            ✨ Sacred Flower Reading ✨
           </h1>
           <p class="text-xl bg-gradient-to-r from-secondary via-primary to-primary bg-clip-text text-transparent">
-            Discover your true zodiac sign through the mystical alignment of the stars
+            Discover your true zodiac sign sacred flower
           </p>
         </div>
 
@@ -45,23 +45,35 @@ const metadata = {
             </div>
 
             <div class="max-w-sm mx-auto">
-              <div class="mb-6">
-                <label for="email-input" class="block text-gray-200 text-base font-medium mb-2">Email Address</label>
-                <input 
-                  type="email" 
-                  id="email-input" 
-                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
-                  placeholder="Enter your email address"
-                >
-              </div>
+              <form id="email-form" name="quiz-leads" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="quiz-leads" />
+                <p class="hidden">
+                  <label>
+                    Don't fill this out if you're human: <input name="bot-field" />
+                  </label>
+                </p>
+                
+                <div class="mb-6">
+                  <label for="email-input" class="block text-gray-200 text-base font-medium mb-2">Email Address</label>
+                  <input 
+                    type="email" 
+                    id="email-input" 
+                    name="email"
+                    required
+                    class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
+                    placeholder="Enter your email address"
+                  >
+                </div>
 
-              <button 
-                id="email-next-btn" 
-                class="btn-primary w-full font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled
-              >
-                Continue to Quiz ✨
-              </button>
+                <button 
+                  type="submit"
+                  id="email-next-btn" 
+                  class="btn-primary w-full font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled
+                >
+                  Continue to Quiz ✨
+                </button>
+              </form>
             </div>
           </div>
 
@@ -108,8 +120,8 @@ const metadata = {
           <div id="step-4" class="quiz-step hidden">
             <div class="text-center">
               <!-- Flower Section -->
-              <div class="bg-page/20 backdrop-blur-sm rounded-xl p-6 border border-gray-500/20">
-                <h3 class="text-xl font-normal tracking-tight text-gray-200 mb-4 font-heading">🌸 Your Sacred Flower</h3>
+              <div class="bg-page/20 backdrop-blur-sm rounded-xl p-6">
+                <h3 class="text-xl font-normal tracking-tight text-gray-200 mb-4 font-heading">Your Sacred Flower:</h3>
                 <div id="flower-info" class="text-muted"></div>
               </div>
 
@@ -430,8 +442,9 @@ const metadata = {
       const shareBtn = document.getElementById('share-btn') as HTMLButtonElement;
       const emailInput = document.getElementById('email-input') as HTMLInputElement;
       const emailNextBtn = document.getElementById('email-next-btn') as HTMLButtonElement;
+      const emailForm = document.getElementById('email-form') as HTMLFormElement;
 
-      if (!birthDateInput || !nextBtn || !restartBtn || !shareBtn || !emailInput || !emailNextBtn) {
+      if (!birthDateInput || !nextBtn || !restartBtn || !shareBtn || !emailInput || !emailNextBtn || !emailForm) {
         console.error('Required elements not found');
         return;
       }
@@ -446,11 +459,33 @@ const metadata = {
         emailNextBtn.disabled = !this.value;
       });
 
-      // Email next button click handler
-      emailNextBtn.addEventListener('click', function() {
-        // In a real application, you would send the email to your backend
-        // For now, we'll just show the birth date step
-        showStep(2);
+      // Form submission handler
+      emailForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(emailForm);
+        const email = formData.get('email');
+
+        if (!email) {
+          alert('Please enter your email address.');
+          return;
+        }
+
+        // Submit to Netlify
+        fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData as any)
+        })
+        .then(() => {
+          // Show birth date step
+          showStep(2);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          // Still show birth date step even if form submission fails
+          showStep(2);
+        });
       });
 
       // Next button click handler
@@ -482,7 +517,7 @@ const metadata = {
           }
 
           showStep(4);
-        }, 3000);
+        }, 600);
       });
 
       // Restart button click handler
