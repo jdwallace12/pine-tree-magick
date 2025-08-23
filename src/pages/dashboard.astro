@@ -1,0 +1,173 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+
+const metadata = {
+  title: 'Dashboard - Pine Tree Magick',
+  description: 'Access your courses and track your mystical learning journey.',
+  canonical: '/dashboard'
+};
+
+const courses = await getCollection('course');
+---
+
+<Layout metadata={metadata}>
+  <div class="min-h-screen bg-dark relative overflow-hidden">
+    <!-- Background with night sky -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary to-dark opacity-90"></div>
+      <div class="absolute inset-0 opacity-55" style="background-image: url('/assets/images/night-sky.webp'); background-size: cover; background-position: center;"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-8">
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <h1 class="text-4xl font-normal tracking-tight text-gray-200 mb-3 font-heading">
+          ✨ Your Learning Dashboard ✨
+        </h1>
+        <p class="text-xl text-muted">
+          Continue your mystical journey with your purchased courses
+        </p>
+      </div>
+
+      <!-- User Info -->
+      <div class="bg-page/20 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-gray-500/20">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-2xl font-normal tracking-tight text-gray-200 mb-2 font-heading">
+              Welcome back, <span id="user-email">Student</span>!
+            </h2>
+            <p class="text-muted">Ready to continue your astrological studies?</p>
+          </div>
+          <button 
+            id="signout-btn"
+            class="btn-secondary font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
+
+      <!-- My Courses -->
+      <div class="bg-page/20 backdrop-blur-lg rounded-2xl p-6 border border-gray-500/20">
+        <h3 class="text-2xl font-normal tracking-tight text-gray-200 mb-6 font-heading">
+          🌟 My Courses
+        </h3>
+        
+        <div id="courses-container" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <!-- Courses will be loaded here dynamically -->
+        </div>
+
+        <div id="no-courses" class="text-center py-12 hidden">
+          <div class="text-6xl mb-4">📚</div>
+          <h4 class="text-xl font-normal tracking-tight text-gray-200 mb-2 font-heading">
+            No courses yet
+          </h4>
+          <p class="text-muted mb-6">
+            Purchase your first course to begin your mystical journey
+          </p>
+          <a href="/courses" class="btn-primary font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+            Browse Courses
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { getCurrentUser, signOut } from '~/lib/auth';
+    import { getUserCourses } from '~/lib/courses';
+
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const user = await getCurrentUser();
+        if (!user) {
+          window.location.href = '/login';
+          return;
+        }
+
+        // Display user email
+        const userEmailElement = document.getElementById('user-email');
+        if (userEmailElement) {
+          userEmailElement.textContent = user.email || 'Student';
+        }
+
+        // Load user's courses
+        await loadUserCourses(user.id);
+
+      } catch (error) {
+        console.error('Authentication error:', error);
+        window.location.href = '/login';
+      }
+    });
+
+    // Sign out handler
+    document.getElementById('signout-btn')?.addEventListener('click', async () => {
+      try {
+        await signOut();
+        window.location.href = '/login';
+      } catch (error) {
+        console.error('Sign out error:', error);
+      }
+    });
+
+    // Load user's courses
+    async function loadUserCourses(userId: string) {
+      try {
+        const userCourses = await getUserCourses(userId);
+        const coursesContainer = document.getElementById('courses-container');
+        const noCoursesElement = document.getElementById('no-courses');
+
+        if (!coursesContainer || !noCoursesElement) return;
+
+        if (userCourses.length === 0) {
+          coursesContainer.classList.add('hidden');
+          noCoursesElement.classList.remove('hidden');
+          return;
+        }
+
+        coursesContainer.classList.remove('hidden');
+        noCoursesElement.classList.add('hidden');
+
+        // Display courses
+        coursesContainer.innerHTML = userCourses.map(course => `
+          <div class="bg-page/10 backdrop-blur-sm rounded-xl p-6 border border-gray-500/20 hover:border-primary/50 transition-all duration-300">
+            <div class="aspect-video bg-gradient-to-br from-secondary/20 to-primary/20 rounded-lg mb-4 flex items-center justify-center">
+              <span class="text-4xl">📚</span>
+            </div>
+            
+            <h4 class="text-lg font-medium text-gray-200 mb-2">${course.courses.title}</h4>
+            <p class="text-sm text-muted mb-4 line-clamp-2">${course.courses.excerpt}</p>
+            
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-muted">${course.courses.duration}</span>
+              <a 
+                href="/course/${course.courses.slug}" 
+                class="btn-primary font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-sm"
+              >
+                Continue Learning
+              </a>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error('Error loading courses:', error);
+        // Show error state
+        const coursesContainer = document.getElementById('courses-container');
+        if (coursesContainer) {
+          coursesContainer.innerHTML = `
+            <div class="col-span-full text-center py-12">
+              <div class="text-6xl mb-4">⚠️</div>
+              <h4 class="text-xl font-normal tracking-tight text-gray-200 mb-2 font-heading">
+                Error loading courses
+              </h4>
+              <p class="text-muted">Please try refreshing the page</p>
+            </div>
+          `;
+        }
+      }
+    }
+  </script>
+</Layout> 

@@ -1,0 +1,269 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+
+const metadata = {
+  title: 'Login - Pine Tree Magick',
+  description: 'Sign in to access your courses and continue your mystical journey.',
+  canonical: '/login'
+};
+
+const courses = await getCollection('course');
+---
+
+<Layout metadata={metadata}>
+  <div class="min-h-screen bg-dark relative overflow-hidden">
+    <!-- Background with night sky -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary to-dark opacity-90"></div>
+      <div class="absolute inset-0 opacity-55" style="background-image: url('/assets/images/night-sky.webp'); background-size: cover; background-position: center;"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-8">
+      <div class="max-w-md mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-normal tracking-tight text-gray-200 mb-3 font-heading">
+            ✨ Welcome Back ✨
+          </h1>
+          <p class="text-xl text-muted">
+            Sign in to access your courses and continue your mystical journey
+          </p>
+        </div>
+
+        <!-- Login Form -->
+        <div class="bg-page/20 backdrop-blur-lg rounded-2xl p-6 md:p-8 shadow-2xl border border-gray-500/20">
+          <div id="login-form" class="auth-form active">
+            <h2 class="text-2xl font-normal tracking-tight text-gray-200 mb-6 text-center font-heading">Sign In</h2>
+            
+            <form id="signin-form" class="space-y-4">
+              <div>
+                <label for="login-email" class="block text-gray-200 text-sm font-medium mb-2">Email</label>
+                <input 
+                  type="email" 
+                  id="login-email" 
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
+                  placeholder="Enter your email"
+                >
+              </div>
+
+              <div>
+                <label for="login-password" class="block text-gray-200 text-sm font-medium mb-2">Password</label>
+                <input 
+                  type="password" 
+                  id="login-password" 
+                  name="password"
+                  required
+                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
+                  placeholder="Enter your password"
+                >
+              </div>
+
+              <button 
+                type="submit"
+                class="btn-primary w-full font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 transform hover:scale-105"
+              >
+                Sign In ✨
+              </button>
+            </form>
+
+            <div class="mt-6 text-center">
+              <button 
+                id="show-signup"
+                class="text-muted hover:text-gray-200 transition-colors"
+              >
+                Don't have an account? Sign up
+              </button>
+            </div>
+
+            <div class="mt-4 text-center">
+              <button 
+                id="show-forgot-password"
+                class="text-muted hover:text-gray-200 transition-colors text-sm"
+              >
+                Forgot your password?
+              </button>
+            </div>
+          </div>
+
+          <!-- Sign Up Form -->
+          <div id="signup-form" class="auth-form hidden">
+            <h2 class="text-2xl font-normal tracking-tight text-gray-200 mb-6 text-center font-heading">Create Account</h2>
+            
+            <form id="signup-form-submit" class="space-y-4">
+              <div>
+                <label for="signup-email" class="block text-gray-200 text-sm font-medium mb-2">Email</label>
+                <input 
+                  type="email" 
+                  id="signup-email" 
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
+                  placeholder="Enter your email"
+                >
+              </div>
+
+              <div>
+                <label for="signup-password" class="block text-gray-200 text-sm font-medium mb-2">Password</label>
+                <input 
+                  type="password" 
+                  id="signup-password" 
+                  name="password"
+                  required
+                  minlength="6"
+                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
+                  placeholder="Create a password (min 6 characters)"
+                >
+              </div>
+
+              <button 
+                type="submit"
+                class="btn-primary w-full font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 transform hover:scale-105"
+              >
+                Create Account ✨
+              </button>
+            </form>
+
+            <div class="mt-6 text-center">
+              <button 
+                id="show-login"
+                class="text-muted hover:text-gray-200 transition-colors"
+              >
+                Already have an account? Sign in
+              </button>
+            </div>
+          </div>
+
+          <!-- Forgot Password Form -->
+          <div id="forgot-password-form" class="auth-form hidden">
+            <h2 class="text-2xl font-normal tracking-tight text-gray-200 mb-6 text-center font-heading">Reset Password</h2>
+            
+            <form id="reset-password-form" class="space-y-4">
+              <div>
+                <label for="reset-email" class="block text-gray-200 text-sm font-medium mb-2">Email</label>
+                <input 
+                  type="email" 
+                  id="reset-email" 
+                  name="email"
+                  required
+                  class="w-full px-4 py-3 bg-white/10 border border-gray-500/30 rounded-lg text-white text-base focus:outline-none focus:ring-4 focus:ring-primary/50 transition-all duration-300 backdrop-blur-sm placeholder-white/70"
+                  placeholder="Enter your email"
+                >
+              </div>
+
+              <button 
+                type="submit"
+                class="btn-primary w-full font-semibold py-3 px-6 rounded-lg text-base transition-all duration-300 transform hover:scale-105"
+              >
+                Send Reset Link ✨
+              </button>
+            </form>
+
+            <div class="mt-6 text-center">
+              <button 
+                id="show-login-from-reset"
+                class="text-muted hover:text-gray-200 transition-colors"
+              >
+                Back to sign in
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .auth-form {
+      transition: all 0.3s ease-in-out;
+    }
+
+    .auth-form.hidden {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+  </style>
+
+  <script>
+    import { signIn, signUp, resetPassword } from '~/lib/auth';
+
+    // Form switching
+    document.getElementById('show-signup')?.addEventListener('click', () => {
+      document.getElementById('login-form')?.classList.add('hidden');
+      document.getElementById('signup-form')?.classList.remove('hidden');
+      document.getElementById('forgot-password-form')?.classList.add('hidden');
+    });
+
+    document.getElementById('show-login')?.addEventListener('click', () => {
+      document.getElementById('signup-form')?.classList.add('hidden');
+      document.getElementById('login-form')?.classList.remove('hidden');
+      document.getElementById('forgot-password-form')?.classList.add('hidden');
+    });
+
+    document.getElementById('show-forgot-password')?.addEventListener('click', () => {
+      document.getElementById('login-form')?.classList.add('hidden');
+      document.getElementById('signup-form')?.classList.add('hidden');
+      document.getElementById('forgot-password-form')?.classList.remove('hidden');
+    });
+
+    document.getElementById('show-login-from-reset')?.addEventListener('click', () => {
+      document.getElementById('forgot-password-form')?.classList.add('hidden');
+      document.getElementById('login-form')?.classList.remove('hidden');
+    });
+
+    // Sign in form
+    document.getElementById('signin-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+
+      try {
+        await signIn(email, password);
+        window.location.href = '/dashboard';
+      } catch (error) {
+        alert('Sign in failed: ' + error.message);
+      }
+    });
+
+    // Sign up form
+    document.getElementById('signup-form-submit')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const email = formData.get('email') as string;
+      const password = formData.get('password') as string;
+
+      try {
+        await signUp(email, password);
+        alert('Account created! Please check your email to verify your account.');
+        // Switch back to login form
+        document.getElementById('signup-form')?.classList.add('hidden');
+        document.getElementById('login-form')?.classList.remove('hidden');
+      } catch (error) {
+        alert('Sign up failed: ' + error.message);
+      }
+    });
+
+    // Reset password form
+    document.getElementById('reset-password-form')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target as HTMLFormElement);
+      const email = formData.get('email') as string;
+
+      try {
+        await resetPassword(email);
+        alert('Password reset link sent! Please check your email.');
+        // Switch back to login form
+        document.getElementById('forgot-password-form')?.classList.add('hidden');
+        document.getElementById('login-form')?.classList.remove('hidden');
+      } catch (error) {
+        alert('Password reset failed: ' + error.message);
+      }
+    });
+  </script>
+</Layout> 

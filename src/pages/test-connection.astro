@@ -1,0 +1,135 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Test Connection - Pine Tree Magick',
+  description: 'Testing Supabase connection and configuration.',
+  canonical: '/test-connection'
+};
+---
+
+<Layout metadata={metadata}>
+  <div class="min-h-screen bg-dark relative overflow-hidden">
+    <!-- Background with night sky -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary to-dark opacity-90"></div>
+      <div class="absolute inset-0 opacity-55" style="background-image: url('/assets/images/night-sky.webp'); background-size: cover; background-position: center;"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-8">
+      <div class="max-w-2xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+          <h1 class="text-4xl font-normal tracking-tight text-gray-200 mb-4 font-heading">
+            🔧 Connection Test
+          </h1>
+          <p class="text-xl text-muted">
+            Testing Supabase connection and configuration
+          </p>
+        </div>
+
+        <!-- Test Results -->
+        <div class="bg-page/20 backdrop-blur-lg rounded-2xl p-6 border border-gray-500/20">
+          <div id="test-results" class="space-y-4">
+            <div class="text-center">
+              <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p class="text-muted">Testing connection...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Environment Info -->
+        <div class="bg-page/20 backdrop-blur-lg rounded-2xl p-6 mt-6 border border-gray-500/20">
+          <h3 class="text-xl font-normal tracking-tight text-gray-200 mb-4 font-heading">Environment Check</h3>
+          <div class="space-y-2 text-sm">
+            <div class="flex justify-between">
+              <span class="text-muted">SUPABASE_URL:</span>
+              <span id="env-url" class="text-gray-200">Checking...</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-muted">SUPABASE_ANON_KEY:</span>
+              <span id="env-key" class="text-gray-200">Checking...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { supabase } from '~/lib/supabase';
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      const testResults = document.getElementById('test-results');
+      const envUrl = document.getElementById('env-url');
+      const envKey = document.getElementById('env-key');
+
+      // Check environment variables
+      const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+      const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+      envUrl.textContent = supabaseUrl ? '✅ Set' : '❌ Missing';
+      envKey.textContent = supabaseKey ? '✅ Set' : '❌ Missing';
+
+      // Test Supabase connection
+      try {
+        // Test basic connection
+        const { data, error } = await supabase.from('course_purchases').select('count').limit(1);
+        
+        if (error) {
+          if (error.code === 'PGRST116') {
+            // Table doesn't exist yet - this is expected
+            testResults.innerHTML = `
+              <div class="text-center">
+                <div class="text-6xl mb-4">⚠️</div>
+                <h4 class="text-xl font-normal tracking-tight text-gray-200 mb-2 font-heading">
+                  Connection Successful!
+                </h4>
+                <p class="text-muted mb-4">
+                  Supabase is connected, but the database tables haven't been created yet.
+                </p>
+                <div class="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
+                  <p class="text-yellow-200 text-sm">
+                    <strong>Next step:</strong> Run the SQL commands from COURSES_SETUP.md in your Supabase SQL Editor to create the required tables.
+                  </p>
+                </div>
+              </div>
+            `;
+          } else {
+            throw error;
+          }
+        } else {
+          testResults.innerHTML = `
+            <div class="text-center">
+              <div class="text-6xl mb-4">✅</div>
+              <h4 class="text-xl font-normal tracking-tight text-gray-200 mb-2 font-heading">
+                Connection Successful!
+              </h4>
+              <p class="text-muted">
+                Supabase is connected and database tables are ready.
+              </p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        console.error('Connection error:', error);
+        testResults.innerHTML = `
+          <div class="text-center">
+            <div class="text-6xl mb-4">❌</div>
+            <h4 class="text-xl font-normal tracking-tight text-gray-200 mb-2 font-heading">
+              Connection Failed
+            </h4>
+            <p class="text-muted mb-4">
+              There was an error connecting to Supabase.
+            </p>
+            <div class="bg-red-500/20 border border-red-500/30 rounded-lg p-4">
+              <p class="text-red-200 text-sm">
+                <strong>Error:</strong> ${error.message}
+              </p>
+            </div>
+          </div>
+        `;
+      }
+    });
+  </script>
+</Layout> 

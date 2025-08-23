@@ -116,6 +116,38 @@ const freebieCollection = defineCollection({
   }),
 });
 
+const courseCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    excerpt: z.string(),
+    image: z.string(),
+    price: z.number(),
+    duration: z.string(), // e.g., "8 weeks", "3 months"
+    level: z.enum(['beginner', 'intermediate', 'advanced']),
+    category: z.string(),
+    tags: z.array(z.string()).optional(),
+    lessons: z.array(z.object({
+      title: z.string(),
+      description: z.string(),
+      duration: z.string(), // e.g., "45 minutes"
+      videoUrl: z.string().optional(),
+      content: z.string().optional(), // MDX content
+      resources: z.array(z.object({
+        name: z.string(),
+        type: z.enum(['pdf', 'video', 'audio', 'link']),
+        url: z.string(),
+      })).optional(),
+    })),
+    requirements: z.array(z.string()).optional(),
+    outcomes: z.array(z.string()).optional(),
+    instructor: z.string(),
+    publishDate: z.date().optional(),
+    updateDate: z.date().optional(),
+    draft: z.boolean().optional(),
+    metadata: metadataDefinition(),
+  }),
+});
 
 export const collections = {
   post: postCollection,
@@ -123,4 +155,5 @@ export const collections = {
   ritual: ritualCollection,
   bundle: bundleCollection,
   freebie: freebieCollection,
+  course: courseCollection,
 };

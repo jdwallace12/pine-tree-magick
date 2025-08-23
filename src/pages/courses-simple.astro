@@ -1,0 +1,130 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { getCollection } from 'astro:content';
+
+const metadata = {
+  title: 'Courses - Pine Tree Magick',
+  description: 'Explore our mystical courses and begin your journey into astrology and magick.',
+  canonical: '/courses'
+};
+
+const courses = await getCollection('course', ({ data }) => !data.draft);
+---
+
+<Layout metadata={metadata}>
+  <div class="min-h-screen bg-dark relative overflow-hidden">
+    <!-- Background with night sky -->
+    <div class="absolute inset-0">
+      <div class="absolute inset-0 bg-gradient-to-b from-primary to-dark opacity-90"></div>
+      <div class="absolute inset-0 opacity-55" style="background-image: url('/assets/images/night-sky.webp'); background-size: cover; background-position: center;"></div>
+    </div>
+
+    <div class="relative z-10 container mx-auto px-4 py-8">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-normal tracking-tight text-gray-200 mb-4 font-heading">
+          ✨ Mystical Courses ✨
+        </h1>
+        <p class="text-xl text-muted max-w-3xl mx-auto">
+          Embark on a transformative journey through our carefully crafted courses designed to awaken your inner mystic and deepen your understanding of the cosmos.
+        </p>
+      </div>
+
+      <!-- Course Grid -->
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {courses.map((course) => (
+          <div class="bg-page/20 backdrop-blur-lg rounded-2xl p-6 border border-gray-500/20 hover:border-primary/50 transition-all duration-300 transform hover:scale-105">
+            <!-- Course Image -->
+            <div class="aspect-video bg-gradient-to-br from-secondary/20 to-primary/20 rounded-xl mb-6 flex items-center justify-center overflow-hidden">
+              {course.data.image ? (
+                <img 
+                  src={course.data.image} 
+                  alt={course.data.title}
+                  class="w-full h-full object-cover"
+                />
+              ) : (
+                <span class="text-6xl">📚</span>
+              )}
+            </div>
+
+            <!-- Course Info -->
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-xl font-medium text-gray-200 mb-2 font-heading">
+                  {course.data.title}
+                </h3>
+                <p class="text-muted line-clamp-3">
+                  {course.data.excerpt}
+                </p>
+              </div>
+
+              <!-- Course Meta -->
+              <div class="flex items-center justify-between text-sm text-muted">
+                <span>⏱️ {course.data.duration}</span>
+                <span>📊 {course.data.level}</span>
+              </div>
+
+              <!-- Course Stats -->
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-muted">📚 {course.data.lessons.length} lessons</span>
+                <span class="text-primary font-semibold">${course.data.price}</span>
+              </div>
+
+              <!-- Course Tags -->
+              {course.data.tags && course.data.tags.length > 0 && (
+                <div class="flex flex-wrap gap-2">
+                  {course.data.tags.slice(0, 3).map((tag) => (
+                    <span class="px-2 py-1 bg-primary/20 text-primary text-xs rounded-full">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <!-- Course Description -->
+              <p class="text-sm text-muted line-clamp-2">
+                {course.data.description}
+              </p>
+
+              <!-- CTA Buttons -->
+              <div class="flex gap-3 pt-4">
+                <a 
+                  href={`/course/${course.slug}`}
+                  class="btn-primary flex-1 font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 text-center"
+                >
+                  Learn More
+                </a>
+                <a 
+                  href="/login"
+                  class="btn-secondary font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
+                >
+                  Enroll Now
+                </a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Call to Action -->
+      <div class="text-center mt-16">
+        <div class="bg-page/20 backdrop-blur-lg rounded-2xl p-8 border border-gray-500/20">
+          <h2 class="text-3xl font-normal tracking-tight text-gray-200 mb-4 font-heading">
+            Ready to Begin Your Journey?
+          </h2>
+          <p class="text-muted mb-6 max-w-2xl mx-auto">
+            Join our community of mystics and spiritual seekers. Each course is designed to provide you with practical knowledge and spiritual growth.
+          </p>
+          <div class="flex gap-4 justify-center">
+            <a href="/login" class="btn-primary font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+              Sign In to Continue
+            </a>
+            <a href="/login" class="btn-secondary font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105">
+              Create Account
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout> 
