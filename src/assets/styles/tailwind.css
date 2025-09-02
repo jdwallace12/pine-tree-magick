@@ -126,3 +126,78 @@
    top: 35px;
   }
 }
+
+/* Enhanced Hero Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(255, 255, 255, 0.3); }
+  to { box-shadow: 0 0 20px rgba(255, 255, 255, 0.6); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes titleGlow {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+}
+
+@keyframes subtitleFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animation utility classes */
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradientShift 8s ease infinite;
+}
