@@ -65,6 +65,10 @@ export const headerData = {
       text: 'Shop',
       href: getPermalink('/shop'),
     },
+    {
+      text: 'Substack',
+      href: "https://pinetreemagick.substack.com/",
+    },
   ],
   actions: [{          
     text: 'Book a Reading',
@@ -86,6 +90,7 @@ export const getFooterData = async () => {
           { text: 'Book a Written Reading', href: 'book-a-written-reading' },
           { text: 'About', href: '/about' },
           { text: 'Workshops', href: '/workshops' },
+          { text: 'Substack', href: 'https://pinetreemagick.substack.com/' },
         ],
       },
       ...(shopLinks.length > 0 ? [{
