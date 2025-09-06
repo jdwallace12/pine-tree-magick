@@ -43,10 +43,11 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
 
 <Layout metadata={metadata}>
   <article class="max-w-2xl mx-auto p-6 space-y-6 mb-12">
-    <div class="flex gap-8 justify-between items-center sticky top-16 bg-dark py-2">
+    <div class="flex items-center justify-between bg-dark py-4 sticky top-[4.5rem]">
       <a href="/shop" class="flex underline w-max">
         <Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop
       </a>
+      <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href="#download">Download</a>
     </div>
     
     <div class="flex flex-col gap-8">
@@ -67,7 +68,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
             This freebie has expired and is no longer available.
           </div>
         ) : (
-          <div class="bg-primary/10 p-8 rounded-lg">
+          <div class="bg-primary/10 p-8 rounded-lg" id="download">
             <Form
               inputs={[
                 {
