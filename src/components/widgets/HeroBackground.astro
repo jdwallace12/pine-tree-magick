@@ -1,6 +1,7 @@
 ---
 import Image from '~/components/common/Image.astro';
 import Button from '~/components/ui/Button.astro';
+import CanvasAnimations from './CanvasAnimations.astro';
 
 import type { Hero as Props } from '~/types';
 
@@ -19,26 +20,22 @@ const {
 ---
 
 <section class="relative md:-mt-[108px] lg:-mt-[132px] not-prose curved-hero overflow-hidden" {...id ? { id } : {}}>
+  <!-- Canvas-based animations for improved performance -->
+  <CanvasAnimations />
+  
   <!-- Enhanced Background with Effects -->
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : null}
     </slot>
     
-    <!-- Floating Stars Effect -->
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="floating-stars">
-        <div class="star star-1"></div>
-        <div class="star star-2"></div>
-        <div class="star star-3"></div>
-        <div class="star star-4"></div>
-        <div class="star star-5"></div>
-        <div class="star star-6"></div>
-        <div class="star star-7"></div>
-        <div class="star star-8"></div>
-        <div class="star star-9"></div>
-        <div class="star star-10"></div>
-      </div>
+    <!-- Simplified floating stars (CSS-only for mobile) -->
+    <div class="absolute inset-0 overflow-hidden floating-stars-mobile">
+      <div class="star star-1"></div>
+      <div class="star star-2"></div>
+      <div class="star star-3"></div>
+      <div class="star star-4"></div>
+      <div class="star star-5"></div>
     </div>
     
     <!-- Background Layer -->
@@ -115,8 +112,8 @@ const {
 </section>
 
 <style>
-  /* Floating Stars Animation */
-  .floating-stars {
+  /* Simplified floating stars for mobile fallback */
+  .floating-stars-mobile {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -136,134 +133,10 @@ const {
   .star-3 { top: 30%; left: 20%; animation-delay: 1s; }
   .star-4 { top: 40%; left: 70%; animation-delay: 1.5s; }
   .star-5 { top: 50%; left: 15%; animation-delay: 2s; }
-  .star-6 { top: 60%; left: 85%; animation-delay: 2.5s; }
-  .star-7 { top: 70%; left: 25%; animation-delay: 0.3s; }
-  .star-8 { top: 80%; left: 75%; animation-delay: 0.8s; }
-  .star-9 { top: 15%; left: 50%; animation-delay: 1.2s; }
-  .star-10 { top: 85%; left: 40%; animation-delay: 1.8s; }
   
   @keyframes twinkle {
     0%, 100% { opacity: 0.3; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.5); }
-  }
-  
-  /* Cosmic particles animation */
-  @keyframes cosmicFloat {
-    0%, 100% { 
-      transform: translateY(0px) translateX(0px);
-      opacity: 0.3;
-    }
-    25% { 
-      transform: translateY(-10px) translateX(5px);
-      opacity: 0.8;
-    }
-    50% { 
-      transform: translateY(-5px) translateX(-3px);
-      opacity: 0.6;
-    }
-    75% { 
-      transform: translateY(-15px) translateX(8px);
-      opacity: 0.9;
-    }
-  }
-  
-  /* Magical Wand Cursor */
-  .magical-wand {
-    position: relative;
-    transform: rotate(-45deg);
-  }
-  
-  .wand-handle {
-    position: absolute;
-    width: 3px;
-    height: 20px;
-    background: linear-gradient(to bottom, #8B4513 0%, #A0522D 50%, #8B4513 100%);
-    border-radius: 2px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 5px rgba(139, 69, 19, 0.5);
-  }
-  
-  .wand-tip {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, rgba(245, 155, 187, 1) 0%, rgba(245, 155, 187, 0.8) 50%, rgba(245, 155, 187, 0.4) 100%);
-    border-radius: 50%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 15px rgba(245, 155, 187, 0.8), 0 0 30px rgba(245, 155, 187, 0.4);
-    animation: wandGlow 2s ease-in-out infinite;
-  }
-  
-  .wand-sparkle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 50%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    animation: sparkle 1.5s ease-in-out infinite;
-  }
-  
-  @keyframes wandGlow {
-    0%, 100% { 
-      box-shadow: 0 0 15px rgba(245, 155, 187, 0.8), 0 0 30px rgba(245, 155, 187, 0.4);
-    }
-    50% { 
-      box-shadow: 0 0 25px rgba(245, 155, 187, 1), 0 0 50px rgba(245, 155, 187, 0.6);
-    }
-  }
-  
-  @keyframes sparkle {
-    0%, 100% { 
-      opacity: 0.3;
-      transform: translate(-50%, -50%) scale(0.8);
-    }
-    50% { 
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.2);
-    }
-  }
-  
-  /* Cursor sparkle animation */
-  @keyframes sparkleFade {
-    0% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(0.5);
-    }
-    50% {
-      opacity: 0.8;
-      transform: translate(-50%, -50%) scale(1.2);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.1);
-    }
-  }
-  
-  /* Custom cursor trail effect */
-  .cursor-trail {
-    mix-blend-mode: screen;
-    filter: blur(0.5px);
-    box-shadow: 0 0 10px rgba(245, 155, 187, 0.5);
-  }
-  
-  .cursor-trail:first-child {
-    box-shadow: 0 0 20px rgba(245, 155, 187, 0.8), 0 0 40px rgba(245, 155, 187, 0.4);
-    background: radial-gradient(circle, rgba(245, 155, 187, 1) 0%, rgba(245, 155, 187, 0.8) 50%, rgba(245, 155, 187, 0.4) 100%);
-  }
-  
-  .cursor-trail:nth-child(2) {
-    box-shadow: 0 0 15px rgba(245, 155, 187, 0.6), 0 0 30px rgba(245, 155, 187, 0.3);
-  }
-  
-  .cursor-trail:nth-child(3) {
-    box-shadow: 0 0 12px rgba(245, 155, 187, 0.5), 0 0 25px rgba(245, 155, 187, 0.2);
   }
   
   /* Pink Brand Gradient Overlay */
@@ -278,85 +151,6 @@ const {
     );
     animation: gradientShift 12s ease infinite;
   }
-  
-  /* Enhanced Star Burst Styles */
-  .star-diamond {
-    animation: diamondSparkle 2s ease-out forwards;
-  }
-  
-  .star-symbol {
-    animation: symbolGlow 2s ease-out forwards;
-  }
-  
-  .star-circle {
-    animation: circlePulse 2s ease-out forwards;
-  }
-  
-  @keyframes diamondSparkle {
-    0% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(0) rotate(0deg);
-    }
-    50% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.3) rotate(360deg);
-    }
-  }
-  
-  @keyframes symbolGlow {
-    0% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(0);
-      text-shadow: 0 0 10px rgba(245, 155, 187, 0.8);
-    }
-    50% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.5);
-      text-shadow: 0 0 20px rgba(245, 155, 187, 1), 0 0 30px rgba(245, 155, 187, 0.6);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.3);
-      text-shadow: 0 0 5px rgba(245, 155, 187, 0.4);
-    }
-  }
-  
-  @keyframes circlePulse {
-    0% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(0);
-    }
-    50% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.3);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0.3);
-    }
-  }
-  
-  /* Star burst animation */
-  @keyframes starBurst {
-    0% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(0);
-    }
-    50% {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.5);
-    }
-    100% {
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(0);
-    }
-  }
-  
-  /* Parallax Effect - Removed */
   
   /* Gradient Animation */
   .animate-gradient {
@@ -432,339 +226,36 @@ const {
     50% { transform: translateY(-10px); }
   }
   
+  /* Hide mobile stars on desktop (canvas handles desktop) */
+  @media (min-width: 769px) {
+    .floating-stars-mobile {
+      display: none;
+    }
+  }
+  
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .star {
       width: 1px;
       height: 1px;
     }
-    
-    .cosmic-particle {
-      display: none;
-    }
-    
-    .cursor-trail {
-      display: none;
-    }
-    
-    .magical-wand {
-      display: none;
-    }
   }
 </style>
 
 <script>
-  // Initialize hero effects
+  // Simplified hero effects - canvas handles most animations
   function initializeHeroEffects() {
-    // Clean up any existing elements first
-    const existingTrails = document.querySelectorAll('.cursor-trail');
-    const existingWands = document.querySelectorAll('.magical-wand');
-    const existingParticles = document.querySelectorAll('.cosmic-particle');
-    
-    existingTrails.forEach(trail => trail.remove());
-    existingWands.forEach(wand => wand.remove());
-    existingParticles.forEach(particle => particle.remove());
-    
     const heroSection = document.querySelector('.curved-hero');
-    
     if (!heroSection) return;
     
-    // Interactive cosmic particles
-    let cursorTrail: HTMLElement[] = [];
-    let isHovering = false;
+    // Only add subtle hover effects for enhanced interactivity
+    heroSection.addEventListener('mouseenter', () => {
+      (heroSection as HTMLElement).style.transition = 'all 0.3s ease';
+    });
     
-    // Sparkle creation function
-    function createSparkle(x: number, y: number) {
-      // Create 3-5 small sparkles
-      const sparkleCount = Math.floor(Math.random() * 3) + 3;
-      
-      for (let i = 0; i < sparkleCount; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.className = 'cursor-sparkle';
-        
-        const offsetX = (Math.random() - 0.5) * 20;
-        const offsetY = (Math.random() - 0.5) * 20;
-        const size = Math.random() * 3 + 2;
-        
-        sparkle.style.cssText = `
-          position: fixed;
-          width: ${size}px;
-          height: ${size}px;
-          background: radial-gradient(circle, rgba(245, 155, 187, 1) 0%, rgba(245, 155, 187, 0.6) 50%, transparent 100%);
-          border-radius: 50%;
-          pointer-events: none;
-          z-index: 9998;
-          left: ${x + offsetX}px;
-          top: ${y + offsetY}px;
-          transform: translate(-50%, -50%);
-          animation: sparkleFade 0.8s ease-out forwards;
-          box-shadow: 0 0 8px rgba(245, 155, 187, 0.6);
-        `;
-        document.body.appendChild(sparkle);
-        
-        // Remove sparkle after animation
-        setTimeout(() => {
-          if (sparkle.parentNode) {
-            sparkle.parentNode.removeChild(sparkle);
-          }
-        }, 800);
-      }
-    }
-    
-    // Create interactive particles
-    for (let i = 0; i < 15; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'cosmic-particle';
-      (particle as HTMLElement).style.cssText = `
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        background: rgba(255, 255, 255, 0.6);
-        border-radius: 50%;
-        pointer-events: none;
-        left: ${Math.random() * 100}%;
-        top: ${Math.random() * 100}%;
-        animation: cosmicFloat ${3 + Math.random() * 4}s ease-in-out infinite;
-        animation-delay: ${Math.random() * 2}s;
-      `;
-      heroSection.appendChild(particle);
-    }
-    
-    // Create cursor trail elements
-    for (let i = 0; i < 12; i++) {
-      const trailDot = document.createElement('div');
-      trailDot.className = 'cursor-trail';
-      (trailDot as HTMLElement).style.cssText = `
-        position: fixed;
-        width: ${6 - i * 0.4}px;
-        height: ${6 - i * 0.4}px;
-        background: ${i === 0 ? 'rgba(245, 155, 187, 1)' : `rgba(245, 155, 187, ${0.8 - i * 0.06})`};
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 9999;
-        transition: all 0.05s ease;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-      `;
-      document.body.appendChild(trailDot);
-      cursorTrail.push(trailDot);
-    }
-    
-    // Mouse interaction effect
-    const particleHandler = function(e: Event) {
-      const particles = document.querySelectorAll('.cosmic-particle');
-      const rect = heroSection.getBoundingClientRect();
-      const x = (e as MouseEvent).clientX - rect.left;
-      const y = (e as MouseEvent).clientY - rect.top;
-      
-      particles.forEach((particle, index) => {
-        const particleRect = particle.getBoundingClientRect();
-        const particleX = particleRect.left - rect.left + particleRect.width / 2;
-        const particleY = particleRect.top - rect.top + particleRect.height / 2;
-        
-        const distance = Math.sqrt((x - particleX) ** 2 + (y - particleY) ** 2);
-        const maxDistance = 100;
-        
-        if (distance < maxDistance) {
-          const intensity = (maxDistance - distance) / maxDistance;
-          (particle as HTMLElement).style.transform = `scale(${1 + intensity * 0.5})`;
-          (particle as HTMLElement).style.opacity = (0.6 + intensity * 0.4).toString();
-        } else {
-          (particle as HTMLElement).style.transform = 'scale(1)';
-          (particle as HTMLElement).style.opacity = '0.6';
-        }
-      });
-    };
-    
-    heroSection.addEventListener('mousemove', particleHandler);
-    
-    // Mouse enter effect
-    const mouseEnterHandler = function() {
-      isHovering = true;
-      cursorTrail.forEach(dot => {
-        (dot as HTMLElement).style.opacity = '1';
-      });
-      
-      // Create wand cursor
-      const wand = document.createElement('div');
-      wand.className = 'magical-wand';
-      wand.innerHTML = `
-        <div class="wand-handle"></div>
-        <div class="wand-tip"></div>
-        <div class="wand-sparkle"></div>
-      `;
-      wand.style.cssText = `
-        position: fixed;
-        width: 24px;
-        height: 24px;
-        pointer-events: none;
-        z-index: 10001;
-        transform: translate(-50%, -50%);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-      `;
-      document.body.appendChild(wand);
-      
-      // Store wand reference
-      (heroSection as any).wandElement = wand;
-      
-      // Show wand
-      setTimeout(() => {
-        (wand as HTMLElement).style.opacity = '1';
-      }, 100);
-    };
-    
-    heroSection.addEventListener('mouseenter', mouseEnterHandler);
-    
-    // Mouse leave effect
-    const mouseLeaveHandler = function() {
-      isHovering = false;
-      cursorTrail.forEach(dot => {
-        (dot as HTMLElement).style.opacity = '0';
-      });
-      
-      // Remove wand
-      const wand = (heroSection as any).wandElement;
-      if (wand && wand.parentNode) {
-        wand.parentNode.removeChild(wand);
-      }
-    };
-    
-    heroSection.addEventListener('mouseleave', mouseLeaveHandler);
-    
-    // Mouse move effect
-    const mouseMoveHandler = function(e: Event) {
-      if (!isHovering) return;
-      
-      const mouseX = (e as MouseEvent).clientX;
-      const mouseY = (e as MouseEvent).clientY;
-      
-      // Update wand position
-      const wand = (heroSection as any).wandElement;
-      if (wand) {
-        (wand as HTMLElement).style.left = mouseX + 'px';
-        (wand as HTMLElement).style.top = mouseY + 'px';
-      }
-      
-      // Update trail positions with delay for comet effect
-      cursorTrail.forEach((dot, index) => {
-        setTimeout(() => {
-          if (isHovering) {
-            // Add slight offset for more natural trail movement
-            const offsetX = (Math.random() - 0.5) * 2;
-            const offsetY = (Math.random() - 0.5) * 2;
-            (dot as HTMLElement).style.left = (mouseX + offsetX) + 'px';
-            (dot as HTMLElement).style.top = (mouseY + offsetY) + 'px';
-          }
-        }, index * 8);
-      });
-      
-      // Create sparkle effect while moving (increased frequency for visibility)
-      if (Math.random() < 0.3) { // 30% chance per mouse move
-        createSparkle(mouseX, mouseY);
-      }
-    };
-    
-    heroSection.addEventListener('mousemove', mouseMoveHandler);
-    
-    // Click burst effect
-    const clickHandler = function(e: Event) {
-      const clickX = (e as MouseEvent).clientX;
-      const clickY = (e as MouseEvent).clientY;
-      
-      // Create burst of pink stars (reduced count for performance)
-      for (let i = 0; i < 15; i++) {
-        const star = document.createElement('div');
-        star.className = 'burst-star';
-        
-        // Random direction for star movement
-        const angle = (Math.PI * 2 * i) / 15;
-        const distance = Math.random() * 120 + 60;
-        const endX = clickX + Math.cos(angle) * distance;
-        const endY = clickY + Math.sin(angle) * distance;
-        
-        // Random star type (circle, diamond, or star shape)
-        const starType = Math.random();
-        let starContent = '';
-        let starClass = '';
-        
-        if (starType < 0.3) {
-          // Diamond shape
-          starContent = '◆';
-          starClass = 'star-diamond';
-        } else if (starType < 0.6) {
-          // Star shape
-          starContent = '★';
-          starClass = 'star-symbol';
-        } else {
-          // Circle (default)
-          starClass = 'star-circle';
-        }
-        
-        star.className = `burst-star ${starClass}`;
-        star.innerHTML = starContent;
-        
-        star.style.cssText = `
-          position: fixed;
-          width: ${Math.random() * 12 + 6}px;
-          height: ${Math.random() * 12 + 6}px;
-          background: ${starClass === 'star-circle' ? 'radial-gradient(circle, rgba(245, 155, 187, 1) 0%, rgba(245, 155, 187, 0.8) 50%, rgba(245, 155, 187, 0.4) 100%)' : 'transparent'};
-          color: rgba(245, 155, 187, 1);
-          border-radius: ${starClass === 'star-circle' ? '50%' : '0'};
-          pointer-events: none;
-          z-index: 10000;
-          left: ${clickX}px;
-          top: ${clickY}px;
-          transform: translate(-50%, -50%);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: ${Math.random() * 8 + 8}px;
-          font-weight: bold;
-          text-shadow: 0 0 10px rgba(245, 155, 187, 0.8);
-          box-shadow: ${starClass === 'star-circle' ? '0 0 20px rgba(245, 155, 187, 0.8), 0 0 40px rgba(245, 155, 187, 0.4)' : 'none'};
-        `;
-        document.body.appendChild(star);
-        
-        // Animate star movement
-        setTimeout(() => {
-          if (star.parentNode) {
-            (star as HTMLElement).style.transition = 'all 2s ease-out';
-            (star as HTMLElement).style.left = endX + 'px';
-            (star as HTMLElement).style.top = endY + 'px';
-            (star as HTMLElement).style.opacity = '0';
-            (star as HTMLElement).style.transform = 'translate(-50%, -50%) scale(0.3) rotate(360deg)';
-          }
-        }, 50);
-        
-        // Remove star after animation
-        setTimeout(() => {
-          if (star.parentNode) {
-            star.parentNode.removeChild(star);
-          }
-        }, 2500);
-      }
-    };
-    
-    heroSection.addEventListener('click', clickHandler);
-    
-    // Store cleanup function
-    (heroSection as any).cleanupHeroEffects = function() {
-      heroSection.removeEventListener('mousemove', particleHandler);
-      heroSection.removeEventListener('mouseenter', mouseEnterHandler);
-      heroSection.removeEventListener('mouseleave', mouseLeaveHandler);
-      heroSection.removeEventListener('mousemove', mouseMoveHandler);
-      heroSection.removeEventListener('click', clickHandler);
-      
-      // Remove all created elements
-      cursorTrail.forEach(trail => trail.remove());
-      const wand = (heroSection as any).wandElement;
-      if (wand && wand.parentNode) {
-        wand.parentNode.removeChild(wand);
-      }
-      const particles = document.querySelectorAll('.cosmic-particle');
-      particles.forEach(particle => particle.remove());
-    };
+    heroSection.addEventListener('mouseleave', () => {
+      (heroSection as HTMLElement).style.transition = 'all 0.3s ease';
+    });
   }
   
   // Initialize on page load
