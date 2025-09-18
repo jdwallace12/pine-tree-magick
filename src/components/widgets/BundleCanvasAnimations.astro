@@ -1,0 +1,376 @@
+---
+// Enhanced canvas animations for bundle pages
+---
+
+<div id="bundle-canvas-container" class="fixed inset-0 pointer-events-none z-5">
+  <canvas id="bundle-canvas" class="w-full h-full"></canvas>
+</div>
+
+<style>
+  #bundle-canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 5;
+  }
+  
+  #bundle-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  
+  /* Hide canvas on mobile for better performance */
+  @media (max-width: 768px) {
+    #bundle-canvas-container {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  class BundleCanvasAnimations {
+    private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
+    private particles: BundleParticle[] = [];
+    private sparkles: BundleSparkle[] = [];
+    private animationId: number | null = null;
+    private lastTime = 0;
+    private mouseX = 0;
+    private mouseY = 0;
+    private isHovering = false;
+    private bundleSection: HTMLElement | null = null;
+
+    constructor() {
+      this.canvas = document.getElementById('bundle-canvas') as HTMLCanvasElement;
+      if (!this.canvas) return;
+      
+      this.ctx = this.canvas.getContext('2d')!;
+      this.setupCanvas();
+      this.setupEventListeners();
+      this.createParticles();
+      this.startAnimation();
+    }
+
+    private setupCanvas() {
+      const resizeCanvas = () => {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = this.canvas.getBoundingClientRect();
+        
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+        
+        this.ctx.scale(dpr, dpr);
+        this.canvas.style.width = rect.width + 'px';
+        this.canvas.style.height = rect.height + 'px';
+      };
+
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+    }
+
+    private setupEventListeners() {
+      document.addEventListener('mousemove', (e) => {
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+      });
+
+      document.addEventListener('mouseenter', () => {
+        this.isHovering = true;
+      });
+
+      document.addEventListener('mouseleave', () => {
+        this.isHovering = false;
+      });
+
+      // Enhanced click effects for bundle interactions
+      document.addEventListener('click', (e) => {
+        this.createBundleSparkleBurst((e as MouseEvent).clientX, (e as MouseEvent).clientY);
+      });
+
+      // Special effects for buy button interactions
+      const buyButtons = document.querySelectorAll('input[type="submit"]');
+      buyButtons.forEach(button => {
+        button.addEventListener('mouseenter', () => {
+          this.createButtonGlow();
+        });
+        
+        button.addEventListener('click', (e) => {
+          this.createPurchaseEffect((e as MouseEvent).clientX, (e as MouseEvent).clientY);
+        });
+      });
+    }
+
+    private createParticles() {
+      const particleCount = 12; // Reduced for bundle pages
+      for (let i = 0; i < particleCount; i++) {
+        this.particles.push(new BundleParticle(
+          Math.random() * this.canvas.width,
+          Math.random() * this.canvas.height,
+          Math.random() * 1.5 + 0.5,
+          Math.random() * 0.015 + 0.005,
+          Math.random() * Math.PI * 2
+        ));
+      }
+    }
+
+    private createBundleSparkleBurst(x: number, y: number) {
+      const sparkleCount = 6;
+      for (let i = 0; i < sparkleCount; i++) {
+        const angle = (Math.PI * 2 * i) / sparkleCount;
+        const velocity = Math.random() * 2 + 1;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        this.sparkles.push(new BundleSparkle(x, y, vx, vy));
+      }
+    }
+
+    private createButtonGlow() {
+      // Create subtle glow particles around buy buttons
+      const buyButtons = document.querySelectorAll('input[type="submit"]');
+      buyButtons.forEach(button => {
+        const rect = button.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        for (let i = 0; i < 3; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const distance = Math.random() * 30 + 20;
+          const x = centerX + Math.cos(angle) * distance;
+          const y = centerY + Math.sin(angle) * distance;
+          
+          this.sparkles.push(new BundleSparkle(x, y, 0, -0.5));
+        }
+      });
+    }
+
+    private createPurchaseEffect(x: number, y: number) {
+      // Special effect for purchase interactions
+      const effectCount = 12;
+      for (let i = 0; i < effectCount; i++) {
+        const angle = (Math.PI * 2 * i) / effectCount;
+        const velocity = Math.random() * 4 + 2;
+        const vx = Math.cos(angle) * velocity;
+        const vy = Math.sin(angle) * velocity;
+        
+        this.sparkles.push(new BundleSparkle(x, y, vx, vy, true));
+      }
+    }
+
+    private update(deltaTime: number) {
+      // Update particles
+      this.particles.forEach(particle => {
+        particle.update(deltaTime, this.canvas.width, this.canvas.height);
+      });
+
+      // Update sparkles
+      this.sparkles.forEach((sparkle, index) => {
+        sparkle.update(deltaTime);
+        if (sparkle.life <= 0) {
+          this.sparkles.splice(index, 1);
+        }
+      });
+    }
+
+    private render() {
+      // Clear canvas
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+      // Render particles
+      this.particles.forEach(particle => {
+        particle.render(this.ctx);
+      });
+
+      // Render sparkles
+      this.sparkles.forEach(sparkle => {
+        sparkle.render(this.ctx);
+      });
+
+      // Render subtle hover effects
+      if (this.isHovering) {
+        this.renderHoverEffects();
+      }
+    }
+
+    private renderHoverEffects() {
+      // Create subtle glow around cursor
+      const gradient = this.ctx.createRadialGradient(
+        this.mouseX, this.mouseY, 0,
+        this.mouseX, this.mouseY, 30
+      );
+      gradient.addColorStop(0, 'rgba(245, 155, 187, 0.05)');
+      gradient.addColorStop(1, 'rgba(245, 155, 187, 0)');
+      
+      this.ctx.fillStyle = gradient;
+      this.ctx.fillRect(this.mouseX - 30, this.mouseY - 30, 60, 60);
+    }
+
+    private animate = (currentTime: number) => {
+      const deltaTime = currentTime - this.lastTime;
+      this.lastTime = currentTime;
+
+      this.update(deltaTime);
+      this.render();
+
+      this.animationId = requestAnimationFrame(this.animate);
+    };
+
+    private startAnimation() {
+      this.animationId = requestAnimationFrame(this.animate);
+    }
+
+    public destroy() {
+      if (this.animationId) {
+        cancelAnimationFrame(this.animationId);
+      }
+    }
+  }
+
+  class BundleParticle {
+    public x: number;
+    public y: number;
+    public size: number;
+    public speed: number;
+    public angle: number;
+    public life: number = 1;
+    private maxLife: number;
+
+    constructor(x: number, y: number, size: number, speed: number, angle: number) {
+      this.x = x;
+      this.y = y;
+      this.size = size;
+      this.speed = speed;
+      this.angle = angle;
+      this.maxLife = Math.random() * 15000 + 8000; // 8-23 seconds
+    }
+
+    update(deltaTime: number, canvasWidth: number, canvasHeight: number) {
+      // Gentle movement
+      this.x += Math.cos(this.angle) * this.speed * deltaTime * 0.05;
+      this.y += Math.sin(this.angle) * this.speed * deltaTime * 0.05;
+
+      // Wrap around screen
+      if (this.x < 0) this.x = canvasWidth;
+      if (this.x > canvasWidth) this.x = 0;
+      if (this.y < 0) this.y = canvasHeight;
+      if (this.y > canvasHeight) this.y = 0;
+
+      // Update life
+      this.life -= deltaTime / this.maxLife;
+      if (this.life <= 0) {
+        this.life = 1;
+        this.x = Math.random() * canvasWidth;
+        this.y = Math.random() * canvasHeight;
+      }
+    }
+
+    render(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.4;
+      ctx.fillStyle = 'rgba(245, 155, 187, 0.6)';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  class BundleSparkle {
+    public x: number;
+    public y: number;
+    public vx: number;
+    public vy: number;
+    public life: number = 1;
+    public size: number;
+    private maxLife: number = 800; // 0.8 seconds
+    private isPurchaseEffect: boolean = false;
+
+    constructor(x: number, y: number, vx: number, vy: number, isPurchaseEffect: boolean = false) {
+      this.x = x;
+      this.y = y;
+      this.vx = vx;
+      this.vy = vy;
+      this.size = Math.random() * 2 + 1;
+      this.isPurchaseEffect = isPurchaseEffect;
+    }
+
+    update(deltaTime: number) {
+      this.x += this.vx * deltaTime * 0.1;
+      this.y += this.vy * deltaTime * 0.1;
+      this.life -= deltaTime / this.maxLife;
+      
+      // Apply gravity for purchase effects
+      if (this.isPurchaseEffect) {
+        this.vy += 0.015 * deltaTime * 0.1;
+      }
+    }
+
+    render(ctx: CanvasRenderingContext2D) {
+      ctx.save();
+      ctx.globalAlpha = this.life;
+      
+      // Different colors for purchase effects
+      const color = this.isPurchaseEffect ? 'rgba(34, 197, 94, 1)' : 'rgba(245, 155, 187, 1)';
+      
+      // Create sparkle effect
+      const gradient = ctx.createRadialGradient(
+        this.x, this.y, 0,
+        this.x, this.y, this.size * 2
+      );
+      gradient.addColorStop(0, color);
+      gradient.addColorStop(0.5, color.replace('1)', '0.6)'));
+      gradient.addColorStop(1, color.replace('1)', '0)'));
+      
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 2, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Add bright center
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    }
+  }
+
+  // Initialize bundle canvas animation system
+  let bundleCanvasSystem: BundleCanvasAnimations | null = null;
+
+  function initializeBundleCanvasAnimations() {
+    // Only initialize on desktop
+    if (window.innerWidth > 768) {
+      bundleCanvasSystem = new BundleCanvasAnimations();
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeBundleCanvasAnimations);
+  } else {
+    initializeBundleCanvasAnimations();
+  }
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    if (bundleCanvasSystem) {
+      bundleCanvasSystem.destroy();
+    }
+  });
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    if (bundleCanvasSystem && window.innerWidth <= 768) {
+      bundleCanvasSystem.destroy();
+      bundleCanvasSystem = null;
+    } else if (!bundleCanvasSystem && window.innerWidth > 768) {
+      initializeBundleCanvasAnimations();
+    }
+  });
+</script>

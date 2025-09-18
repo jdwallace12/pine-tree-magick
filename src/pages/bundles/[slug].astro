@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
 import { Icon } from 'astro-icon/components';
+import BundleCanvasAnimations from '~/components/widgets/BundleCanvasAnimations.astro';
 
 export async function getStaticPaths() {
   const bundles = await getCollection('bundle');
@@ -45,6 +46,9 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
 ---
 
 <Layout metadata={metadata}>
+  <!-- Enhanced canvas animations for bundle pages -->
+  <BundleCanvasAnimations />
+  
   <article class="max-w-2xl mx-auto p-6 space-y-6 mb-12">
     <div class="flex gap-8 justify-between items-center sticky top-16 bg-dark py-2">
       <a href="/shop" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop</a>
