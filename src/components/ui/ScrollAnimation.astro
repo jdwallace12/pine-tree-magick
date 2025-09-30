@@ -1,0 +1,95 @@
+---
+export interface Props {
+  class?: string;
+  delay?: number;
+  duration?: number;
+  threshold?: number;
+  rootMargin?: string;
+  once?: boolean;
+}
+
+const {
+  class: className = '',
+  delay = 0,
+  duration = 600,
+  threshold = 0.1,
+  rootMargin = '0px 0px -50px 0px',
+  once = true
+} = Astro.props;
+---
+
+<div 
+  class={`scroll-animate ${className}`}
+  data-delay={delay}
+  data-duration={duration}
+  data-threshold={threshold}
+  data-root-margin={rootMargin}
+  data-once={once}
+>
+  <slot />
+</div>
+
+<style>
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity var(--duration, 600ms) ease-out, transform var(--duration, 600ms) ease-out;
+    transition-delay: var(--delay, 0ms);
+  }
+  
+  .scroll-animate.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  function initScrollAnimations() {
+    const elements = document.querySelectorAll('.scroll-animate');
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const element = entry.target as HTMLElement;
+        const delay = parseInt(element.getAttribute('data-delay') || '0');
+        const duration = parseInt(element.getAttribute('data-duration') || '600');
+        const once = element.getAttribute('data-once') === 'true';
+        
+        if (entry.isIntersecting) {
+          // Set CSS custom properties for animation
+          element.style.setProperty('--delay', `${delay}ms`);
+          element.style.setProperty('--duration', `${duration}ms`);
+          
+          // Add animation class after delay
+          setTimeout(() => {
+            element.classList.add('animate-in');
+          }, delay);
+          
+          // Stop observing if once is true
+          if (once) {
+            observer.unobserve(element);
+          }
+        } else if (!once) {
+          // Remove animation class when out of view (for repeat animations)
+          element.classList.remove('animate-in');
+        }
+      });
+    }, {
+      threshold: parseFloat(elements[0]?.getAttribute('data-threshold') || '0.1'),
+      rootMargin: elements[0]?.getAttribute('data-root-margin') || '0px 0px -50px 0px'
+    });
+    
+    elements.forEach((element) => {
+      observer.observe(element);
+    });
+  }
+  
+  // Initialize when DOM is loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScrollAnimations);
+  } else {
+    initScrollAnimations();
+  }
+  
+  // Re-initialize for Astro's client-side navigation
+  document.addEventListener('astro:page-load', initScrollAnimations);
+</script>

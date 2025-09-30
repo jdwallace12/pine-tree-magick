@@ -1,6 +1,7 @@
 ---
 import type { Headline as Props } from '~/types';
 import { twMerge } from 'tailwind-merge';
+import ScrollAnimation from './ScrollAnimation.astro';
 
 const {
   title = await Astro.slots.render('title'),
@@ -21,10 +22,12 @@ const {
   (title || subtitle || tagline) && (
     <div class={twMerge('mb-8 md:mx-auto md:mb-12 text-center relative', containerClass)}>
       {titleMotifImage && (
-        <div
-          class="title-motif hidden md:block"
-          style={`background-image: url(${titleMotifImage}); height: 250px; background-size: cover; opacity: .2; transform: scale(1.5); position: absolute; top: -5vw;left: -14vw;width: 100%; z-index:-1;`}
-        />
+        <ScrollAnimation delay={300} class="hidden md:block">
+          <div
+            class="title-motif"
+            style={`background-image: url(${titleMotifImage}); height: 250px; background-size: cover; opacity: .2; transform: scale(1.5); position: absolute; top: -5vw;left: -14vw;width: 100%; z-index:-1;`}
+          />
+        </ScrollAnimation>
       )}
       {tagline && (
         <p class="text-base text-secondary dark:text-primary font-bold tracking-wide uppercase" set:html={tagline} />
