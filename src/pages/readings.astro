@@ -13,15 +13,11 @@ const metadata = {
   <Fragment slot="announcement"></Fragment>
   <div class="mx-auto max-w-3xl p-4 md:px-8">
     <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Book A Written Reading</p> -->
-    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">Private Sessions</h1>
-    <p class="text-xl mb-6 text-muted text-center">Private Sessions - 60 minutes, $250 for New Clients, $200 for Returning Clients
-
-      Private sessions serve as containers for connection and personal growth. Each online session begins with a Tarot card pull to allow wisdom from your Spirit Guides to direct our time together. From there, I’ll move through your chart to identify prevalent cycles, opportunities, and insights.
-      
-      After our session ends, I’ll send a ritual practice tailored to your unique astrological blueprint. Each ritual includes a recorded meditation, journal prompts, bespoke altar suggestions, and a step-by-step ritual designed to align you with your cosmic path. An audio file of our time together is included with this package.
-      
-      Private sessions are perfect for anyone seeking real-time connection and collaboration. If you value one-on-one interaction and enjoy asking questions, this session offers a safe container to explore your chart. It’s ideal for those who crave reflection and actionable guidance, and are interested in the art of ritual.
-      </p>
+    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">Private Sessions + Guided Rituals</h1>
+    <p class="text-xl mb-6 text-muted text-center">60 minutes - $250 for New Clients, $200 for Returning Clients</p>
+    <p class="text-lg dark:text-slate-400">Private sessions serve as containers for connection and personal growth. Each online session begins with a Tarot card pull to allow wisdom from your Spirit Guides to direct our time together. From there, I'll move through your chart to identify prevalent cycles, opportunities, and insights.</p>
+    <p class="text-lg dark:text-slate-400 mt-4">After our session ends, I'll send a ritual practice tailored to your unique astrological blueprint. Each ritual includes a recorded meditation, journal prompts, bespoke altar suggestions, and a step-by-step ritual designed to align you with your cosmic path. An audio file of our time together is included with this package.</p>
+    <p class="text-lg dark:text-slate-400 mt-4">Private sessions are perfect for anyone seeking real-time connection and collaboration. If you value one-on-one interaction and enjoy asking questions, this session offers a safe container to explore your chart. It's ideal for those who crave reflection and actionable guidance, and are interested in the art of ritual.</p>
   </div>
   <!-- Content Widget **************** -->
   <Content
@@ -31,11 +27,6 @@ const metadata = {
       alt: 'Hand-drawn botanical moon phases',
     }}
     callToAction={{
-      text: 'Book a Written Reading',
-      icon: 'tabler:chevron-right',
-      href: '/book-a-written-reading',
-    }}
-    callToAction2={{
       text: 'Book a Private Session',
       icon: 'tabler:chevron-right',
       href: '/private-sessions',
@@ -64,11 +55,6 @@ const metadata = {
       loading: 'lazy',
     }}
     callToAction={{
-      text: 'Book a Written Reading',
-      icon: 'tabler:chevron-right',
-      href: '/book-a-written-reading',
-    }}
-    callToAction2={{
       text: 'Book a Private Session',
       icon: 'tabler:chevron-right',
       href: '/private-sessions',
@@ -100,11 +86,6 @@ const metadata = {
       alt: 'Hand-drawn botanical moon phases',
     }}
     callToAction={{
-      text: 'Book a Written Reading',
-      icon: 'tabler:chevron-right',
-      href: '/book-a-written-reading',
-    }}
-    callToAction2={{
       text: 'Book a Private Session',
       icon: 'tabler:chevron-right',
       href: '/private-sessions',
@@ -125,6 +106,13 @@ const metadata = {
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
+
+  <div class="mx-auto max-w-3xl p-4 md:px-8">
+    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">Audio Readings + Guided Rituals</h1>
+    <p class="text-xl mb-6 text-muted text-center">$125</p>
+    <p class="text-lg dark:text-slate-400">Audio readings are pre-recorded and include astrological insight and a Tarot card message from Spirit.  Along with this detailed audio reading, you’ll receive a PDF ritual to help you work your desired manifestation. Each written ritual includes a link to a recorded meditation, journal prompts, altar suggestions, timing recommendations, and a step-by-step guide to help you manifest your intention.</p>
+    <p class="text-lg dark:text-slate-400 mt-4">This reading is ideal for anyone who prefers to listen and reflect in their own time, or is seeking a lower price point.  It’s designed for those who want insight into their natal chart and are interested in tapping into their personal power. Turnaround time for audio recordings is based on volume, Jersey will alert you when you are at the top of the waiting list.</p>
+  </div>
   <Content
     image={{
       src: '/assets/images/astrocartography-reading.webp',
@@ -133,17 +121,12 @@ const metadata = {
     callToAction={{
       text: 'Book Audio Reading',
       icon: 'tabler:chevron-right',
-      href: '/book-a-written-reading',
-    }}
-    callToAction2={{
-      text: 'Book a Private Session',
-      icon: 'tabler:chevron-right',
-      href: '/private-sessions',
+      href: '/audio-reading',
     }}
   >
     <Fragment slot="content">
       <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Career and Money Reading</p>
-      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Money Manifestation Ritual</h2>
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Money Ritual</h2>
       <p>
         Ideal for anyone struggling in their career or working through money blocks, this reading looks to the key points in your chart related to career and finances. Jersey will reveal the best ways for you to make money, and the type of career to which you are best suited. The Money Manifestation Ritual will help you align with the vibration of this energetic currency, so you can remove money blocks and call more abundance into your life.
 
@@ -154,4 +137,78 @@ const metadata = {
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>
   </Content>
+
+  <Content
+  isReversed
+  image={{
+    src: '/assets/images/astrocartography-reading.webp',
+    alt: 'Hand-drawn botanical moon phases',
+  }}
+  callToAction={{
+    text: 'Book Audio Reading',
+    icon: 'tabler:chevron-right',
+    href: '/audio-reading',
+  }}
+>
+  <Fragment slot="content">
+    <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Love Reading</p>
+    <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Love Spell</h2>
+    <p>
+      If you’re ready to invite love into your life, this reading explores the key points in your chart connected to partnership, pleasure, and attraction. Jersey will interpret your chart to reveal insights about your your natural magnetism, your ideal partner, and where you’re most likely to meet them. The Love Spell ritual helps you release expectations and align with the vibration of the love you desire, and includes suggested astrological timing for best results.
+    </p>
+  </Fragment>
+
+  <Fragment slot="bg">
+    <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+  </Fragment>
+</Content>
+
+<Content
+image={{
+  src: '/assets/images/astrocartography-reading.webp',
+  alt: 'Hand-drawn botanical moon phases',
+}}
+callToAction={{
+  text: 'Book Audio Reading',
+  icon: 'tabler:chevron-right',
+  href: '/audio-reading',
+}}
+>
+<Fragment slot="content">
+  <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Soul Purpose Reading</p>
+  <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Highest Self Ritual</h2>
+  <p>
+   If you’ve ever wondered, “What is the purpose of all of this?” then this reading is for you. In our society, people often mistake “purpose” for “career” — but your soul purpose is much more nuanced  and layered. By looking at key points in your chart, Jersey will reveal what your soul craves and the direction your life is meant to take. The Highest Self Ritual is designed to get you in touch with your divine being so you can feel secure and confident about what you’re meant to do in this lifetime.
+  </p>
+</Fragment>
+
+<Fragment slot="bg">
+  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+</Fragment>
+</Content>
+
+<Content
+isReversed
+image={{
+  src: '/assets/images/astrocartography-reading.webp',
+  alt: 'Hand-drawn botanical moon phases',
+}}
+callToAction={{
+  text: 'Book Audio Reading',
+  icon: 'tabler:chevron-right',
+  href: '/audio-reading',
+}}
+>
+<Fragment slot="content">
+  <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Radiant Gifts Reading</p>
+  <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Self-Love and Worthiness Ritual</h2>
+  <p>
+    If you need a little pick-me-up, this reading is sure to lift your spirits. By looking at your best placements, Jersey will reveal the radiant gifts hidden in your chart. You’ll learn what makes you special and how to best work with your inherent blessings. The Self-Love and Worthiness Ritual is designed to help you release limiting beliefs and vibrate at the frequency of your own worthiness, so you can recognize how amazing you truly are! ❤️
+  </p>
+</Fragment>
+
+<Fragment slot="bg">
+  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+</Fragment>
+</Content>
 </Layout>
