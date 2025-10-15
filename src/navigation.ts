@@ -87,7 +87,7 @@ export const getFooterData = async () => {
         links: [
           { text: 'Readings', href: '/readings' },
           { text: 'Private Sessions', href: '/private-sessions' },
-          { text: 'Book a Written Reading', href: 'book-a-written-reading' },
+          { text: 'Book Audio Readings', href: '/audio-reading' },
           { text: 'About', href: '/about' },
           { text: 'Workshops', href: '/workshops' },
           { text: 'Substack', href: 'https://pinetreemagick.substack.com/' },
