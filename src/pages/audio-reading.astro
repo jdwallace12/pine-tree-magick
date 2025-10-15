@@ -1,0 +1,260 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+const metadata = {
+  title: 'Audio Readings | Pine Tree Magick',
+  description: 'Book an audio reading with Jersey - personalized astrological insights and guided rituals',
+};
+
+// PayPal Button ID for audio readings
+const payPalButtonId = 'YOUR_PAYPAL_BUTTON_ID'; // Replace with actual PayPal button ID
+---
+
+<Layout metadata={metadata}>
+  <Fragment slot="announcement"></Fragment>
+  
+  <div class="mx-auto max-w-4xl p-4 md:px-8">
+    <div class="text-center mb-12">
+      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase mt-12">Book Your Audio Reading</p>
+      <h1 class="font-normal tracking-tighter font-heading text-heading text-3xl md:text-4xl mb-4">
+        <span class="dark:text-primary text-primary">Audio Readings</span> + Guided Rituals
+      </h1>
+      <p class="text-xl mb-6 text-muted">$125</p>
+   
+
+
+    <!-- Booking Form -->
+    <div class="bg-slate-50 dark:bg-slate-800/50 p-8 rounded-lg">
+
+      
+      <form 
+        id="audio-reading-form"
+        class="space-y-6"
+        onsubmit="handleFormSubmit(event)"
+      >
+        <!-- Personal Information -->
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label for="name" class="block text-sm font-medium text-heading mb-2">
+              Full Name *
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-heading dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="Enter your full name"
+            />
+          </div>
+          
+          <div>
+            <label for="email" class="block text-sm font-medium text-heading mb-2">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-heading dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="Enter your email address"
+            />
+          </div>
+        </div>
+
+        <!-- Birth Information -->
+        <div class="grid md:grid-cols-3 gap-6">
+          <div>
+            <label for="birthday" class="block text-sm font-medium text-heading mb-2">
+              Birthday *
+            </label>
+            <input
+              type="date"
+              id="birthday"
+              name="birthday"
+              required
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-heading dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+          </div>
+          
+          <div>
+            <label for="birthTime" class="block text-sm font-medium text-heading mb-2">
+              Birth Time *
+            </label>
+            <input
+              type="time"
+              id="birthTime"
+              name="birthTime"
+              required
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-heading dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+            />
+          </div>
+          
+          <div>
+            <label for="birthPlace" class="block text-sm font-medium text-heading mb-2">
+              Birth Place *
+            </label>
+            <input
+              type="text"
+              id="birthPlace"
+              name="birthPlace"
+              required
+              class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-heading dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+              placeholder="City, State/Country"
+            />
+          </div>
+        </div>
+
+        <!-- Reading Type Selection -->
+        <div>
+          <label class="block text-sm font-medium text-heading mb-4">
+            Select Your Audio Reading Type *
+          </label>
+          <div class="grid md:grid-cols-2 gap-4">
+            <label class="flex items-start space-x-3 p-4 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+              <input
+                type="radio"
+                name="readingType"
+                value="career-money"
+                required
+                class="mt-1 text-primary focus:ring-primary"
+              />
+              <div>
+                <div class="font-medium text-heading">Career and Money Reading</div>
+                <div class="text-sm text-muted">+ Money Ritual</div>
+              </div>
+            </label>
+            
+            <label class="flex items-start space-x-3 p-4 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+              <input
+                type="radio"
+                name="readingType"
+                value="love"
+                required
+                class="mt-1 text-primary focus:ring-primary"
+              />
+              <div>
+                <div class="font-medium text-heading">Love Reading</div>
+                <div class="text-sm text-muted">+ Love Spell</div>
+              </div>
+            </label>
+            
+            <label class="flex items-start space-x-3 p-4 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+              <input
+                type="radio"
+                name="readingType"
+                value="soul-purpose"
+                required
+                class="mt-1 text-primary focus:ring-primary"
+              />
+              <div>
+                <div class="font-medium text-heading">Soul Purpose Reading</div>
+                <div class="text-sm text-muted">+ Highest Self Ritual</div>
+              </div>
+            </label>
+            
+            <label class="flex items-start space-x-3 p-4 border border-slate-300 dark:border-slate-600 rounded-lg cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+              <input
+                type="radio"
+                name="readingType"
+                value="radiant-gifts"
+                required
+                class="mt-1 text-primary focus:ring-primary"
+              />
+              <div>
+                <div class="font-medium text-heading">Radiant Gifts Reading</div>
+                <div class="text-sm text-muted">+ Self-Love Ritual</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Additional Notes -->
+        <div>
+          <label for="notes" class="block text-sm font-medium text-heading mb-2">
+            Additional Notes (Optional)
+          </label>
+          <textarea
+            id="notes"
+            name="notes"
+            rows="4"
+            class="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-heading dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+            placeholder="Any specific questions or areas you'd like Jersey to focus on during your reading..."
+          ></textarea>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+          <p class="text-sm text-amber-800 dark:text-amber-200">
+            <strong>Please note:</strong> By submitting this form, you agree to our terms and conditions. 
+            Please read our <a href="/disclaimer" class="underline hover:text-amber-600 dark:hover:text-amber-300">disclaimer</a> before proceeding.
+          </p>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button
+            type="submit"
+            class="inline-flex items-center px-8 py-4 bg-primary text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+          >
+            <Icon name="tabler:credit-card" class="w-5 h-5 mr-2" />
+            Proceed to Payment - $125
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Hidden PayPal Form -->
+  <form
+    id="paypal-form"
+    action={`https://www.paypal.com/ncp/payment/${payPalButtonId}`}
+    method="post"
+    target="_top"
+    style="display: none;"
+  >
+    <input type="hidden" id="paypal-name" name="name" />
+    <input type="hidden" id="paypal-email" name="email" />
+    <input type="hidden" id="paypal-birthday" name="birthday" />
+    <input type="hidden" id="paypal-birthTime" name="birthTime" />
+    <input type="hidden" id="paypal-birthPlace" name="birthPlace" />
+    <input type="hidden" id="paypal-readingType" name="readingType" />
+    <input type="hidden" id="paypal-notes" name="notes" />
+  </form>
+
+  <script>
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      // Get form data
+      const formData = new FormData(event.target);
+      const name = formData.get('name');
+      const email = formData.get('email');
+      const birthday = formData.get('birthday');
+      const birthTime = formData.get('birthTime');
+      const birthPlace = formData.get('birthPlace');
+      const readingType = formData.get('readingType');
+      const notes = formData.get('notes');
+      
+      // Validate required fields
+      if (!name || !email || !birthday || !birthTime || !birthPlace || !readingType) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+      
+      // Set PayPal form data
+      document.getElementById('paypal-name').value = name;
+      document.getElementById('paypal-email').value = email;
+      document.getElementById('paypal-birthday').value = birthday;
+      document.getElementById('paypal-birthTime').value = birthTime;
+      document.getElementById('paypal-birthPlace').value = birthPlace;
+      document.getElementById('paypal-readingType').value = readingType;
+      document.getElementById('paypal-notes').value = notes || '';
+      
+      // Submit PayPal form
+      document.getElementById('paypal-form').submit();
+    }
+  </script>
+</Layout>
