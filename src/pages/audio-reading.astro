@@ -8,7 +8,7 @@ const metadata = {
 };
 
 // PayPal Button ID for audio readings
-const payPalButtonId = 'YOUR_PAYPAL_BUTTON_ID'; // Replace with actual PayPal button ID
+const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
 ---
 
 <style>
@@ -307,10 +307,17 @@ const payPalButtonId = 'YOUR_PAYPAL_BUTTON_ID'; // Replace with actual PayPal bu
         <div class="mt-10 grid">
           <button
             type="submit"
-            class="inline-flex items-center justify-center px-8 py-4 bg-primary dark:text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+            id="submit-btn"
+            class="inline-flex items-center justify-center px-8 py-4 bg-primary dark:text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Icon name="tabler:credit-card" class="w-5 h-5 mr-2" />
-            Proceed to Payment - $125
+            <div id="spinner" class="hidden w-5 h-5 mr-2">
+              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <Icon name="tabler:credit-card" id="submit-icon" class="w-5 h-5 mr-2" />
+            <span id="submit-text">Proceed to Payment - $125</span>
           </button>
         </div>
       </form>
@@ -320,7 +327,7 @@ const payPalButtonId = 'YOUR_PAYPAL_BUTTON_ID'; // Replace with actual PayPal bu
   <!-- Hidden PayPal Form -->
   <form
     id="paypal-form"
-    action={`https://www.paypal.com/ncp/payment/N5SATHTNU4MAQ`}
+    action={`https://www.paypal.com/ncp/payment/${payPalButtonId}`}
     method="post"
     target="_top"
     style="display: none;"
@@ -334,29 +341,64 @@ const payPalButtonId = 'YOUR_PAYPAL_BUTTON_ID'; // Replace with actual PayPal bu
     <input type="hidden" id="paypal-notes" name="notes" />
   </form>
 
+  <!-- Success Overlay -->
+  <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-xl">
+      <div class="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Form Submitted Successfully!</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">You will be redirected to PayPal checkout shortly...</p>
+      <div class="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+        <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+        <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+        <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const form = document.querySelector('.form-component') as HTMLFormElement;
       if (!form) return;
       
+      // Get form elements
+      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
+      const spinner = document.getElementById('spinner') as HTMLElement;
+      const submitIcon = document.getElementById('submit-icon') as HTMLElement;
+      const submitText = document.getElementById('submit-text') as HTMLElement;
+      const successOverlay = document.getElementById('success-overlay') as HTMLElement;
+      
       const messageContainer = document.createElement('div');
       messageContainer.className = 'mt-4 hidden text-center';
       messageContainer.innerHTML = `
-        <p class="text-green-600 dark:text-green-400 hidden" data-success-message>
-          Form submitted successfully! You will be redirected to PayPal checkout shortly...
-        </p>
         <p class="text-red-600 dark:text-red-400 hidden" data-error-message>
           There was an error submitting the form. Please try again.
         </p>
       `;
       form.appendChild(messageContainer);
       
-      const successMessage = messageContainer.querySelector('[data-success-message]') as HTMLElement;
       const errorMessage = messageContainer.querySelector('[data-error-message]') as HTMLElement;
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         messageContainer.classList.add('hidden');
+        
+        // Show spinner and disable button
+        if (submitBtn) {
+          submitBtn.disabled = true;
+        }
+        if (spinner) {
+          spinner.classList.remove('hidden');
+        }
+        if (submitIcon) {
+          submitIcon.classList.add('hidden');
+        }
+        if (submitText) {
+          submitText.textContent = 'Submitting...';
+        }
         
         try {
           const formData = new FormData(e.target as HTMLFormElement);
@@ -369,10 +411,11 @@ const payPalButtonId = 'YOUR_PAYPAL_BUTTON_ID'; // Replace with actual PayPal bu
           });
 
           if (response.ok) {
-            // Show success message
-            messageContainer.classList.remove('hidden');
-            if (successMessage) successMessage.classList.remove('hidden');
-            if (errorMessage) errorMessage.classList.add('hidden');
+            // Show success overlay
+            if (successOverlay) {
+              successOverlay.classList.remove('hidden');
+              successOverlay.classList.add('flex');
+            }
             
             // Redirect to PayPal after successful form submission
             setTimeout(() => {
@@ -413,9 +456,24 @@ const payPalButtonId = 'YOUR_PAYPAL_BUTTON_ID'; // Replace with actual PayPal bu
           }
         } catch (error) {
           console.error('Error submitting form:', error);
+          
+          // Reset button state
+          if (submitBtn) {
+            submitBtn.disabled = false;
+          }
+          if (spinner) {
+            spinner.classList.add('hidden');
+          }
+          if (submitIcon) {
+            submitIcon.classList.remove('hidden');
+          }
+          if (submitText) {
+            submitText.textContent = 'Proceed to Payment - $125';
+          }
+          
+          // Show error message
           messageContainer.classList.remove('hidden');
           if (errorMessage) errorMessage.classList.remove('hidden');
-          if (successMessage) successMessage.classList.add('hidden');
         }
       });
     });
