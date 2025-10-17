@@ -137,17 +137,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
       <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl mb-4">
         Audio Readings + Guided Rituals
       </h1>
-      
-      <!-- Discount Banner -->
-      {hasDiscount && (
-        <div class="text-white px-6 py-3 rounded-lg inline-block">
-          <div class="flex items-center space-x-2">
-            <Icon name="tabler:discount" class="w-5 h-5" />
-            <span class="font-semibold">Special {discountCode ? discountCode.charAt(0).toUpperCase() + discountCode.slice(1) : ''} Discount!</span>
-          </div>
-        </div>
-      )}
-      
+
       <!-- Price Display -->
       <div class="mb-6 price-container">
         {hasDiscount ? (
@@ -331,7 +321,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
             name="notes"
             rows="4"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-            placeholder="Any specific questions or areas you'd like Jersey to focus on during your reading..."
+            placeholder="Tell me what's going on in your life right now or why you're getting this reading — anything that feels relevant. You can include challenges, decisions, or details about the area of focus (career, love, purpose etc.) The more I know, the more I can tailor the reading to give you accurate insights."
           ></textarea>
         </div>
 
