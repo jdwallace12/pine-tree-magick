@@ -314,9 +314,10 @@ const hasDiscount = discountCode && discountCode !== 'default';
         <!-- Additional Notes -->
         <div class="mb-6">
           <label for="notes" class="block text-sm font-medium mb-2 text-left md:text-center">
-            Additional Notes (Optional)
+            Additional Notes<span class="text-primary">*</span>
           </label>
           <textarea
+            required
             id="notes"
             name="notes"
             rows="4"
