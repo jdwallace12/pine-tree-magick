@@ -140,7 +140,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
       
       <!-- Discount Banner -->
       {hasDiscount && (
-        <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-lg mb-4 inline-block">
+        <div class="text-white px-6 py-3 rounded-lg inline-block">
           <div class="flex items-center space-x-2">
             <Icon name="tabler:discount" class="w-5 h-5" />
             <span class="font-semibold">Special {discountCode ? discountCode.charAt(0).toUpperCase() + discountCode.slice(1) : ''} Discount!</span>
@@ -154,9 +154,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
           <div class="flex items-center justify-center space-x-3">
             <span class="text-xl text-gray-400 line-through original-price">$125</span>
             <span class="text-2xl font-bold text-primary current-price">${currentPrice}</span>
-            <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded text-sm font-medium savings">
-              Save ${125 - currentPrice}
-            </span>
           </div>
         ) : (
           <p class="text-xl mb-6 text-muted current-price">${currentPrice}</p>
@@ -423,11 +420,11 @@ const hasDiscount = discountCode && discountCode !== 'default';
       
       if (url.includes('?samhain') || url.includes('&samhain')) {
         discountCode = 'samhain';
-      } else if (url.includes('?yule') || url.includes('&yule')) {
-        discountCode = 'yule';
-      } else if (url.includes('?eclipse') || url.includes('&eclipse')) {
-        discountCode = 'eclipse';
-      }
+       } // else if (url.includes('?yule') || url.includes('&yule')) {
+      //   discountCode = 'yule';
+      // } else if (url.includes('?eclipse') || url.includes('&eclipse')) {
+      //   discountCode = 'eclipse';
+      // }
       
       return discountCode;
     }
@@ -439,9 +436,9 @@ const hasDiscount = discountCode && discountCode !== 'default';
       
       if (clientDiscountCode) {
         const discountPrices = {
-          samhain: 100,
-          yule: 90,
-          eclipse: 110
+          samhain: 100
+          // yule: 90,
+          // eclipse: 110
         };
         
         const discountedPrice = discountPrices[clientDiscountCode];
@@ -449,7 +446,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         if (discountedPrice) {
           // Show discount banner
           const discountBanner = document.createElement('div');
-          discountBanner.className = 'bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-lg mb-4 inline-block';
+          discountBanner.className = 'text-white px-6 py-3 rounded-lg inline-block';
           discountBanner.innerHTML = `
             <div class="flex items-center space-x-2">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -476,9 +473,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
                 <div class="flex items-center justify-center space-x-3">
                   <span class="text-xl text-gray-400 line-through original-price">$125</span>
                   <span class="text-2xl font-bold text-primary current-price">$${discountedPrice}</span>
-                  <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded text-sm font-medium savings">
-                    Save $${125 - discountedPrice}
-                  </span>
                 </div>
               `;
               currentPriceEl.outerHTML = discountPriceHTML;
