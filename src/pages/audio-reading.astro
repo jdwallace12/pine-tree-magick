@@ -7,8 +7,40 @@ const metadata = {
   description: 'Book an audio reading with Jersey - personalized astrological insights and guided rituals',
 };
 
-// PayPal Button ID for audio readings
-const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
+// PayPal Button ID mapping for different discount codes
+const payPalButtonMapping = {
+  default: 'N5SATHTNU4MAQ', // Regular price button ID
+  samhain: 'AWWRM9KBCWCHG', // Replace with actual Samhain discount button ID
+  // Add more discount codes as needed
+  // yule: 'YULE_BUTTON_ID',
+  // eclipse: 'ECLIPSE_BUTTON_ID',
+};
+
+// Get URL parameters using Astro.request
+const request = Astro.request;
+const url = new URL(request.url);
+let discountCode = url.searchParams.get('discount');
+
+// Also check for direct parameter names like ?samhain by checking the URL string
+if (!discountCode) {
+  const urlString = url.href;
+  if (urlString.includes('?samhain') || urlString.includes('&samhain')) discountCode = 'samhain';
+  // else if (urlString.includes('?yule') || urlString.includes('&yule')) discountCode = 'yule';
+  // else if (urlString.includes('?eclipse') || urlString.includes('&eclipse')) discountCode = 'eclipse';
+}
+
+// Determine which PayPal button ID to use
+const payPalButtonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
+
+// Price mapping for different discount codes
+const priceMapping = {
+  default: 125,
+  samhain: 100, // Example: 20% discount
+  // Add more discount prices as needed
+};
+
+const currentPrice = priceMapping[discountCode || 'default'] || priceMapping.default;
+const hasDiscount = discountCode && discountCode !== 'default';
 ---
 
 <style>
@@ -105,7 +137,31 @@ const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
       <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl mb-4">
         Audio Readings + Guided Rituals
       </h1>
-      <p class="text-xl mb-6 text-muted">$125</p>
+      
+      <!-- Discount Banner -->
+      {hasDiscount && (
+        <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-lg mb-4 inline-block">
+          <div class="flex items-center space-x-2">
+            <Icon name="tabler:discount" class="w-5 h-5" />
+            <span class="font-semibold">Special {discountCode ? discountCode.charAt(0).toUpperCase() + discountCode.slice(1) : ''} Discount!</span>
+          </div>
+        </div>
+      )}
+      
+      <!-- Price Display -->
+      <div class="mb-6 price-container">
+        {hasDiscount ? (
+          <div class="flex items-center justify-center space-x-3">
+            <span class="text-xl text-gray-400 line-through original-price">$125</span>
+            <span class="text-2xl font-bold text-primary current-price">${currentPrice}</span>
+            <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded text-sm font-medium savings">
+              Save ${125 - currentPrice}
+            </span>
+          </div>
+        ) : (
+          <p class="text-xl mb-6 text-muted current-price">${currentPrice}</p>
+        )}
+      </div>
       <p>Audio readings are pre-recorded and include astrological insight and a Tarot card message from Spirit. Along with this detailed audio reading, you'll receive a guided ritual to help you work your desired manifestation. Each written ritual includes a link to a recorded meditation, journal prompts, altar suggestions, timing recommendations, and a step-by-step guide to help you manifest your intention.</p>
 
     <!-- Booking Form -->
@@ -317,7 +373,7 @@ const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
               </svg>
             </div>
             <Icon name="tabler:credit-card" id="submit-icon" class="w-5 h-5 mr-2" />
-            <span id="submit-text">Proceed to Payment - $125</span>
+            <span id="submit-text">Proceed to Payment - ${currentPrice}</span>
           </button>
         </div>
       </form>
@@ -359,17 +415,101 @@ const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
     </div>
   </div>
 
-  <script>
+  <script define:vars={{ currentPrice }}>
+    // Client-side discount detection
+    function detectDiscount() {
+      const url = window.location.href;
+      let discountCode = null;
+      
+      if (url.includes('?samhain') || url.includes('&samhain')) {
+        discountCode = 'samhain';
+      } else if (url.includes('?yule') || url.includes('&yule')) {
+        discountCode = 'yule';
+      } else if (url.includes('?eclipse') || url.includes('&eclipse')) {
+        discountCode = 'eclipse';
+      }
+      
+      return discountCode;
+    }
+    
+    
     document.addEventListener('DOMContentLoaded', () => {
-      const form = document.querySelector('.form-component') as HTMLFormElement;
+      // Apply client-side discount if detected (fallback for ?samhain format)
+      const clientDiscountCode = detectDiscount();
+      
+      if (clientDiscountCode) {
+        const discountPrices = {
+          samhain: 100,
+          yule: 90,
+          eclipse: 110
+        };
+        
+        const discountedPrice = discountPrices[clientDiscountCode];
+        
+        if (discountedPrice) {
+          // Show discount banner
+          const discountBanner = document.createElement('div');
+          discountBanner.className = 'bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-lg mb-4 inline-block';
+          discountBanner.innerHTML = `
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+              </svg>
+              <span class="font-semibold">Special ${clientDiscountCode.charAt(0).toUpperCase() + clientDiscountCode.slice(1)} Discount!</span>
+            </div>
+          `;
+          
+          // Insert banner before the price
+          const priceContainer = document.querySelector('.price-container');
+          if (priceContainer) {
+            priceContainer.insertBefore(discountBanner, priceContainer.firstChild);
+          }
+          
+          // Update price display - handle both discount and non-discount cases
+          const currentPriceEl = document.querySelector('.current-price');
+          
+          if (currentPriceEl) {
+            // If it's currently showing as a single price, convert to discount format
+            if (currentPriceEl.tagName === 'P') {
+              // Replace the single price with discount format
+              const discountPriceHTML = `
+                <div class="flex items-center justify-center space-x-3">
+                  <span class="text-xl text-gray-400 line-through original-price">$125</span>
+                  <span class="text-2xl font-bold text-primary current-price">$${discountedPrice}</span>
+                  <span class="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded text-sm font-medium savings">
+                    Save $${125 - discountedPrice}
+                  </span>
+                </div>
+              `;
+              currentPriceEl.outerHTML = discountPriceHTML;
+            } else {
+              // Update existing discount elements
+              const originalPrice = document.querySelector('.original-price');
+              const savingsEl = document.querySelector('.savings');
+              
+              if (originalPrice) originalPrice.textContent = '$125';
+              if (currentPriceEl) currentPriceEl.textContent = '$' + discountedPrice;
+              if (savingsEl) savingsEl.textContent = 'Save $' + (125 - discountedPrice);
+            }
+          }
+          
+          // Update submit button
+          const submitText = document.getElementById('submit-text');
+          if (submitText) {
+            submitText.textContent = 'Proceed to Payment - $' + discountedPrice;
+          }
+        }
+      }
+      
+      const form = document.querySelector('.form-component');
       if (!form) return;
       
       // Get form elements
-      const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
-      const spinner = document.getElementById('spinner') as HTMLElement;
-      const submitIcon = document.getElementById('submit-icon') as HTMLElement;
-      const submitText = document.getElementById('submit-text') as HTMLElement;
-      const successOverlay = document.getElementById('success-overlay') as HTMLElement;
+      const submitBtn = document.getElementById('submit-btn');
+      const spinner = document.getElementById('spinner');
+      const submitIcon = document.getElementById('submit-icon');
+      const submitText = document.getElementById('submit-text');
+      const successOverlay = document.getElementById('success-overlay');
       
       const messageContainer = document.createElement('div');
       messageContainer.className = 'mt-4 hidden text-center';
@@ -380,7 +520,7 @@ const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
       `;
       form.appendChild(messageContainer);
       
-      const errorMessage = messageContainer.querySelector('[data-error-message]') as HTMLElement;
+      const errorMessage = messageContainer.querySelector('[data-error-message]');
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -401,13 +541,13 @@ const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
         }
         
         try {
-          const formData = new FormData(e.target as HTMLFormElement);
+          const formData = new FormData(e.target);
           
           // Submit to Netlify Forms
           const response = await fetch('/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData as any).toString()
+            body: new URLSearchParams(formData).toString()
           });
 
           if (response.ok) {
@@ -429,22 +569,32 @@ const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
               const notes = formData.get('notes');
               
               // Set PayPal form data
-              const paypalName = document.getElementById('paypal-name') as HTMLInputElement;
-              const paypalEmail = document.getElementById('paypal-email') as HTMLInputElement;
-              const paypalBirthday = document.getElementById('paypal-birthday') as HTMLInputElement;
-              const paypalBirthTime = document.getElementById('paypal-birthTime') as HTMLInputElement;
-              const paypalBirthPlace = document.getElementById('paypal-birthPlace') as HTMLInputElement;
-              const paypalReadingType = document.getElementById('paypal-readingType') as HTMLInputElement;
-              const paypalNotes = document.getElementById('paypal-notes') as HTMLInputElement;
-              const paypalForm = document.getElementById('paypal-form') as HTMLFormElement;
+              const paypalName = document.getElementById('paypal-name');
+              const paypalEmail = document.getElementById('paypal-email');
+              const paypalBirthday = document.getElementById('paypal-birthday');
+              const paypalBirthTime = document.getElementById('paypal-birthTime');
+              const paypalBirthPlace = document.getElementById('paypal-birthPlace');
+              const paypalReadingType = document.getElementById('paypal-readingType');
+              const paypalNotes = document.getElementById('paypal-notes');
+              const paypalForm = document.getElementById('paypal-form');
               
-              if (paypalName) paypalName.value = name as string;
-              if (paypalEmail) paypalEmail.value = email as string;
-              if (paypalBirthday) paypalBirthday.value = birthday as string;
-              if (paypalBirthTime) paypalBirthTime.value = birthTime as string;
-              if (paypalBirthPlace) paypalBirthPlace.value = birthPlace as string;
-              if (paypalReadingType) paypalReadingType.value = readingType as string;
-              if (paypalNotes) paypalNotes.value = notes as string || '';
+              if (paypalName) paypalName.value = name;
+              if (paypalEmail) paypalEmail.value = email;
+              if (paypalBirthday) paypalBirthday.value = birthday;
+              if (paypalBirthTime) paypalBirthTime.value = birthTime;
+              if (paypalBirthPlace) paypalBirthPlace.value = birthPlace;
+              if (paypalReadingType) paypalReadingType.value = readingType;
+              if (paypalNotes) paypalNotes.value = notes || '';
+
+              const discountCode = detectDiscount();
+              const payPalButtonMapping = {
+                default: 'N5SATHTNU4MAQ',
+                samhain: 'AWWRM9KBCWCHG',
+                yule: 'YULE_BUTTON_ID',
+                eclipse: 'ECLIPSE_BUTTON_ID'
+              };
+              const buttonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
+              paypalForm.action = `https://www.paypal.com/ncp/payment/${buttonId}`;
               
               // Submit PayPal form
               if (paypalForm) paypalForm.submit();
@@ -468,7 +618,7 @@ const payPalButtonId = 'N5SATHTNU4MAQ'; // Replace with actual PayPal button ID
             submitIcon.classList.remove('hidden');
           }
           if (submitText) {
-            submitText.textContent = 'Proceed to Payment - $125';
+            submitText.textContent = 'Proceed to Payment - $' + currentPrice;
           }
           
           // Show error message
