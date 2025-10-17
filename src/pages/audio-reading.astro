@@ -9,8 +9,8 @@ const metadata = {
 
 // PayPal Button ID mapping for different discount codes
 const payPalButtonMapping = {
-  default: 'N5SATHTNU4MAQ', // Regular price button ID
-  samhain: 'AWWRM9KBCWCHG', // Replace with actual Samhain discount button ID
+  default: 'U6MBRBGJGHDAL', // Regular price button ID
+  samhain: 'QHTWD393ANQ4A', // Replace with actual Samhain discount button ID
   // Add more discount codes as needed
   // yule: 'YULE_BUTTON_ID',
   // eclipse: 'ECLIPSE_BUTTON_ID',
@@ -573,10 +573,10 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
               const discountCode = detectDiscount();
               const payPalButtonMapping = {
-                default: 'N5SATHTNU4MAQ',
-                samhain: 'AWWRM9KBCWCHG',
-                yule: 'YULE_BUTTON_ID',
-                eclipse: 'ECLIPSE_BUTTON_ID'
+                default: 'U6MBRBGJGHDAL',
+                samhain: 'QHTWD393ANQ4A'
+                // yule: 'YULE_BUTTON_ID',
+                // eclipse: 'ECLIPSE_BUTTON_ID'
               };
               const buttonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
               paypalForm.action = `https://www.paypal.com/ncp/payment/${buttonId}`;
