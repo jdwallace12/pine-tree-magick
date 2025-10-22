@@ -159,7 +159,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
         data-netlify="true"
         netlify-honeypot="bot-field"
         class="needs-validation form-component"
-        action="/success"
       >
         <input type="hidden" name="form-name" value="audio-reading" />
         <p class="hidden">
@@ -322,7 +321,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
             id="referrals"
             name="referrals"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-          ></input>
+          />
         </div>
 
         <!-- Additional Notes -->
@@ -576,8 +575,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
               const paypalBirthTime = document.getElementById('paypal-birthTime');
               const paypalBirthPlace = document.getElementById('paypal-birthPlace');
               const paypalReadingType = document.getElementById('paypal-readingType');
-              const paypalNotes = document.getElementById('paypal-notes');
               const paypalReferrals = document.getElementById('paypal-referrals');
+              const paypalNotes = document.getElementById('paypal-notes');
               const paypalForm = document.getElementById('paypal-form');
               
               if (paypalName) paypalName.value = name;
@@ -586,8 +585,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
               if (paypalBirthTime) paypalBirthTime.value = birthTime;
               if (paypalBirthPlace) paypalBirthPlace.value = birthPlace;
               if (paypalReadingType) paypalReadingType.value = readingType;
-              if (paypalNotes) paypalNotes.value = notes;
               if (paypalReferrals) paypalReferrals.value = referrals;
+              if (paypalNotes) paypalNotes.value = notes;
 
               const discountCode = detectDiscount();
               const payPalButtonMapping = {
