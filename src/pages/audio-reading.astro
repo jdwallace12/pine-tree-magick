@@ -158,6 +158,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         method="POST"
         data-netlify="true"
         netlify-honeypot="bot-field"
+        data-netlify-recaptcha="false"
         class="needs-validation form-component"
       >
         <input type="hidden" name="form-name" value="audio-reading" />
@@ -543,7 +544,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const formData = new FormData(e.target);
           
           // Submit to Netlify Forms
-          const response = await fetch('/audio-reading', {
+          const response = await fetch('/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams(formData).toString()
