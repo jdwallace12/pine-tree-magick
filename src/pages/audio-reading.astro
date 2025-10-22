@@ -396,6 +396,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
     <input type="hidden" id="paypal-birthTime" name="birthTime" />
     <input type="hidden" id="paypal-birthPlace" name="birthPlace" />
     <input type="hidden" id="paypal-readingType" name="readingType" />
+    <input type="hidden" id="paypal-referrals" name="referrals" />
     <input type="hidden" id="paypal-notes" name="notes" />
   </form>
 
@@ -565,6 +566,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
               const birthTime = formData.get('birthTime');
               const birthPlace = formData.get('birthPlace');
               const readingType = formData.get('readingType');
+              const referrals = formData.get('referrals');
               const notes = formData.get('notes');
               
               // Set PayPal form data
@@ -575,6 +577,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
               const paypalBirthPlace = document.getElementById('paypal-birthPlace');
               const paypalReadingType = document.getElementById('paypal-readingType');
               const paypalNotes = document.getElementById('paypal-notes');
+              const paypalReferrals = document.getElementById('paypal-referrals');
               const paypalForm = document.getElementById('paypal-form');
               
               if (paypalName) paypalName.value = name;
@@ -583,7 +586,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
               if (paypalBirthTime) paypalBirthTime.value = birthTime;
               if (paypalBirthPlace) paypalBirthPlace.value = birthPlace;
               if (paypalReadingType) paypalReadingType.value = readingType;
-              if (paypalNotes) paypalNotes.value = notes || '';
+              if (paypalNotes) paypalNotes.value = notes;
+              if (paypalReferrals) paypalReferrals.value = referrals;
 
               const discountCode = detectDiscount();
               const payPalButtonMapping = {
