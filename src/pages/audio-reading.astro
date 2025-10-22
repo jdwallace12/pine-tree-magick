@@ -548,65 +548,29 @@ const hasDiscount = discountCode && discountCode !== 'default';
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams(formData).toString()
-          });
+          })
+          .then((response) => {
+            if (!response.ok) throw new Error('Form submission failed');
 
-          if (response.ok) {
-            // Show success overlay
-            if (successOverlay) {
-              successOverlay.classList.remove('hidden');
-              successOverlay.classList.add('flex');
-            }
-            
-            // Redirect to PayPal after successful form submission
+            // Show overlay
+            successOverlay?.classList.remove('hidden');
+            successOverlay?.classList.add('flex');
+
+            // Determine PayPal link
+            const discount = detectDiscount();
+            const payPalButtonMapping = {
+              default: 'U6MBRBGJGHDAL',
+              samhain: 'QHTWD393ANQ4A',
+            };
+            const buttonId = payPalButtonMapping[discount || 'default'] || payPalButtonMapping.default;
+
+            // Redirect to PayPal
             setTimeout(() => {
-              // Get form data for PayPal
-              const name = formData.get('name');
-              const email = formData.get('email');
-              const birthday = formData.get('birthday');
-              const birthTime = formData.get('birthTime');
-              const birthPlace = formData.get('birthPlace');
-              const readingType = formData.get('readingType');
-              const referrals = formData.get('referrals');
-              const notes = formData.get('notes');
-              
-              // Set PayPal form data
-              const paypalName = document.getElementById('paypal-name');
-              const paypalEmail = document.getElementById('paypal-email');
-              const paypalBirthday = document.getElementById('paypal-birthday');
-              const paypalBirthTime = document.getElementById('paypal-birthTime');
-              const paypalBirthPlace = document.getElementById('paypal-birthPlace');
-              const paypalReadingType = document.getElementById('paypal-readingType');
-              const paypalReferrals = document.getElementById('paypal-referrals');
-              const paypalNotes = document.getElementById('paypal-notes');
-              const paypalForm = document.getElementById('paypal-form');
-              
-              if (paypalName) paypalName.value = name;
-              if (paypalEmail) paypalEmail.value = email;
-              if (paypalBirthday) paypalBirthday.value = birthday;
-              if (paypalBirthTime) paypalBirthTime.value = birthTime;
-              if (paypalBirthPlace) paypalBirthPlace.value = birthPlace;
-              if (paypalReadingType) paypalReadingType.value = readingType;
-              if (paypalReferrals) paypalReferrals.value = referrals;
-              if (paypalNotes) paypalNotes.value = notes;
+              window.location.href = `https://www.paypal.com/ncp/payment/${buttonId}`;
+            }, 1000);
 
-              const discountCode = detectDiscount();
-              const payPalButtonMapping = {
-                default: 'U6MBRBGJGHDAL',
-                samhain: 'QHTWD393ANQ4A'
-                // yule: 'YULE_BUTTON_ID',
-                // eclipse: 'ECLIPSE_BUTTON_ID'
-              };
-              const buttonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
-              paypalForm.action = `https://www.paypal.com/ncp/payment/${buttonId}`;
-              
-              // Submit PayPal form
-              if (paypalForm) paypalForm.submit();
-            }, 1500);
-            
             form.reset();
-          } else {
-            throw new Error('Form submission failed');
-          }
+          })
         } catch (error) {
           console.error('Error submitting form:', error);
           
