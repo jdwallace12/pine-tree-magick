@@ -312,7 +312,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
             required
             type="text"
             id="referrals"
-            name="referrals"
+            name="How did you hear about me?"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
         </div>
@@ -524,6 +524,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
           formData.set('referrals', referralsVal);
           // Also set alias field to improve visibility in Netlify UI
           formData.set('referral', referralsVal);
+          // Also set a friendly labeled field for Netlify UI
+          formData.set('How did you hear about me?', referralsVal);
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
@@ -536,11 +538,18 @@ const hasDiscount = discountCode && discountCode !== 'default';
             const formatted = `${h}:${m} ${ampm}`;
             formData.set('birthTime', formatted);
           }
+          // Format birthday as MM/DD/YYYY for Netlify storage
+          const rawBirthday = formData.get('birthday');
+          if (rawBirthday && typeof rawBirthday === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(rawBirthday)) {
+            const [y, m, d] = rawBirthday.split('-');
+            formData.set('birthday', `${m}/${d}/${y}`);
+          }
           // Transform readingType to display-friendly value without hyphens for Netlify
           const originalReadingType = formData.get('readingType');
           if (originalReadingType && typeof originalReadingType === 'string') {
             const displayReadingType = originalReadingType.replace(/-/g, ' ');
-            formData.set('readingType', displayReadingType);
+            const titleCased = displayReadingType.replace(/\b\w/g, (c) => c.toUpperCase());
+            formData.set('readingType', titleCased);
           }
           // 'referrals' is already part of the form; FormData includes it as-is
           
