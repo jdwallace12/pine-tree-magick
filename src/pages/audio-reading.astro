@@ -151,6 +151,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         netlify-honeypot="bot-field"
         data-netlify-recaptcha="false"
         class="needs-validation form-component"
+        accept-charset="UTF-8"
       >
         <input type="hidden" name="form-name" value="audio-readings" />
         <p class="hidden">
@@ -551,12 +552,24 @@ const hasDiscount = discountCode && discountCode !== 'default';
             formData.set('readingType', titleCased);
           }
           
-          // Submit to Netlify Forms
-          const response = await fetch(`${window.location.pathname}?no-cache=1`, {
+          // Build params with form-name first for Netlify
+          const params = new URLSearchParams();
+          params.append('form-name', formData.get('form-name'));
+          params.append('bot-field', formData.get('bot-field') || '');
+          for (const [key, value] of formData.entries()) {
+            if (key === 'form-name' || key === 'bot-field') continue;
+            params.append(key, String(value));
+          }
+          // Debug: verify outgoing form-name
+          console.log('Submitting Netlify form-name:', params.get('form-name'));
+          // Submit to Netlify Forms (root path, avoid path-level caching)
+          const response = await fetch('/?no-cache=1', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams(formData).toString()
+            body: params.toString()
           });
+          // Debug: log Netlify request id header for tracking
+          console.log('Netlify request id:', response.headers.get('x-nf-request-id'));
 
           if (response.ok) {
             // Show success overlay
