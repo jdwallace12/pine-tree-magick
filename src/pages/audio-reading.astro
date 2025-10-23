@@ -313,9 +313,10 @@ const hasDiscount = discountCode && discountCode !== 'default';
             required
             type="text"
             id="howDidYouHearAboutMe"
-            name="howDidYouHearAboutMe"
+            name="how_did_you_hear_about_me"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
+          <input type="hidden" name="how_did_you_hear_about_me" value="" />
         </div>
 
         <!-- Additional Notes -->
@@ -537,7 +538,11 @@ const hasDiscount = discountCode && discountCode !== 'default';
           formData.set('birthPlace', getVal('birthPlace'));
           const selectedType = (document.querySelector('input[name="readingType"]:checked') || {}).value || formData.get('readingType') || '';
           formData.set('readingType', selectedType);
-          formData.set('howDidYouHearAboutMe', getVal('howDidYouHearAboutMe'));
+          const heardVal = getVal('howDidYouHearAboutMe');
+          // Primary snake_case key for Netlify table visibility
+          formData.set('how_did_you_hear_about_me', heardVal);
+          // Keep camelCase alias for backwards compatibility in payload
+          formData.set('howDidYouHearAboutMe', heardVal);
           formData.set('notes', getVal('notes'));
           // Exclude disclaimer
           formData.delete('disclaimer');
