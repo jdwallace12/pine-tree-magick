@@ -305,18 +305,16 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
         <!-- Referrals -->
         <div class="mb-6">
-          <label for="referrals" class="block text-sm font-medium mb-2 text-left md:text-center">
+          <label for="hearAboutMe" class="block text-sm font-medium mb-2 text-left md:text-center">
             How did you hear about me? If someone referred you, please let me know who!<span class="text-primary">*</span>
           </label>
           <input
             required
             type="text"
-            id="referrals"
-            name="referrals"
+            id="hearAboutMe"
+            name="hearAboutMe"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
-          <!-- Hidden field for Netlify schema detection -->
-          <input type="hidden" id="referrals-hidden" name="referrals" value="" />
         </div>
 
         <!-- Additional Notes -->
@@ -522,14 +520,9 @@ const hasDiscount = discountCode && discountCode !== 'default';
         try {
           const formData = new FormData(e.target);
           // Ensure referrals is explicitly set from the visible input
-          const referralsInput = document.getElementById('referrals');
-          const referralsVal = referralsInput ? referralsInput.value : (formData.get('referrals') || '');
-          formData.set('referrals', referralsVal);
-          // Also set alias field to improve visibility in Netlify UI
-          formData.set('referral', referralsVal);
-          // Mirror into hidden input for completeness
-          const referralsHidden = document.getElementById('referrals-hidden');
-          if (referralsHidden) referralsHidden.value = referralsVal;
+          const referralsInput = document.getElementById('hearAboutMe');
+          const referralsVal = referralsInput ? referralsInput.value : (formData.get('hearAboutMe') || '');
+          formData.set('hearAboutMe', referralsVal);
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
@@ -555,7 +548,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
             const titleCased = displayReadingType.replace(/\b\w/g, (c) => c.toUpperCase());
             formData.set('readingType', titleCased);
           }
-          // 'referrals' is already part of the form; FormData includes it as-is
           
           // Submit to Netlify Forms
           const response = await fetch(window.location.pathname, {
