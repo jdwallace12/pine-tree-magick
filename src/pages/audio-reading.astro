@@ -562,8 +562,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
           // Debug: verify outgoing form-name and payload
           console.log('Submitting Netlify form-name:', params.get('form-name'));
           console.log('Netlify payload:', params.toString());
-          // Submit to Netlify Forms (root path, avoid path-level caching)
-          const response = await fetch('/?no-cache=1', {
+          // Submit to Netlify Forms (page path, avoid path-level caching)
+          const response = await fetch(`${window.location.pathname}?no-cache=1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
             body: params.toString()
@@ -595,7 +595,12 @@ const hasDiscount = discountCode && discountCode !== 'default';
             
             form.reset();
           } else {
-            throw new Error('Form submission failed');
+            const status = response.status;
+            const statusText = response.statusText;
+            let bodyText = '';
+            try { bodyText = await response.text(); } catch {}
+            console.error('Netlify form submission failed:', { status, statusText, bodyText });
+            throw new Error(`Form submission failed (${status} ${statusText})`);
           }
         } catch (error) {
           console.error('Error submitting form:', error);
