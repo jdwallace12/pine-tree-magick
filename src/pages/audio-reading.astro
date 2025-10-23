@@ -435,9 +435,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
       
       return discountCode;
     }
-    
-    
-    document.addEventListener('DOMContentLoaded', () => {
+
+    function initAudioReadingForm() {
       // Apply client-side discount if detected (fallback for ?samhain format)
       const clientDiscountCode = detectDiscount();
       
@@ -546,7 +545,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const formData = new FormData(e.target);
           
           // Submit to Netlify Forms
-          const response = await fetch('/', {
+          const response = await fetch(window.location.pathname, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams(formData).toString()
@@ -571,26 +570,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
               const referrals = formData.get('referrals');
               const notes = formData.get('notes');
               
-              // Set PayPal form data
-              const paypalName = document.getElementById('paypal-name');
-              const paypalEmail = document.getElementById('paypal-email');
-              const paypalBirthday = document.getElementById('paypal-birthday');
-              const paypalBirthTime = document.getElementById('paypal-birthTime');
-              const paypalBirthPlace = document.getElementById('paypal-birthPlace');
-              const paypalReadingType = document.getElementById('paypal-readingType');
-              const paypalReferrals = document.getElementById('paypal-referrals');
-              const paypalNotes = document.getElementById('paypal-notes');
-              const paypalForm = document.getElementById('paypal-form');
-              
-              if (paypalName) paypalName.value = name;
-              if (paypalEmail) paypalEmail.value = email;
-              if (paypalBirthday) paypalBirthday.value = birthday;
-              if (paypalBirthTime) paypalBirthTime.value = birthTime;
-              if (paypalBirthPlace) paypalBirthPlace.value = birthPlace;
-              if (paypalReadingType) paypalReadingType.value = readingType;
-              if (paypalReferrals) paypalReferrals.value = referrals;
-              if (paypalNotes) paypalNotes.value = notes;
-
               const discountCode = detectDiscount();
               const payPalButtonMapping = {
                 default: 'U6MBRBGJGHDAL',
@@ -599,10 +578,9 @@ const hasDiscount = discountCode && discountCode !== 'default';
                 // eclipse: 'ECLIPSE_BUTTON_ID'
               };
               const buttonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
-              paypalForm.action = `https://www.paypal.com/ncp/payment/${buttonId}`;
-              
-              // Submit PayPal form
-              if (paypalForm) paypalForm.submit();
+              const paypalUrl = `https://www.paypal.com/ncp/payment/${buttonId}`;
+              // Navigate directly (more reliable than programmatic form submit in production)
+              window.location.assign(paypalUrl);
             }, 1500);
             
             form.reset();
@@ -631,6 +609,12 @@ const hasDiscount = discountCode && discountCode !== 'default';
           if (errorMessage) errorMessage.classList.remove('hidden');
         }
       });
-    });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAudioReadingForm);
+    } else {
+      initAudioReadingForm();
+    }
   </script>
 </Layout>
