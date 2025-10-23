@@ -145,7 +145,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
     <!-- Booking Form -->
     <div class="bg-primary/10 p-8 rounded-lg mt-12">
       <form 
-        name="audio-reading"
+        name="test-audio-reading"
         method="POST"
         data-netlify="true"
         netlify-honeypot="bot-field"
@@ -154,7 +154,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         accept-charset="UTF-8"
         action="/"
       >
-        <input type="hidden" name="form-name" value="audio-reading" />
+        <input type="hidden" name="form-name" value="test-audio-reading" />
         <p class="hidden">
           <label>
             Don't fill this out if you're human: <input name="bot-field" />
@@ -519,7 +519,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const formData = new FormData(e.target);
           // Ensure Netlify form-name matches the form's name attribute
           const formEl = e.target;
-          const formNameAttr = formEl.getAttribute('name') || 'audio-reading';
+          const formNameAttr = formEl.getAttribute('name') || 'test-audio-reading';
           formData.set('form-name', formNameAttr);
           // Make sure honeypot is empty (avoid spam tab)
           if (!formData.get('bot-field')) {
