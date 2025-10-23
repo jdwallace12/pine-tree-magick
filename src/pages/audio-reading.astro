@@ -152,6 +152,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         data-netlify-recaptcha="false"
         class="needs-validation form-component"
         accept-charset="UTF-8"
+        action="/"
       >
         <input type="hidden" name="form-name" value="audio-readings" />
         <p class="hidden">
@@ -562,8 +563,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
             params.append(key, String(value));
             seenKeys.add(key);
           }
-          // Submit to Netlify Forms (page path, avoid path-level caching)
-          const response = await fetch(`${window.location.pathname}?no-cache=1`, {
+          // Submit to Netlify Forms (site root, avoid path-level caching differences)
+          const response = await fetch('/?no-cache=1', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
             body: params.toString()
