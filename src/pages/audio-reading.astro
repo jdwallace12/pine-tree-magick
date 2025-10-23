@@ -337,7 +337,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
           <label class="custom-checkbox text-left md:text-center">
             <input
               type="checkbox"
-              name="disclaimer"
               required
             />
             <span class="checkbox-label">
@@ -552,7 +551,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
             formData.set('readingType', titleCased);
           }
           // 'referrals' is already part of the form; FormData includes it as-is
-          
+           formData.delete('disclaimer');
           // Submit to Netlify Forms
           const response = await fetch(window.location.pathname, {
             method: 'POST',
