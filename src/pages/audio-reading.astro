@@ -306,14 +306,14 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
         <!-- Referrals -->
         <div class="mb-6">
-          <label for="referrals" class="block text-sm font-medium mb-2 text-left md:text-center">
+          <label for="howDidYouHearAboutMe" class="block text-sm font-medium mb-2 text-left md:text-center">
             How did you hear about me? If someone referred you, please let me know who!<span class="text-primary">*</span>
           </label>
           <input
             required
             type="text"
-            id="referrals"
-            name="referrals"
+            id="howDidYouHearAboutMe"
+            name="howDidYouHearAboutMe"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
         </div>
@@ -538,7 +538,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           formData.set('birthPlace', getVal('birthPlace'));
           const selectedType = (document.querySelector('input[name="readingType"]:checked') || {}).value || formData.get('readingType') || '';
           formData.set('readingType', selectedType);
-          formData.set('referrals', getVal('referrals'));
+          formData.set('howDidYouHearAboutMe', getVal('howDidYouHearAboutMe'));
           formData.set('notes', getVal('notes'));
           // Exclude disclaimer
           formData.delete('disclaimer');
