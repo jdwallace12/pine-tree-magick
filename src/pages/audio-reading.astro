@@ -375,7 +375,19 @@ const hasDiscount = discountCode && discountCode !== 'default';
     </div>
   </div>
 
-  
+  <!-- Hidden Netlify schema form to ensure field detection at build time -->
+  <form name="audio-readings" data-netlify="true" hidden>
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <input type="text" name="birthday" />
+    <input type="text" name="birthTime" />
+    <input type="text" name="birthPlace" />
+    <input type="text" name="readingType" />
+    <input type="text" name="referrals" />
+    <textarea name="notes"></textarea>
+    <input type="text" name="bot-field" />
+    <input type="hidden" name="form-name" value="audio-readings" />
+  </form>
 
   <!-- Success Overlay -->
   <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
@@ -560,12 +572,13 @@ const hasDiscount = discountCode && discountCode !== 'default';
             if (key === 'form-name' || key === 'bot-field') continue;
             params.append(key, String(value));
           }
-          // Debug: verify outgoing form-name
+          // Debug: verify outgoing form-name and payload
           console.log('Submitting Netlify form-name:', params.get('form-name'));
+          console.log('Netlify payload:', params.toString());
           // Submit to Netlify Forms (root path, avoid path-level caching)
           const response = await fetch('/?no-cache=1', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
             body: params.toString()
           });
           // Debug: log Netlify request id header for tracking
