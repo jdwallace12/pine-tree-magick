@@ -517,6 +517,14 @@ const hasDiscount = discountCode && discountCode !== 'default';
         
         try {
           const formData = new FormData(e.target);
+          // Ensure Netlify form-name matches the form's name attribute
+          const formEl = e.target;
+          const formNameAttr = formEl.getAttribute('name') || 'audio-readings';
+          formData.set('form-name', formNameAttr);
+          // Make sure honeypot is empty (avoid spam tab)
+          if (!formData.get('bot-field')) {
+            formData.set('bot-field', '');
+          }
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
