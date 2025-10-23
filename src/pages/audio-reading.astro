@@ -305,14 +305,14 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
         <!-- Referrals -->
         <div class="mb-6">
-          <label for="hearAboutMe" class="block text-sm font-medium mb-2 text-left md:text-center">
+          <label for="referrals" class="block text-sm font-medium mb-2 text-left md:text-center">
             How did you hear about me? If someone referred you, please let me know who!<span class="text-primary">*</span>
           </label>
           <input
             required
             type="text"
-            id="hearAboutMe"
-            name="hearAboutMe"
+            id="referrals"
+            name="referrals"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
         </div>
@@ -519,10 +519,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
         
         try {
           const formData = new FormData(e.target);
-          // Ensure referrals is explicitly set from the visible input
-          const referralsInput = document.getElementById('hearAboutMe');
-          const referralsVal = referralsInput ? referralsInput.value : (formData.get('hearAboutMe') || '');
-          formData.set('hearAboutMe', referralsVal);
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
