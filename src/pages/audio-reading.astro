@@ -145,7 +145,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
     <!-- Booking Form -->
     <div class="bg-primary/10 p-8 rounded-lg mt-12">
       <form 
-        name="audio-readings"
+        name="audio-reading"
         method="POST"
         data-netlify="true"
         netlify-honeypot="bot-field"
@@ -154,7 +154,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         accept-charset="UTF-8"
         action="/"
       >
-        <input type="hidden" name="form-name" value="audio-readings" />
+        <input type="hidden" name="form-name" value="audio-reading" />
         <p class="hidden">
           <label>
             Don't fill this out if you're human: <input name="bot-field" />
@@ -316,7 +316,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
             name="referrals"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
-          <input type="hidden" name="referrals" value="" />
         </div>
 
         <!-- Additional Notes -->
@@ -376,20 +375,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
       </form>
     </div>
 </div>
-
-<!-- Hidden Netlify schema form to ensure field detection at build time -->
-<form name="audio-readings" data-netlify="true" hidden>
-  <input type="text" name="name" />
-  <input type="email" name="email" />
-  <input type="text" name="birthday" />
-  <input type="text" name="birthTime" />
-  <input type="text" name="birthPlace" />
-  <input type="text" name="readingType" />
-  <input type="text" name="referrals" />
-  <textarea name="notes"></textarea>
-  <input type="text" name="bot-field" />
-  <input type="hidden" name="form-name" value="audio-readings" />
-</form>
 
   <!-- Success Overlay -->
   <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
@@ -514,6 +499,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('submitting form')
         messageContainer.classList.add('hidden');
         
         // Show spinner and disable button
@@ -534,7 +520,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const formData = new FormData(e.target);
           // Ensure Netlify form-name matches the form's name attribute
           const formEl = e.target;
-          const formNameAttr = formEl.getAttribute('name') || 'audio-readings';
+          const formNameAttr = formEl.getAttribute('name') || 'audio-reading';
           formData.set('form-name', formNameAttr);
           // Make sure honeypot is empty (avoid spam tab)
           if (!formData.get('bot-field')) {
@@ -586,42 +572,21 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const params = new URLSearchParams();
           params.append('form-name', formData.get('form-name'));
           params.append('bot-field', formData.get('bot-field') || '');
-          const seenKeys = new Set();
           for (const [key, value] of formData.entries()) {
             if (key === 'form-name' || key === 'bot-field') continue;
-            if (seenKeys.has(key)) continue;
             params.append(key, String(value));
-            seenKeys.add(key);
           }
-          // Submit to Netlify Forms via hidden iframe + native form post to guarantee payload capture
-          let iframe = document.getElementById('netlify-target-iframe');
-          if (!iframe) {
-            iframe = document.createElement('iframe');
-            iframe.id = 'netlify-target-iframe';
-            iframe.name = 'netlify-target-iframe';
-            iframe.style.display = 'none';
-            document.body.appendChild(iframe);
-          }
-          const ghostForm = document.createElement('form');
-          ghostForm.method = 'POST';
-          ghostForm.action = `${window.location.pathname}?no-cache=1`;
-          ghostForm.acceptCharset = 'UTF-8';
-          ghostForm.target = 'netlify-target-iframe';
-          ghostForm.style.display = 'none';
-          // Populate hidden inputs from params
-          for (const [k, v] of params.entries()) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = k;
-            input.value = v;
-            ghostForm.appendChild(input);
-          }
-          document.body.appendChild(ghostForm);
-          ghostForm.submit();
-          // Clean up shortly after submit
-          setTimeout(() => {
-            try { document.body.removeChild(ghostForm); } catch {}
-          }, 2000);
+          // Debug: verify outgoing form-name and payload
+          console.log('Submitting Netlify form-name:', params.get('form-name'));
+          console.log('Netlify payload:', params.toString());
+          // Submit to Netlify Forms (page path, avoid path-level caching)
+          const response = await fetch(`${window.location.pathname}?no-cache=1`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: params.toString()
+          });
+          // Debug: log Netlify request id header for tracking
+          console.log('Netlify request id:', response.headers.get('x-nf-request-id'));
 
           // Proceed as success
             // Show success overlay
