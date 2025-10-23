@@ -145,7 +145,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
     <!-- Booking Form -->
     <div class="bg-primary/10 p-8 rounded-lg mt-12">
       <form 
-        name="audio-readings"
+        name="audio-reading"
         method="POST"
         data-netlify="true"
         netlify-honeypot="bot-field"
@@ -153,7 +153,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         class="needs-validation form-component"
         accept-charset="UTF-8"
       >
-        <input type="hidden" name="form-name" value="audio-readings" />
+        <input type="hidden" name="form-name" value="audio-reading" />
         <p class="hidden">
           <label>
             Don't fill this out if you're human: <input name="bot-field" />
@@ -375,20 +375,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
     </div>
   </div>
 
-  <!-- Hidden Netlify schema form to ensure field detection at build time -->
-  <form name="audio-readings" data-netlify="true" hidden>
-    <input type="text" name="name" />
-    <input type="email" name="email" />
-    <input type="text" name="birthday" />
-    <input type="text" name="birthTime" />
-    <input type="text" name="birthPlace" />
-    <input type="text" name="readingType" />
-    <input type="text" name="referrals" />
-    <textarea name="notes"></textarea>
-    <input type="text" name="bot-field" />
-    <input type="hidden" name="form-name" value="audio-readings" />
-  </form>
-
   <!-- Success Overlay -->
   <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
     <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-xl">
@@ -533,7 +519,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const formData = new FormData(e.target);
           // Ensure Netlify form-name matches the form's name attribute
           const formEl = e.target;
-          const formNameAttr = formEl.getAttribute('name') || 'audio-readings';
+          const formNameAttr = formEl.getAttribute('name') || 'audio-reading';
           formData.set('form-name', formNameAttr);
           // Make sure honeypot is empty (avoid spam tab)
           if (!formData.get('bot-field')) {
