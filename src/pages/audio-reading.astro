@@ -524,7 +524,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
       const errorMessage = messageContainer.querySelector('[data-error-message]');
 
       form.addEventListener('submit', async (e) => {
-        console.log('did you make it here');
         e.preventDefault();
         messageContainer.classList.add('hidden');
         
