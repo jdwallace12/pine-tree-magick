@@ -7,14 +7,6 @@ const metadata = {
   description: 'Book an audio reading - personalized astrological insights and guided rituals',
 };
 
-// PayPal Button ID mapping for different discount codes
-const payPalButtonMapping = {
-  default: 'U6MBRBGJGHDAL', // Regular price button ID
-  samhain: 'QHTWD393ANQ4A', // Replace with actual Samhain discount button ID
-  // Add more discount codes as needed
-  // yule: 'YULE_BUTTON_ID',
-  // eclipse: 'ECLIPSE_BUTTON_ID',
-};
 
 // Get URL parameters using Astro.request
 const request = Astro.request;
@@ -29,8 +21,7 @@ if (!discountCode) {
   // else if (urlString.includes('?eclipse') || urlString.includes('&eclipse')) discountCode = 'eclipse';
 }
 
-// Determine which PayPal button ID to use
-const payPalButtonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
+// Determine discount for price display on server-render
 
 // Price mapping for different discount codes
 const priceMapping = {
@@ -383,23 +374,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
     </div>
   </div>
 
-  <!-- Hidden PayPal Form -->
-  <form
-    id="paypal-form"
-    action={`https://www.paypal.com/ncp/payment/${payPalButtonId}`}
-    method="post"
-    target="_top"
-    style="display: none;"
-  >
-    <input type="hidden" id="paypal-name" name="name" />
-    <input type="hidden" id="paypal-email" name="email" />
-    <input type="hidden" id="paypal-birthday" name="birthday" />
-    <input type="hidden" id="paypal-birthTime" name="birthTime" />
-    <input type="hidden" id="paypal-birthPlace" name="birthPlace" />
-    <input type="hidden" id="paypal-readingType" name="readingType" />
-    <input type="hidden" id="paypal-referrals" name="referrals" />
-    <input type="hidden" id="paypal-notes" name="notes" />
-  </form>
+  
 
   <!-- Success Overlay -->
   <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
@@ -573,16 +548,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
             
             // Redirect to PayPal after successful form submission
             setTimeout(() => {
-              // Get form data for PayPal
-              const name = formData.get('name');
-              const email = formData.get('email');
-              const birthday = formData.get('birthday');
-              const birthTime = formData.get('birthTime');
-              const birthPlace = formData.get('birthPlace');
-              const readingType = formData.get('readingType');
-              const referrals = formData.get('referrals');
-              const notes = formData.get('notes');
-              
               const discountCode = detectDiscount();
               const payPalButtonMapping = {
                 default: 'U6MBRBGJGHDAL',
