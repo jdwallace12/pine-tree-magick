@@ -540,6 +540,10 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const heardVal = getVal('referrals');
           formData.set('referrals', heardVal);
           formData.set('notes', getVal('notes'));
+          // Include disclaimer checkbox explicitly (Yes/No)
+          const disclaimerEl = document.getElementById('disclaimer');
+          const disclaimerVal = disclaimerEl && disclaimerEl.checked ? 'Yes' : 'No';
+          formData.set('disclaimer', disclaimerVal);
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
