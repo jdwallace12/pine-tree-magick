@@ -536,6 +536,12 @@ const hasDiscount = discountCode && discountCode !== 'default';
             const formatted = `${h}:${m} ${ampm}`;
             formData.set('birthTime', formatted);
           }
+          // Transform readingType to display-friendly value without hyphens for Netlify
+          const originalReadingType = formData.get('readingType');
+          if (originalReadingType && typeof originalReadingType === 'string') {
+            const displayReadingType = originalReadingType.replace(/-/g, ' ');
+            formData.set('readingType', displayReadingType);
+          }
           // 'referrals' is already part of the form; FormData includes it as-is
           
           // Submit to Netlify Forms
