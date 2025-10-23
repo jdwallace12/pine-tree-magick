@@ -543,6 +543,19 @@ const hasDiscount = discountCode && discountCode !== 'default';
         
         try {
           const formData = new FormData(e.target);
+          // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
+          const rawBirthTime = formData.get('birthTime');
+          if (rawBirthTime && typeof rawBirthTime === 'string') {
+            const [hStr, mStr] = rawBirthTime.split(':');
+            let h = parseInt(hStr, 10);
+            const m = mStr.padStart(2, '0');
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            if (h === 0) h = 12;
+            const formatted = `${h}:${m} ${ampm}`;
+            formData.set('birthTime', formatted);
+          }
+          // 'referrals' is already part of the form; FormData includes it as-is
           
           // Submit to Netlify Forms
           const response = await fetch(window.location.pathname, {
