@@ -552,7 +552,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           }
           
           // Submit to Netlify Forms
-          const response = await fetch(window.location.pathname, {
+          const response = await fetch(`${window.location.pathname}?no-cache=1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams(formData).toString()
