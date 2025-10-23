@@ -524,6 +524,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
       const errorMessage = messageContainer.querySelector('[data-error-message]');
 
       form.addEventListener('submit', async (e) => {
+        console.log('did you make it here');
         e.preventDefault();
         messageContainer.classList.add('hidden');
         
@@ -545,7 +546,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const formData = new FormData(e.target);
           
           // Submit to Netlify Forms
-          const response = await fetch('/audio-reading', {
+          const response = await fetch('/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams(formData).toString()
