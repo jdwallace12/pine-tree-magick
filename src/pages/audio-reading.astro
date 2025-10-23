@@ -337,7 +337,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
           <label class="custom-checkbox text-left md:text-center">
             <input
               type="checkbox"
-              name="disclaimer"
               required
             />
             <span class="checkbox-label">
@@ -518,6 +517,11 @@ const hasDiscount = discountCode && discountCode !== 'default';
         
         try {
           const formData = new FormData(e.target);
+          // Ensure referrals is explicitly set from the visible input
+          const referralsInput = document.getElementById('referrals');
+          formData.set('referrals', referralsInput ? referralsInput.value : (formData.get('referrals') || ''));
+          // Exclude disclaimer from Netlify submission
+          formData.delete('disclaimer');
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
