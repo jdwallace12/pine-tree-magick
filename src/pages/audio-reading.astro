@@ -375,7 +375,21 @@ const hasDiscount = discountCode && discountCode !== 'default';
         </div>
       </form>
     </div>
-  </div>
+</div>
+
+<!-- Hidden Netlify schema form to ensure field detection at build time -->
+<form name="audio-readings" data-netlify="true" hidden>
+  <input type="text" name="name" />
+  <input type="email" name="email" />
+  <input type="text" name="birthday" />
+  <input type="text" name="birthTime" />
+  <input type="text" name="birthPlace" />
+  <input type="text" name="readingType" />
+  <input type="text" name="referrals" />
+  <textarea name="notes"></textarea>
+  <input type="text" name="bot-field" />
+  <input type="hidden" name="form-name" value="audio-readings" />
+</form>
 
   <!-- Success Overlay -->
   <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
