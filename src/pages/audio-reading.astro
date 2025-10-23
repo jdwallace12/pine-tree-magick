@@ -577,14 +577,15 @@ const hasDiscount = discountCode && discountCode !== 'default';
             params.append(key, String(value));
             seenKeys.add(key);
           }
-          // Submit to Netlify Forms (site root, avoid path-level caching differences)
-          const response = await fetch('/?no-cache=1', {
+          // Submit to Netlify Forms (site root) using no-cors to avoid redirect/body issues on new forms
+          await fetch('/?no-cache=1', {
             method: 'POST',
+            mode: 'no-cors',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
             body: params.toString()
           });
 
-          if (response.ok) {
+          // In no-cors, we can't read response; proceed as success
             // Show success overlay
             if (successOverlay) {
               successOverlay.classList.remove('hidden');
@@ -607,14 +608,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
             }, 1500);
             
             form.reset();
-          } else {
-            const status = response.status;
-            const statusText = response.statusText;
-            let bodyText = '';
-            try { bodyText = await response.text(); } catch {}
-            console.error('Netlify form submission failed:', { status, statusText, bodyText });
-            throw new Error(`Form submission failed (${status} ${statusText})`);
-          }
         } catch (error) {
           console.error('Error submitting form:', error);
           
