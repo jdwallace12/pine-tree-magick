@@ -315,6 +315,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
             name="referrals"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
           />
+          <input type="hidden" name="referrals" value="" />
         </div>
 
         <!-- Additional Notes -->
@@ -498,7 +499,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log('submitting form')
         messageContainer.classList.add('hidden');
         
         // Show spinner and disable button
@@ -555,21 +555,19 @@ const hasDiscount = discountCode && discountCode !== 'default';
           const params = new URLSearchParams();
           params.append('form-name', formData.get('form-name'));
           params.append('bot-field', formData.get('bot-field') || '');
+          const seenKeys = new Set();
           for (const [key, value] of formData.entries()) {
             if (key === 'form-name' || key === 'bot-field') continue;
+            if (seenKeys.has(key)) continue;
             params.append(key, String(value));
+            seenKeys.add(key);
           }
-          // Debug: verify outgoing form-name and payload
-          console.log('Submitting Netlify form-name:', params.get('form-name'));
-          console.log('Netlify payload:', params.toString());
           // Submit to Netlify Forms (page path, avoid path-level caching)
           const response = await fetch(`${window.location.pathname}?no-cache=1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
             body: params.toString()
           });
-          // Debug: log Netlify request id header for tracking
-          console.log('Netlify request id:', response.headers.get('x-nf-request-id'));
 
           if (response.ok) {
             // Show success overlay
