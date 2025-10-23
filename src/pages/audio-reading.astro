@@ -308,13 +308,15 @@ const hasDiscount = discountCode && discountCode !== 'default';
           <label for="referrals" class="block text-sm font-medium mb-2 text-left md:text-center">
             How did you hear about me? If someone referred you, please let me know who!<span class="text-primary">*</span>
           </label>
-          <textarea
+          <input
             required
-            rows="1"
+            type="text"
             id="referrals"
-            name="How did you hear about me?"
+            name="referrals"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-          ></textarea>
+          />
+          <!-- Hidden field for Netlify schema detection -->
+          <input type="hidden" id="referrals-hidden" name="referrals" value="" />
         </div>
 
         <!-- Additional Notes -->
@@ -337,6 +339,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
           <label class="custom-checkbox text-left md:text-center">
             <input
               type="checkbox"
+              id="disclaimer"
               name="disclaimer"
               required
             />
@@ -524,8 +527,9 @@ const hasDiscount = discountCode && discountCode !== 'default';
           formData.set('referrals', referralsVal);
           // Also set alias field to improve visibility in Netlify UI
           formData.set('referral', referralsVal);
-          // Also set a friendly labeled field for Netlify UI
-          formData.set('How did you hear about me?', referralsVal);
+          // Mirror into hidden input for completeness
+          const referralsHidden = document.getElementById('referrals-hidden');
+          if (referralsHidden) referralsHidden.value = referralsVal;
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
