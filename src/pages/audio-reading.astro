@@ -540,6 +540,22 @@ const hasDiscount = discountCode && discountCode !== 'default';
           if (!formData.get('bot-field')) {
             formData.set('bot-field', '');
           }
+          // Ensure expected fields are explicitly populated from visible inputs
+          const getVal = (id) => {
+            const el = document.getElementById(id);
+            return el && 'value' in el ? el.value : (formData.get(id) || '');
+          };
+          formData.set('name', getVal('name'));
+          formData.set('email', getVal('email'));
+          formData.set('birthday', getVal('birthday'));
+          formData.set('birthTime', getVal('birthTime'));
+          formData.set('birthPlace', getVal('birthPlace'));
+          const selectedType = (document.querySelector('input[name="readingType"]:checked') || {}).value || formData.get('readingType') || '';
+          formData.set('readingType', selectedType);
+          formData.set('referrals', getVal('referrals'));
+          formData.set('notes', getVal('notes'));
+          // Exclude disclaimer
+          formData.delete('disclaimer');
           // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
           const rawBirthTime = formData.get('birthTime');
           if (rawBirthTime && typeof rawBirthTime === 'string') {
@@ -577,15 +593,37 @@ const hasDiscount = discountCode && discountCode !== 'default';
             params.append(key, String(value));
             seenKeys.add(key);
           }
-          // Submit to Netlify Forms (site root) using no-cors to avoid redirect/body issues on new forms
-          await fetch('/?no-cache=1', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            body: params.toString()
-          });
+          // Submit to Netlify Forms via hidden iframe + native form post to guarantee payload capture
+          let iframe = document.getElementById('netlify-target-iframe');
+          if (!iframe) {
+            iframe = document.createElement('iframe');
+            iframe.id = 'netlify-target-iframe';
+            iframe.name = 'netlify-target-iframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+          }
+          const ghostForm = document.createElement('form');
+          ghostForm.method = 'POST';
+          ghostForm.action = `${window.location.pathname}?no-cache=1`;
+          ghostForm.acceptCharset = 'UTF-8';
+          ghostForm.target = 'netlify-target-iframe';
+          ghostForm.style.display = 'none';
+          // Populate hidden inputs from params
+          for (const [k, v] of params.entries()) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = k;
+            input.value = v;
+            ghostForm.appendChild(input);
+          }
+          document.body.appendChild(ghostForm);
+          ghostForm.submit();
+          // Clean up shortly after submit
+          setTimeout(() => {
+            try { document.body.removeChild(ghostForm); } catch {}
+          }, 2000);
 
-          // In no-cors, we can't read response; proceed as success
+          // Proceed as success
             // Show success overlay
             if (successOverlay) {
               successOverlay.classList.remove('hidden');
