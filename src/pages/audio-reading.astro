@@ -499,7 +499,6 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log('submitting form')
         messageContainer.classList.add('hidden');
         
         // Show spinner and disable button
@@ -576,17 +575,12 @@ const hasDiscount = discountCode && discountCode !== 'default';
             if (key === 'form-name' || key === 'bot-field') continue;
             params.append(key, String(value));
           }
-          // Debug: verify outgoing form-name and payload
-          console.log('Submitting Netlify form-name:', params.get('form-name'));
-          console.log('Netlify payload:', params.toString());
           // Submit to Netlify Forms (page path, avoid path-level caching)
           const response = await fetch(`${window.location.pathname}?no-cache=1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
             body: params.toString()
           });
-          // Debug: log Netlify request id header for tracking
-          console.log('Netlify request id:', response.headers.get('x-nf-request-id'));
 
           // Proceed as success
             // Show success overlay
