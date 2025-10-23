@@ -525,6 +525,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log('submitting form')
         messageContainer.classList.add('hidden');
         
         // Show spinner and disable button
