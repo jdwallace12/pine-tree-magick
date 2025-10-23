@@ -308,13 +308,13 @@ const hasDiscount = discountCode && discountCode !== 'default';
           <label for="referrals" class="block text-sm font-medium mb-2 text-left md:text-center">
             How did you hear about me? If someone referred you, please let me know who!<span class="text-primary">*</span>
           </label>
-          <input
+          <textarea
             required
-            type="text"
+            rows="1"
             id="referrals"
             name="How did you hear about me?"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-          />
+          ></textarea>
         </div>
 
         <!-- Additional Notes -->
@@ -326,7 +326,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
             required
             id="notes"
             name="notes"
-            rows="4"
+            rows="5"
             class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
             placeholder="Tell me what's going on in your life right now or why you're getting this reading — anything that feels relevant. You can include challenges, decisions, or details about the area of focus (career, love, purpose etc.) The more I know, the more I can tailor the reading to give you helpful insights."
           ></textarea>
