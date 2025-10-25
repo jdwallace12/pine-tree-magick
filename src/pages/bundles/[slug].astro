@@ -97,6 +97,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
           action="/"
         >
           <input type="hidden" name="form-name" value="bundle-purchase" />
+          <input type="hidden" name="itemTitle" value={title} />
           <p class="hidden">
             <label>
               Don't fill this out if you're human: <input name="bot-field" />
