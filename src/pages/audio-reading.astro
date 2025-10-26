@@ -1,0 +1,641 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+const metadata = {
+  title: 'Audio Readings | Pine Tree Magick',
+  description: 'Book an audio reading - personalized astrological insights and guided rituals',
+};
+
+
+// Get URL parameters using Astro.request
+const request = Astro.request;
+const url = new URL(request.url);
+let discountCode = url.searchParams.get('discount');
+
+// Also check for direct parameter names like ?samhain by checking the URL string
+if (!discountCode) {
+  const urlString = url.href;
+  if (urlString.includes('?samhain') || urlString.includes('&samhain')) discountCode = 'samhain';
+  // else if (urlString.includes('?yule') || urlString.includes('&yule')) discountCode = 'yule';
+  // else if (urlString.includes('?eclipse') || urlString.includes('&eclipse')) discountCode = 'eclipse';
+}
+
+// Determine discount for price display on server-render
+
+// Price mapping for different discount codes
+const priceMapping = {
+  default: 125,
+  samhain: 100, // Example: 20% discount
+  // Add more discount prices as needed
+};
+
+const currentPrice = priceMapping[discountCode || 'default'] || priceMapping.default;
+const hasDiscount = discountCode && discountCode !== 'default';
+---
+
+<style>
+  /* Custom checkbox styles */
+  .custom-checkbox {
+    @apply relative flex items-start;
+  }
+
+  .custom-checkbox input[type="checkbox"] {
+    @apply absolute opacity-0 w-5 h-5 cursor-pointer;
+  }
+
+  .custom-checkbox .checkbox-label {
+    @apply pl-7 relative select-none;
+  }
+
+  .custom-checkbox .checkbox-label::before {
+    content: '';
+    @apply absolute left-0 top-1 w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded transition-all duration-200;
+  }
+
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::before {
+    @apply bg-primary border-primary;
+  }
+
+  .custom-checkbox .checkbox-label::after {
+    content: '';
+    @apply absolute left-[6px] top-[9px] w-2.5 h-1.5 border-gray-900 dark:border-gray-900 border-l-2 border-b-2 transform -rotate-45 opacity-0 transition-all duration-200;
+  }
+
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::after {
+    @apply opacity-100;
+  }
+
+  .custom-checkbox input[type="checkbox"]:focus + .checkbox-label::before {
+    @apply ring-2 ring-opacity-50 ring-primary;
+  }
+
+  /* Custom radio button styles */
+  .custom-radio {
+    @apply relative flex items-start;
+  }
+
+  .custom-radio input[type="radio"] {
+    @apply absolute opacity-0 w-5 h-5 cursor-pointer;
+  }
+
+  .custom-radio .radio-label {
+    @apply pl-7 relative select-none;
+  }
+
+  .custom-radio .radio-label::before {
+    content: '';
+    @apply absolute left-0 top-1 w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full transition-all duration-200;
+  }
+
+  .custom-radio input[type="radio"]:checked + .radio-label::before {
+    @apply bg-primary border-primary;
+  }
+
+  .custom-radio .radio-label::after {
+    content: '';
+    @apply absolute left-[6px] top-[9px] w-2 h-2 bg-white dark:bg-gray-900 rounded-full opacity-0 transition-all duration-200;
+  }
+
+  .custom-radio input[type="radio"]:checked + .radio-label::after {
+    @apply opacity-100;
+  }
+
+  .custom-radio input[type="radio"]:focus + .radio-label::before {
+    @apply ring-2 ring-opacity-50 ring-primary;
+  }
+
+  /* Radio button container styling */
+  .radio-option {
+    @apply p-4 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer transition-all duration-200;
+  }
+
+  .radio-option:hover {
+    @apply bg-gray-50 dark:bg-gray-800/50 border-primary;
+  }
+
+  .radio-option:has(input[type="radio"]:checked) {
+    @apply bg-pink-50 dark:bg-pink-900/20 border-primary ring-1 ring-primary;
+  }
+</style>
+
+<Layout metadata={metadata}>
+  <Fragment slot="announcement"></Fragment>
+  
+  <div class="mx-auto max-w-4xl p-4 md:px-8">
+    <div class="text-center mb-12">
+      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase mt-12">Book Your Audio Reading</p>
+      <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl mb-4">
+        Audio Readings + Guided Rituals
+      </h1>
+
+      <!-- Price Display -->
+      <div class="mb-6 price-container">
+        {hasDiscount ? (
+          <div class="flex items-center justify-center space-x-3">
+            <span class="text-xl text-gray-400 line-through original-price">$125</span>
+            <span class="text-2xl font-bold text-primary current-price">${currentPrice}</span>
+          </div>
+        ) : (
+          <p class="text-xl mb-6 text-muted current-price">${currentPrice}</p>
+        )}
+      </div>
+      <p>Audio readings are pre-recorded and include astrological insight and a Tarot card message from Spirit. Along with this detailed audio reading, you'll receive a guided ritual to help you work your desired manifestation. Each written ritual includes a link to a recorded meditation, journal prompts, altar suggestions, timing recommendations, and a step-by-step guide to help you manifest your intention.</p>
+
+    <!-- Booking Form -->
+    <div class="bg-primary/10 p-8 rounded-lg mt-12">
+      <form 
+        name="audio-reading"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        data-netlify-recaptcha="false"
+        class="needs-validation form-component"
+        accept-charset="UTF-8"
+        action="/"
+      >
+        <input type="hidden" name="form-name" value="audio-reading" />
+        <p class="hidden">
+          <label>
+            Don't fill this out if you're human: <input name="bot-field" />
+          </label>
+        </p>
+        <!-- Personal Information -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="name" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Full Name <span class="text-primary">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              minlength="2"
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="Your name"
+            />
+          </div>
+          
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Email Address <span class="text-primary">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="your@email.com"
+            />
+          </div>
+        </div>
+
+        <!-- Birth Information -->
+        <div class="grid md:grid-cols-3 gap-6 mb-6">
+          <div>
+            <label for="birthday" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Birthday <span class="text-primary">*</span>
+            </label>
+            <input
+              type="date"
+              id="birthday"
+              name="birthday"
+              required
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+            />
+          </div>
+          
+          <div>
+            <label for="birthTime" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Birth Time <span class="text-primary">*</span>
+            </label>
+            <input
+              type="time"
+              id="birthTime"
+              name="birthTime"
+              required
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+            />
+          </div>
+          
+          <div>
+            <label for="birthPlace" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Birth Place <span class="text-primary">*</span>
+            </label>
+            <input
+              type="text"
+              id="birthPlace"
+              name="birthPlace"
+              required
+              minlength="2"
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="City, State/Country"
+            />
+          </div>
+        </div>
+
+        <!-- Reading Type Selection -->
+        <div class="mb-6 py-8">
+          <label class="block text-sm font-medium mb-4 text-left md:text-center">
+            Select Your Audio Reading Type <span class="text-primary">*</span>
+          </label>
+          <div class="grid md:grid-cols-2 gap-4">
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input
+                  type="radio"
+                  name="readingType"
+                  value="career-money"
+                  required
+                />
+                <span class="radio-label">
+                  <div class="font-medium">Career and Money Reading</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400">+ Money Ritual</div>
+                </span>
+              </div>
+            </label>
+            
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input
+                  type="radio"
+                  name="readingType"
+                  value="love"
+                  required
+                />
+                <span class="radio-label">
+                  <div class="font-medium">Love Reading</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400">+ Love Spell</div>
+                </span>
+              </div>
+            </label>
+            
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input
+                  type="radio"
+                  name="readingType"
+                  value="soul-purpose"
+                  required
+                />
+                <span class="radio-label">
+                  <div class="font-medium">Soul Purpose Reading</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400">+ Highest Self Ritual</div>
+                </span>
+              </div>
+            </label>
+            
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input
+                  type="radio"
+                  name="readingType"
+                  value="radiant-gifts"
+                  required
+                />
+                <span class="radio-label">
+                  <div class="font-medium">Radiant Gifts Reading</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400">+ Self-Love Ritual</div>
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Referrals -->
+        <div class="mb-6">
+          <label for="referrals" class="block text-sm font-medium mb-2 text-left md:text-center">
+            How did you hear about me? If someone referred you, please let me know who!<span class="text-primary">*</span>
+          </label>
+          <input
+            required
+            type="text"
+            id="referrals"
+            name="referrals"
+            class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+          />
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="mb-6">
+          <label for="notes" class="block text-sm font-medium mb-2 text-left md:text-center">
+            Additional Notes<span class="text-primary">*</span>
+          </label>
+          <textarea
+            required
+            id="notes"
+            name="notes"
+            rows="5"
+            class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+            placeholder="Tell me what's going on in your life right now or why you're getting this reading — anything that feels relevant. You can include challenges, decisions, or details about the area of focus (career, love, purpose etc.) The more I know, the more I can tailor the reading to give you helpful insights."
+          ></textarea>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="mb-6">
+          <label class="custom-checkbox text-left md:text-center">
+            <input
+              type="checkbox"
+              id="disclaimer"
+              name="disclaimer"
+              required
+            />
+            <span class="checkbox-label">
+              I agree to the terms in the 
+              <a
+                target="_blank" 
+                href="/disclaimer" 
+                class="text-primary hover:underline"
+              >
+                disclaimer
+              </a>
+            </span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-10 grid">
+          <button
+            type="submit"
+            id="submit-btn"
+            class="inline-flex items-center justify-center px-8 py-4 bg-primary dark:text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div id="spinner" class="hidden w-5 h-5 mr-2">
+              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <Icon name="tabler:credit-card" id="submit-icon" class="w-5 h-5 mr-2" />
+            <span id="submit-text">Proceed to Payment - ${currentPrice}</span>
+          </button>
+        </div>
+      </form>
+    </div>
+</div>
+
+  <!-- Success Overlay -->
+  <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-xl">
+      <div class="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Form Submitted Successfully!</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">You will be redirected to PayPal checkout shortly...</p>
+      <div class="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+        <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+        <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+        <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ currentPrice }}>
+    // Client-side discount detection
+    function detectDiscount() {
+      const url = window.location.href;
+      let discountCode = null;
+      
+      if (url.includes('?samhain') || url.includes('&samhain')) {
+        discountCode = 'samhain';
+       } // else if (url.includes('?yule') || url.includes('&yule')) {
+      //   discountCode = 'yule';
+      // } else if (url.includes('?eclipse') || url.includes('&eclipse')) {
+      //   discountCode = 'eclipse';
+      // }
+      
+      return discountCode;
+    }
+
+    function initAudioReadingForm() {
+      // Apply client-side discount if detected (fallback for ?samhain format)
+      const clientDiscountCode = detectDiscount();
+      
+      if (clientDiscountCode) {
+        const discountPrices = {
+          samhain: 100
+          // yule: 90,
+          // eclipse: 110
+        };
+        
+        const discountedPrice = discountPrices[clientDiscountCode];
+        
+        if (discountedPrice) {
+          // Show discount banner
+          const discountBanner = document.createElement('div');
+          discountBanner.className = 'text-white px-6 py-3 rounded-lg inline-block';
+          discountBanner.innerHTML = `
+            <div class="flex items-center space-x-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+              </svg>
+              <span class="font-semibold">Special ${clientDiscountCode.charAt(0).toUpperCase() + clientDiscountCode.slice(1)} Discount!</span>
+            </div>
+          `;
+          
+          // Insert banner before the price
+          const priceContainer = document.querySelector('.price-container');
+          if (priceContainer) {
+            priceContainer.insertBefore(discountBanner, priceContainer.firstChild);
+          }
+          
+          // Update price display - handle both discount and non-discount cases
+          const currentPriceEl = document.querySelector('.current-price');
+          
+          if (currentPriceEl) {
+            // If it's currently showing as a single price, convert to discount format
+            if (currentPriceEl.tagName === 'P') {
+              // Replace the single price with discount format
+              const discountPriceHTML = `
+                <div class="flex items-center justify-center space-x-3">
+                  <span class="text-xl text-gray-400 line-through original-price">$125</span>
+                  <span class="text-2xl font-bold text-primary current-price">$${discountedPrice}</span>
+                </div>
+              `;
+              currentPriceEl.outerHTML = discountPriceHTML;
+            } else {
+              // Update existing discount elements
+              const originalPrice = document.querySelector('.original-price');
+              const savingsEl = document.querySelector('.savings');
+              
+              if (originalPrice) originalPrice.textContent = '$125';
+              if (currentPriceEl) currentPriceEl.textContent = '$' + discountedPrice;
+              if (savingsEl) savingsEl.textContent = 'Save $' + (125 - discountedPrice);
+            }
+          }
+          
+          // Update submit button
+          const submitText = document.getElementById('submit-text');
+          if (submitText) {
+            submitText.textContent = 'Proceed to Payment - $' + discountedPrice;
+          }
+        }
+      }
+      
+      const form = document.querySelector('.form-component');
+      if (!form) return;
+      
+      // Get form elements
+      const submitBtn = document.getElementById('submit-btn');
+      const spinner = document.getElementById('spinner');
+      const submitIcon = document.getElementById('submit-icon');
+      const submitText = document.getElementById('submit-text');
+      const successOverlay = document.getElementById('success-overlay');
+      
+      const messageContainer = document.createElement('div');
+      messageContainer.className = 'mt-4 hidden text-center';
+      messageContainer.innerHTML = `
+        <p class="text-red-600 dark:text-red-400 hidden" data-error-message>
+          There was an error submitting the form. Please try again.
+        </p>
+      `;
+      form.appendChild(messageContainer);
+      
+      const errorMessage = messageContainer.querySelector('[data-error-message]');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        messageContainer.classList.add('hidden');
+        
+        // Show spinner and disable button
+        if (submitBtn) {
+          submitBtn.disabled = true;
+        }
+        if (spinner) {
+          spinner.classList.remove('hidden');
+        }
+        if (submitIcon) {
+          submitIcon.classList.add('hidden');
+        }
+        if (submitText) {
+          submitText.textContent = 'Submitting...';
+        }
+        
+        try {
+          const formData = new FormData(e.target);
+          // Ensure Netlify form-name matches the form's name attribute
+          const formEl = e.target;
+          const formNameAttr = formEl.getAttribute('name') || 'audio-reading';
+          formData.set('form-name', formNameAttr);
+          // Make sure honeypot is empty (avoid spam tab)
+          if (!formData.get('bot-field')) {
+            formData.set('bot-field', '');
+          }
+          // Ensure expected fields are explicitly populated from visible inputs
+          const getVal = (id) => {
+            const el = document.getElementById(id);
+            return el && 'value' in el ? el.value : (formData.get(id) || '');
+          };
+          formData.set('name', getVal('name'));
+          formData.set('email', getVal('email'));
+          formData.set('birthday', getVal('birthday'));
+          formData.set('birthTime', getVal('birthTime'));
+          formData.set('birthPlace', getVal('birthPlace'));
+          const selectedType = (document.querySelector('input[name="readingType"]:checked') || {}).value || formData.get('readingType') || '';
+          formData.set('readingType', selectedType);
+          const heardVal = getVal('referrals');
+          formData.set('referrals', heardVal);
+          formData.set('notes', getVal('notes'));
+          // Include disclaimer checkbox explicitly (Yes/No)
+          const disclaimerEl = document.getElementById('disclaimer');
+          const disclaimerVal = disclaimerEl && disclaimerEl.checked ? 'Yes' : 'No';
+          formData.set('disclaimer', disclaimerVal);
+          // Normalize birthTime to 12-hour format with AM/PM for Netlify storage
+          const rawBirthTime = formData.get('birthTime');
+          if (rawBirthTime && typeof rawBirthTime === 'string') {
+            const [hStr, mStr] = rawBirthTime.split(':');
+            let h = parseInt(hStr, 10);
+            const m = mStr.padStart(2, '0');
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            h = h % 12;
+            if (h === 0) h = 12;
+            const formatted = `${h}:${m} ${ampm}`;
+            formData.set('birthTime', formatted);
+          }
+          // Format birthday as MM/DD/YYYY for Netlify storage
+          const rawBirthday = formData.get('birthday');
+          if (rawBirthday && typeof rawBirthday === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(rawBirthday)) {
+            const [y, m, d] = rawBirthday.split('-');
+            formData.set('birthday', `${m}/${d}/${y}`);
+          }
+          // Transform readingType to display-friendly value without hyphens for Netlify
+          const originalReadingType = formData.get('readingType');
+          if (originalReadingType && typeof originalReadingType === 'string') {
+            const displayReadingType = originalReadingType.replace(/-/g, ' ');
+            const titleCased = displayReadingType.replace(/\b\w/g, (c) => c.toUpperCase());
+            formData.set('readingType', titleCased);
+          }
+          
+          // Build params with form-name first for Netlify
+          const params = new URLSearchParams();
+          params.append('form-name', formData.get('form-name'));
+          params.append('bot-field', formData.get('bot-field') || '');
+          for (const [key, value] of formData.entries()) {
+            if (key === 'form-name' || key === 'bot-field') continue;
+            params.append(key, String(value));
+          }
+          // Submit to Netlify Forms (page path, avoid path-level caching)
+          const response = await fetch(`${window.location.pathname}?no-cache=1`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: params.toString()
+          });
+
+          // Proceed as success
+            // Show success overlay
+            if (successOverlay) {
+              successOverlay.classList.remove('hidden');
+              successOverlay.classList.add('flex');
+            }
+            
+            // Redirect to PayPal after successful form submission
+            setTimeout(() => {
+              const discountCode = detectDiscount();
+              const payPalButtonMapping = {
+                default: 'U6MBRBGJGHDAL',
+                samhain: 'QHTWD393ANQ4A'
+                // yule: 'YULE_BUTTON_ID',
+                // eclipse: 'ECLIPSE_BUTTON_ID'
+              };
+              const buttonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
+              const paypalUrl = `https://www.paypal.com/ncp/payment/${buttonId}`;
+              // Navigate directly (more reliable than programmatic form submit in production)
+              window.location.assign(paypalUrl);
+            }, 1500);
+            
+            form.reset();
+        } catch (error) {
+          console.error('Error submitting form:', error);
+          
+          // Reset button state
+          if (submitBtn) {
+            submitBtn.disabled = false;
+          }
+          if (spinner) {
+            spinner.classList.add('hidden');
+          }
+          if (submitIcon) {
+            submitIcon.classList.remove('hidden');
+          }
+          if (submitText) {
+            submitText.textContent = 'Proceed to Payment - $' + currentPrice;
+          }
+          
+          // Show error message
+          messageContainer.classList.remove('hidden');
+          if (errorMessage) errorMessage.classList.remove('hidden');
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initAudioReadingForm);
+    } else {
+      initAudioReadingForm();
+    }
+  </script>
+</Layout>

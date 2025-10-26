@@ -28,13 +28,13 @@ const metadata = {
 
     <Fragment slot="subtitle">
       <span class="text-muted">
-        Pine Tree Magick is a small business rooted in astrology and intentional magick. With over a decade of experience as a healer, Jersey offers thoughtful and practical guidance, with a mission to help others find ease and empowerment in their personal&nbsp;lives.
-      </span>
+        Pine Tree Magick is a small business rooted in astrology and ritual magick. With over a decade of experience as a healer, Jersey offers thoughtful and intuitive guidance, with a mission to help others reclaim their personal power.
+
     </Fragment>
   </Hero>
   <div class="mx-auto max-w-7xl px-8">
     <h2 class="bg-gradient-to-r from-secondary via-accent to-accent bg-clip-text text-transparent text-center text-3xl md:text-4xl font-heading font-normal">“Know the heavens and you will understand yourself; know yourself and you will understand the heavens.”</h2>
-    <p class="text-white font-light text-center mt-8 opacity-80">– 2nd Century Astrology, <span class="font-bold">Vettius Valens</span></p>
+    <p class="text-white font-light text-center mt-8 opacity-80">– 2nd Century Astrologer, <strong>Vettius Valens</strong></p>
   </div>
   <!-- Content Widget **************** -->
   <Content
@@ -70,22 +70,19 @@ const metadata = {
     <Fragment slot="content">
       <h2 class="text-3xl tracking-tight font-heading dark:text-white sm:text-4xl mb-2">About me</h2>
       <p>
-        Hi there! I’m Jersey Griggs, the creator of Pine Tree Magick. I’m a professional writer and
-        astrologer, with a grounded approach to the mystical world. I’m passionate about helping others through the lens
-        of mysticism—whether through personalized astrology readings, captivating storytelling, or intentional
-        workshops.
+        Hi there! I’m Jersey Griggs, the creator of Pine Tree Magick. I’m a professional writer and astrologer, and I’m passionate about helping others through the lens of mysticism.  My work combines astrology, Tarot, and ritual magick, all tools designed to help people make sense of their life path and become empowered along the way.
+
       </p>
       <br />
       <p>
-        I offer written astrology readings, one-on-one astrology sessions, and group events that incorporate my
-        extensive knowledge, including astrology workshops, moon circles, and manifestation classes. I also work with
-        clients to help them understand the timing of their lives, and how they can achieve their dreams with guidance
-        from the cosmos.
+        I specialize in ritual astrology, which combines the ancient knowledge of the cosmos with the art of manifestation. Through this work, I offer two types of readings: private sessions and audio readings, each designed to help you become more aligned with your most authentic self.  I invite you to check out my Readings Page to see which offering resonates with what your soul craves.
+
+
+
       </p>
       <br />
       <p>
-        Explore my offerings on my readings page, check out my upcoming events, or follow along on Instagram and TikTok
-        @pinetreemagick to stay connected.
+        To stay connected, follow me on Instagram and TikTok @pinetreemagick or sign up for my Substack, Fourth House.
       </p>
     </Fragment>
 
@@ -112,19 +109,19 @@ const metadata = {
       {
         title: 'I Believe In',
         description:
-          'The natal promise, reincarnation, spirit guides, ancestral work, manifestation, signs from loved ones, living with intention, working with nature’s cycles',
+          'The natal promise, reincarnation, spirit guides, ancestral work, the power of ritual, manifestation, signs from loved ones, living with intention, working with nature’s cycles',
         icon: 'tabler:star',
       },
       {
         title: 'You Can Find Me',
         description:
-          'Exploring new places, devouring books, doing anything outside, swimming in the ocean, listening to podcasts, watching the sunset, working on my YA novel',
+          'Exploring new places, devouring books, doing anything outside, knitting sweaters, swimming in the ocean, listening to podcasts, watching the sunset, sitting in the sauna',
         icon: 'tabler:search',
       },
       {
         title: 'My Favorite Things',
         description:
-          'Good books, snuggly dogs, drinking tea, skiing powder, watching the sunset, going for a swim, picking flowers, cozy fires, mountain summits',
+          'Good books, snuggly dogs, drinking tea, skiing powder, watching the sunset, going for a swim, picking flowers, cozy fires, mountain summits, hot springs',
         icon: 'tabler:heart',
       },
     ]}
@@ -144,7 +141,7 @@ const metadata = {
       {
         title: 'On My Bookshelf',
         description:
-          'Many Lives, Many Masters by Brian Weiss, M.D., The Four Agreements by Don Miguel Ruiz, Ask and It is Given by Esther and Jerry Hicks, The Secret Language of Your Body by Inna Segal',
+          'Many Lives, Many Masters by Brian Weiss, M.D., The Four Agreements by Don Miguel Ruiz, Ask and It is Given by Esther and Jerry Hicks, The Secret Language of Your Body by Inna Segal, Becoming Supernatural by Dr. Joe Dispenza',
         icon: 'tabler:book',
       },
       {
@@ -191,17 +188,11 @@ const metadata = {
       </p>
       <br />
       <p>
-        Of all the practices I’ve studied, astrology has been the most profound. Studying astrology has connected me to
-        my calling, and helped me better understand myself and my place in the world. Having my natal chart
-        professionally read years ago was the first time I truly felt seen and unlocking my chart’s
-        potential has helped me live with purpose, intention, and greater ease. I’ve grown from someone dominated by
-        fear and worry to someone who leads an intentional life guided by trust.
+        All of these healing modalities inform my work as an astrologer and ritual practitioner. It is both my pleasure and my calling to combine all of this knowledge under the umbrella of Pine Tree Magick, and to guide those who are curious about their own astrological blueprint and inherent power.
       </p>
       <br />
       <p>
-        As a healer, I feel called to help others on their own journey to healing—whether by exploring their unique
-        potential in a natal chart reading, preparing them for the year ahead, or leading workshops that allow them to
-        align with their own magick.
+        I would be honored to be your guide in this type of work. If a little part of you is saying “yes,”  then you already know what to do.
       </p>
     </Fragment>
 
@@ -212,36 +203,38 @@ const metadata = {
   <!--  Latest Workshops -->
   <LatestWorkshops />
   <!-- FAQs Widget ******************* -->
-  <FAQs
-    title="Frequently Asked Questions"
-    id="faq"
-    items={[
-      {
-        title: 'Why do I need my birth time for an astrology reading?',
-        description:
-          'Your birth time is essential for an astrology reading because it determines the exact placement of the four angles in astrology, including your Ascendent (or rising sign) which determines the rest of your chart. Even a small difference in birth time can significantly change the chart, so having the correct time ensures the insights are correct.',
-        icon: 'tabler:chevrons-right',
-      },
-      {
-        title: 'Can astrology predict my future?',
-        description:
-          'Astrology doesn’t predict the future in a fixed or fatalistic way but instead provides insights into the energetic cycles and patterns that might influence your life. It highlights opportunities, challenges, and themes you’re likely to experience, helping you make informed decisions and align with the flow of these cosmic energies. Ultimately, your free will plays a central role in shaping your future, and astrology serves as a guide to empower you along the way.',
-        icon: 'tabler:chevrons-right',
-      },
-      {
-        title: 'What can astrology help me with?',
-        description:
-          'Astrology can help you understand yourself better, including your strengths, challenges, and life patterns. It can offer insight into relationships, career, personal growth, and timing for important life decisions. By understanding your natal chart and the timing of your life, astrology empowers you to navigate challenges, recognize opportunities, and live with more intention.',
-        icon: 'tabler:chevrons-right',
-      },
-      {
-        title: 'How often should I get an astrology reading?',
-        description:
-          'This depends on your needs and goals. A full natal chart reading is typically a one-time session, offering deep insights into your life’s patterns, strengths, and purpose. After that, you might choose to have follow-up readings for transits, solar return charts, or electional astrology. Ultimately, it’s about what feels supportive and beneficial for you. Regular readings can help you stay aligned with the cosmic flow and make the most of the cycles in your life.',
-        icon: 'tabler:chevrons-right',
-      },
-    ]}
-  >
+ <!-- FAQs Widget ******************* -->
+
+ <FAQs
+ title="Frequently Asked Questions"
+ id="faq"
+ items={[
+   {
+     title: 'Why do I need my birth time for an astrology reading?',
+     description:
+       'Your birth time is essential for an astrology reading because it determines the exact placement of the four angles in astrology, including your Ascendent (or rising sign) which determines the rest of your chart. Even a small difference in birth time can significantly change the chart, so having the correct time ensures more accurate insights. Please double check your birth time is correct before booking a reading.',
+     icon: 'tabler:chevrons-right',
+   },
+   {
+     title: "What's included with the ritual?",
+     description:
+       "Each ritual includes a recorded meditation, journal prompts,  altar suggestions, and step-by-step instructions. Rituals are included with all readings, but vary based on which type of reading you purchase. A private session includes a personalized ritual designed specifically for your unique chart, current planetary alignment, and divine timing. Audio readings provide astrological guidance based on your chart, in addition to a powerful manifestation ritual designed around your intention.",
+     icon: 'tabler:chevrons-right',
+   },
+   {
+     title: "I'm new to manifestation and ritual magick. Can I still do the ritual?",
+     description:
+       "Absolutely. The rituals provided are accessible to new and advanced practitioners alike. If you've ever followed a guided meditation, written in a journal, or done an arts and crafts project, then you will be able to complete a Pine Tree Magick ritual.",
+     icon: 'tabler:chevrons-right',
+   },
+   {
+     title: 'How often should I get an astrology reading?',
+     description:
+       'I suggest booking a follow-up Cosmic Forecast reading annually. Just like a weather report, understanding the forecast for the year-ahead is an invaluable tool for planning ahead and understanding your current circumstances. As an added bonus, I offer lower rates for repeat private sessions.',
+     icon: 'tabler:chevrons-right',
+   },
+ ]}
+>
     <Fragment slot="bg">
       <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
     </Fragment>

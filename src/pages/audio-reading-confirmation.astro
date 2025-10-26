@@ -1,0 +1,24 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+const metadata = {
+  title: 'Audio Reading has Been Booked | Pine Tree Magick',
+  description: "Thank you for booking an audio reading! I can't wait to dive into your chart."
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="flex items-center h-full p-16">
+    <div class="container flex flex-col items-center justify-center px-5 mx-auto my-8">
+      <div class="max-w-md text-center">
+        <h2 class="mb-8 font-bold text-4xl">
+          <span class="text-primary">Thank you for booking an audio reading!</span>
+        </h2>
+        <p class="mt-4 mb-8 text-lg text-muted dark:text-slate-400">
+          Return time varies on volume. I'll email you when you are next in the queue with an estimated delivery date.
+        </p>
+        <a rel="noopener noreferrer" href="/" class="btn ml-4">Back to homepage</a>
+      </div>
+    </div>
+  </section>
+</Layout> 

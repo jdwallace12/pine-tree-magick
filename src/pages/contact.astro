@@ -2,36 +2,123 @@
 import Layout from '~/layouts/PageLayout.astro';
 import HeroText from '~/components/widgets/HeroText.astro';
 import ContactUs from '~/components/widgets/Contact.astro';
+import { Icon } from 'astro-icon/components';
 
 const metadata = {
   title: 'Contact Us | Pine Tree Magick',
-  description: 'Contact Pine Tree Magick'
+  description: 'Contact Pine Tree Magick - Get in touch for readings, workshops, and spiritual guidance'
 };
 ---
 
 <Layout metadata={metadata}>
   <!-- HeroText Widget ******************* -->
+  <HeroText tagline="<strong class='text-secondary'>Contact Me</strong>" title="Let's Connect!" />
 
-  <HeroText tagline="<strong class='text-secondary'>Contact Us</strong>" title="Let's Connect!" />
+  <!-- Contact Section with Social Icons -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+      
+      <!-- Contact Form -->
+      <div class="order-1 lg:order-1">
+        <ContactUs
+          id="form"
+          subtitle="Fill out the form and we will get back to you as soon as possible"
+          inputs={[
+            {
+              type: 'text',
+              name: 'name',
+              label: 'Name',
+            },
+            {
+              type: 'email',
+              name: 'email',
+              label: 'Email',
+            },
+          ]}
+          textarea={{
+            label: 'Message',
+          }}
+        />
+      </div>
 
-  <ContactUs
-    id="form"
-    subtitle="Fill out the form and we will get back to you as soon as possible "
-    inputs={[
-      {
-        type: 'text',
-        name: 'name',
-        label: 'Name',
-      },
-      {
-        type: 'email',
-        name: 'email',
-        label: 'Email',
-      },
-    ]}
-    textarea={{
-      label: 'Message',
-    }}
-  />
+      <!-- Social & Contact Info -->
+      <div class="order-2 lg:order-2">
+        <div class="bg-primary/10 p-8 rounded-lg h-full">
+          <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+            I'd love to stay in touch!
+          </h3>
+          
+          <p class="text-gray-600 dark:text-gray-400 mb-8 text-lg">
+            Follow me on my socials and subscribe to my Substack
+          </p>
+
+          <!-- Social Media Links -->
+          <div class="space-y-6 mb-8">
+            <div class="space-y-4">
+              <!-- Instagram -->
+              <a 
+                href="https://www.instagram.com/pinetreemagick/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary hover:shadow-lg transition-all duration-300 group"
+              >
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                  <Icon name="tabler:brand-instagram" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h5 class="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">
+                    Instagram
+                  </h5>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+              
+                  </p>
+                </div>
+              </a>
+
+              <!-- TikTok -->
+              <a 
+                href="https://www.tiktok.com/@pinetreemagick?lang=en" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary hover:shadow-lg transition-all duration-300 group"
+              >
+                <div class="w-12 h-12 bg-black dark:bg-gray-900 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                  <Icon name="tabler:brand-tiktok" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h5 class="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">
+                    TikTok
+                  </h5>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                   
+                  </p>
+                </div>
+              </a>
+
+              <!-- Substack -->
+              <a 
+                href="https://pinetreemagick.substack.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="flex items-center p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-primary hover:shadow-lg transition-all duration-300 group"
+              >
+                <div class="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform duration-300">
+                  <Icon name="tabler:mail" class="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h5 class="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">
+                    Substack Newsletter
+                  </h5>
+                  <p class="text-sm text-gray-600 dark:text-gray-400">
+                
+                  </p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </Layout>
