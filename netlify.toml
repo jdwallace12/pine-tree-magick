@@ -3,6 +3,10 @@
   command = "npm run build"
 [build.processing.html]
   pretty_urls = false
+
+[functions]
+  directory = "netlify/functions"
+
 [[headers]]
   for = "/_astro/*"
   [headers.values]
