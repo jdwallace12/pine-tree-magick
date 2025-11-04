@@ -31,6 +31,16 @@ if (EMAIL_FROM && !EMAIL_FROM.includes('@')) {
   EMAIL_FROM = `no-reply@${EMAIL_FROM}`;
 }
 
+// Boot log (no secrets)
+console.log('paypal_webhook_boot', {
+  paypal_env: PAYPAL_ENV,
+  has_client_id: !!PAYPAL_CLIENT_ID,
+  has_secret: !!PAYPAL_SECRET,
+  has_webhook_id: !!PAYPAL_WEBHOOK_ID,
+  has_resend_key: !!RESEND_API_KEY,
+  has_email_from: !!EMAIL_FROM,
+});
+
 // Map PayPal item names -> Google Drive links
 const PRODUCT_LINKS_BY_ITEM_NAME = {
   'Highest Self Ritual': 'https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view?usp=sharing',
@@ -50,6 +60,7 @@ async function getPayPalAccessToken() {
   });
   if (!res.ok) throw new Error(`paypal_oauth_failed:${res.status}`);
   const json = await res.json();
+  console.log('paypal_oauth_ok');
   return json.access_token;
 }
 
@@ -73,7 +84,12 @@ async function verifyPayPalSignature({ headers, body, accessToken }) {
   });
   if (!res.ok) throw new Error(`paypal_verify_failed:${res.status}`);
   const json = await res.json();
-  return json.verification_status === 'SUCCESS';
+  const ok = json.verification_status === 'SUCCESS';
+  console.log('paypal_verify_result', {
+    transmission_id: payload.transmission_id,
+    verification_status: json.verification_status,
+  });
+  return ok;
 }
 
 async function getOrderDetails(orderId, accessToken) {
@@ -147,29 +163,56 @@ exports.handler = async (event) => {
     }
 
     if (!PAYPAL_CLIENT_ID || !PAYPAL_SECRET || !PAYPAL_WEBHOOK_ID) {
+      console.warn('paypal_env_missing', {
+        has_client_id: !!PAYPAL_CLIENT_ID,
+        has_secret: !!PAYPAL_SECRET,
+        has_webhook_id: !!PAYPAL_WEBHOOK_ID,
+      });
       return { statusCode: 500, body: 'paypal_env_missing' };
     }
 
     const bodyStr = event.body || '';
     const headers = Object.fromEntries(Object.entries(event.headers || {}).map(([k, v]) => [k.toLowerCase(), v]));
 
+    // Entry log with selective headers
+    console.log('paypal_webhook_entry', {
+      length: bodyStr.length,
+      transmission_id: headers['paypal-transmission-id'] || null,
+      transmission_time: headers['paypal-transmission-time'] || null,
+      auth_algo: headers['paypal-auth-algo'] || null,
+      cert_url: headers['paypal-cert-url'] ? '[present]' : null,
+      content_type: headers['content-type'] || null,
+    });
+
     const accessToken = await getPayPalAccessToken();
     const valid = await verifyPayPalSignature({ headers, body: bodyStr, accessToken });
-    if (!valid) return { statusCode: 401, body: 'invalid_signature' };
+    if (!valid) {
+      console.warn('invalid_signature');
+      return { statusCode: 401, body: 'invalid_signature' };
+    }
 
     const evt = JSON.parse(bodyStr);
     const type = evt.event_type || evt.event?.event_type;
+    console.log('paypal_event_type', { type });
 
     if (type !== 'PAYMENT.CAPTURE.COMPLETED') {
       // Ignore other event types
+      console.log('paypal_event_ignored');
       return { statusCode: 200, body: 'ignored' };
     }
 
     const resource = evt.resource || {};
     const orderId = resource?.supplementary_data?.related_ids?.order_id || null;
+    console.log('paypal_order_id', { orderId });
 
     const order = await getOrderDetails(orderId, accessToken);
+    console.log('paypal_order_loaded', { has_order: !!order });
     const { buyerEmail, buyerName, itemName } = extractBuyerAndItem({ evt, order });
+    console.log('paypal_buyer_and_item', {
+      has_email: !!buyerEmail,
+      buyer_name_present: !!buyerName,
+      item_name: itemName || null,
+    });
 
     if (!buyerEmail) {
       // Cannot deliver without email; acknowledge to avoid retries but log internally in Netlify logs
@@ -196,10 +239,11 @@ exports.handler = async (event) => {
     `;
 
     await sendEmailViaResend({ to: buyerEmail, subject, html });
+    console.log('resend_email_sent', { to_present: !!buyerEmail, itemName });
 
     return { statusCode: 200, body: 'sent' };
   } catch (err) {
-    console.error('paypal_webhook_error', err);
+    console.error('paypal_webhook_error', { message: err?.message, stack: err?.stack });
     return { statusCode: 500, body: 'error' };
   }
 };
