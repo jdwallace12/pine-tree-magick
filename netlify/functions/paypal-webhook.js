@@ -41,6 +41,19 @@ console.log('paypal_webhook_boot', {
   has_email_from: !!EMAIL_FROM,
 });
 
+// Log all env vars (redacted) for local debugging
+if (process.env.NETLIFY_DEV === 'true') {
+  console.log('Environment variables (local):', Object.keys(process.env).filter(k => 
+    k.includes('PAYPAL_') || k.includes('RESEND_') || k === 'EMAIL_FROM' || k === 'NODE_ENV'
+  ).reduce((obj, key) => {
+    const value = process.env[key];
+    obj[key] = key.includes('SECRET') || key.includes('KEY') 
+      ? `${value ? '***' + value.slice(-4) : 'not_set'}` 
+      : value || 'not_set';
+    return obj;
+  }, {}));
+}
+
 // Map PayPal item names -> Google Drive links
 const PRODUCT_LINKS_BY_ITEM_NAME = {
   'Highest Self Ritual': 'https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view?usp=sharing',
@@ -156,8 +169,31 @@ async function sendEmailViaResend({ to, subject, html }) {
   }
 }
 
-exports.handler = async (event) => {
+// Test endpoint to view env vars (local only)
+const handleEnvRoute = (event) => {
+  return {
+    statusCode: 200,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(
+      Object.keys(process.env).reduce((obj, key) => {
+        const value = process.env[key];
+        obj[key] = key.includes('SECRET') || key.includes('KEY') 
+          ? `${value ? '***' + value.slice(-4) : 'not_set'}` 
+          : value || 'not_set';
+        return obj;
+      }, {}),
+      null, 2
+    )
+  };
+};
+
+export const handler = async (event) => {
   try {
+    // Handle test endpoint for local development
+    if (process.env.NETLIFY_DEV === 'true' && event?.httpMethod === 'GET' && event?.path === '/.netlify/functions/paypal-webhook/env') {
+      return handleEnvRoute(event);
+    }
+
     if (event.httpMethod !== 'POST') {
       return { statusCode: 405, body: 'method_not_allowed' };
     }
@@ -184,11 +220,29 @@ exports.handler = async (event) => {
       content_type: headers['content-type'] || null,
     });
 
-    const accessToken = await getPayPalAccessToken();
-    const valid = await verifyPayPalSignature({ headers, body: bodyStr, accessToken });
-    if (!valid) {
-      console.warn('invalid_signature');
-      return { statusCode: 401, body: 'invalid_signature' };
+    console.log('Verifying PayPal signature...');
+    console.log('Request headers:', JSON.stringify(headers, null, 2));
+    console.log('Request body length:', bodyStr.length);
+    
+    let accessToken;
+    try {
+      accessToken = await getPayPalAccessToken();
+      console.log('Obtained PayPal access token');
+    } catch (error) {
+      console.error('Error getting PayPal access token:', error.message);
+      return { statusCode: 500, body: 'Error authenticating with PayPal' };
+    }
+
+    try {
+      const valid = await verifyPayPalSignature({ headers, body: bodyStr, accessToken });
+      if (!valid) {
+        console.warn('Invalid PayPal signature');
+        return { statusCode: 401, body: 'invalid_signature' };
+      }
+      console.log('PayPal signature verified successfully');
+    } catch (error) {
+      console.error('Error verifying PayPal signature:', error.message);
+      return { statusCode: 400, body: 'signature_verification_error' };
     }
 
     const evt = JSON.parse(bodyStr);
