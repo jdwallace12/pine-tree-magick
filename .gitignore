@@ -25,3 +25,6 @@ pnpm-lock.yaml
 # Local Netlify folder
 .netlify
 .env
+.env.development
+.env.production
+
