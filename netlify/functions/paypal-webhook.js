@@ -16,8 +16,13 @@ function env(name, fallback = undefined) {
   return v == null || v === '' ? fallback : v;
 }
 
-const PAYPAL_ENV = env('PAYPAL_ENV', 'live');
+const PAYPAL_ENV = (env('PAYPAL_ENV', 'live') || '').toLowerCase();
 const PAYPAL_BASE = PAYPAL_ENV === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+console.log('PayPal Configuration:', { 
+  env: PAYPAL_ENV, 
+  baseUrl: PAYPAL_BASE,
+  webhookId: env('PAYPAL_WEBHOOK_ID')
+});
 const PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID');
 const PAYPAL_SECRET = env('PAYPAL_SECRET');
 const PAYPAL_WEBHOOK_ID = env('PAYPAL_WEBHOOK_ID');
@@ -41,6 +46,19 @@ console.log('paypal_webhook_boot', {
   has_email_from: !!EMAIL_FROM,
 });
 
+// Log all env vars (redacted) for local debugging
+if (process.env.NETLIFY_DEV === 'true') {
+  console.log('Environment variables (local):', Object.keys(process.env).filter(k => 
+    k.includes('PAYPAL_') || k.includes('RESEND_') || k === 'EMAIL_FROM' || k === 'NODE_ENV'
+  ).reduce((obj, key) => {
+    const value = process.env[key];
+    obj[key] = key.includes('SECRET') || key.includes('KEY') 
+      ? `${value ? '***' + value.slice(-4) : 'not_set'}` 
+      : value || 'not_set';
+    return obj;
+  }, {}));
+}
+
 // Map PayPal item names -> Google Drive links
 const PRODUCT_LINKS_BY_ITEM_NAME = {
   'Highest Self Ritual': 'https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view?usp=sharing',
@@ -48,48 +66,148 @@ const PRODUCT_LINKS_BY_ITEM_NAME = {
   'Ancestral Connection and Samhain Ritual': 'https://drive.google.com/file/d/1A4KDgpZzksUnGJa0US4HeHzPMfr9HqWJ/view?usp=drive_link',
 };
 
-async function getPayPalAccessToken() {
-  const basic = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString('base64');
-  const res = await fetch(`${PAYPAL_BASE}/v1/oauth2/token`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${basic}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: 'grant_type=client_credentials',
-  });
-  if (!res.ok) throw new Error(`paypal_oauth_failed:${res.status}`);
-  const json = await res.json();
-  console.log('paypal_oauth_ok');
-  return json.access_token;
+async function getPayPalAccessToken(useLiveApi = false) {
+  // Determine which API endpoint to use
+  const authBase = useLiveApi ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+  
+  const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString('base64');
+  console.log('Requesting PayPal access token from:', authBase);
+  
+  try {
+    const res = await fetch(`${authBase}/v1/oauth2/token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${auth}`,
+      },
+      body: 'grant_type=client_credentials',
+    });
+    
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('PayPal OAuth error:', {
+        status: res.status,
+        statusText: res.statusText,
+        body: errorText
+      });
+      throw new Error(`paypal_oauth_failed:${res.status}`);
+    }
+    
+    const json = await res.json();
+    console.log('paypal_oauth_ok', { token: json.access_token ? '***' + json.access_token.slice(-6) : 'no_token' });
+    return json.access_token;
+  } catch (error) {
+    console.error('Error getting PayPal access token:', error.message);
+    throw error;
+  }
 }
 
 async function verifyPayPalSignature({ headers, body, accessToken }) {
-  const payload = {
-    auth_algo: headers['paypal-auth-algo'],
-    cert_url: headers['paypal-cert-url'],
-    transmission_id: headers['paypal-transmission-id'],
-    transmission_sig: headers['paypal-transmission-sig'],
-    transmission_time: headers['paypal-transmission-time'],
-    webhook_id: PAYPAL_WEBHOOK_ID,
-    webhook_event: JSON.parse(body),
-  };
-  const res = await fetch(`${PAYPAL_BASE}/v1/notifications/verify-webhook-signature`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error(`paypal_verify_failed:${res.status}`);
-  const json = await res.json();
-  const ok = json.verification_status === 'SUCCESS';
-  console.log('paypal_verify_result', {
-    transmission_id: payload.transmission_id,
-    verification_status: json.verification_status,
-  });
-  return ok;
+  try {
+    const transmissionId = headers['paypal-transmission-id'] || headers['paypal-transmission-id'.toLowerCase()];
+    const transmissionTime = headers['paypal-transmission-time'] || headers['paypal-transmission-time'.toLowerCase()];
+    const certUrl = headers['paypal-cert-url'] || headers['paypal-cert-url'.toLowerCase()];
+    const authAlgo = headers['paypal-auth-algo'] || headers['paypal-auth-algo'.toLowerCase()];
+    const transmissionSig = headers['paypal-transmission-sig'] || headers['paypal-transmission-sig'.toLowerCase()];
+
+    console.log('Verification headers received:', {
+      hasTransmissionId: !!transmissionId,
+      hasTransmissionTime: !!transmissionTime,
+      hasCertUrl: !!certUrl,
+      hasAuthAlgo: !!authAlgo,
+      hasTransmissionSig: !!transmissionSig,
+      webhookId: PAYPAL_WEBHOOK_ID
+    });
+
+    if (!transmissionId || !transmissionTime || !certUrl || !authAlgo || !transmissionSig) {
+      console.warn('Missing required PayPal headers for verification');
+      console.log('All headers received:', JSON.stringify(headers, null, 2));
+      return false;
+    }
+
+    const webhookId = PAYPAL_WEBHOOK_ID;
+    const verificationPayload = {
+      transmission_id: transmissionId,
+      transmission_time: transmissionTime,
+      cert_url: certUrl,
+      auth_algo: authAlgo,
+      transmission_sig: transmissionSig,
+      webhook_id: webhookId,
+      webhook_event: JSON.parse(body)
+    };
+
+    // Determine the correct API base URL based on the cert_url in the webhook
+    const isLiveCert = certUrl.includes('api.paypal.com');
+    const verificationBase = isLiveCert ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+    const verificationUrl = `${verificationBase}/v1/notifications/verify-webhook-signature`;
+    
+    // Get an access token for the correct environment
+    accessToken = await getPayPalAccessToken(isLiveCert);
+    
+    // Log detailed verification info (without sensitive data)
+    console.log('Verification request details:', {
+      webhookId: webhookId,
+      transmissionId: transmissionId,
+      transmissionTime: transmissionTime,
+      certUrl: certUrl,
+      authAlgo: authAlgo,
+      transmissionSig: transmissionSig ? '***' + transmissionSig.slice(-4) : 'missing',
+      verificationUrl: verificationUrl,
+      bodyLength: body.length,
+      bodyStart: body.substring(0, 100) + (body.length > 100 ? '...' : '')
+    });
+    
+    console.log('Sending verification request to PayPal with payload:', {
+      ...verificationPayload,
+      transmission_sig: transmissionSig ? '***' + transmissionSig.slice(-4) : 'missing',
+      webhook_event: '[REDACTED]', // Don't log the full event payload
+      verification_url: verificationUrl
+    });
+
+    const response = await fetch(verificationUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(verificationPayload)
+    });
+
+    const responseText = await response.text();
+    console.log(`PayPal verification response: ${response.status} ${response.statusText}`, responseText);
+    
+    if (!response.ok) {
+      console.error('PayPal verification error:', {
+        status: response.status,
+        statusText: response.statusText,
+        body: responseText,
+        headers: Object.fromEntries(response.headers.entries())
+      });
+      return false;
+    }
+    
+    const json = JSON.parse(responseText);
+    console.log('PayPal verification details:', {
+      verification_status: json.verification_status,
+      verification_reason: json.verification_reason || 'No reason provided',
+      response_headers: Object.fromEntries(response.headers.entries()),
+      response_body: responseText,
+      request_url: verificationUrl,
+      request_headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken ? '***' + accessToken.slice(-6) : 'missing'}`,
+        'PayPal-Request-Id': verificationPayload.transmission_id
+      }
+    });
+    
+    return json.verification_status === 'SUCCESS';
+  } catch (error) {
+    console.error('Error in verifyPayPalSignature:', {
+      message: error.message,
+      stack: error.stack
+    });
+    return false;
+  }
 }
 
 async function getOrderDetails(orderId, accessToken) {
@@ -156,8 +274,31 @@ async function sendEmailViaResend({ to, subject, html }) {
   }
 }
 
-exports.handler = async (event) => {
+// Test endpoint to view env vars (local only)
+const handleEnvRoute = (event) => {
+  return {
+    statusCode: 200,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(
+      Object.keys(process.env).reduce((obj, key) => {
+        const value = process.env[key];
+        obj[key] = key.includes('SECRET') || key.includes('KEY') 
+          ? `${value ? '***' + value.slice(-4) : 'not_set'}` 
+          : value || 'not_set';
+        return obj;
+      }, {}),
+      null, 2
+    )
+  };
+};
+
+export const handler = async (event) => {
   try {
+    // Handle test endpoint for local development
+    if (process.env.NETLIFY_DEV === 'true' && event?.httpMethod === 'GET' && event?.path === '/.netlify/functions/paypal-webhook/env') {
+      return handleEnvRoute(event);
+    }
+
     if (event.httpMethod !== 'POST') {
       return { statusCode: 405, body: 'method_not_allowed' };
     }
@@ -184,11 +325,34 @@ exports.handler = async (event) => {
       content_type: headers['content-type'] || null,
     });
 
-    const accessToken = await getPayPalAccessToken();
-    const valid = await verifyPayPalSignature({ headers, body: bodyStr, accessToken });
-    if (!valid) {
-      console.warn('invalid_signature');
-      return { statusCode: 401, body: 'invalid_signature' };
+    console.log('Verifying PayPal signature...');
+    console.log('Request headers:', JSON.stringify(headers, null, 2));
+    console.log('Request body length:', bodyStr.length);
+    
+    let accessToken;
+    try {
+      // First, determine if this is a live or sandbox webhook
+      const isLiveCert = (headers['paypal-cert-url'] || '').includes('api.paypal.com');
+      console.log('Webhook environment detected:', isLiveCert ? 'LIVE' : 'SANDBOX');
+      
+      // Get an access token for the correct environment
+      accessToken = await getPayPalAccessToken(isLiveCert);
+      console.log('Obtained PayPal access token for', isLiveCert ? 'LIVE' : 'SANDBOX', 'environment');
+      
+      // Verify the signature with the correct environment
+      const valid = await verifyPayPalSignature({ 
+        headers, 
+        body: bodyStr, 
+        accessToken 
+      });
+      if (!valid) {
+        console.warn('Invalid PayPal signature');
+        return { statusCode: 401, body: 'invalid_signature' };
+      }
+      console.log('PayPal signature verified successfully');
+    } catch (error) {
+      console.error('Error verifying PayPal signature:', error.message);
+      return { statusCode: 400, body: 'signature_verification_error' };
     }
 
     const evt = JSON.parse(bodyStr);
