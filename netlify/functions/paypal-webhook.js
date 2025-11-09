@@ -136,13 +136,11 @@ async function verifyPayPalSignature({ headers, body, accessToken }) {
       webhook_event: JSON.parse(body)
     };
 
-    // Determine the correct API base URL based on the cert_url in the webhook
-    const isLiveCert = certUrl.includes('api.paypal.com');
-    const verificationBase = isLiveCert ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+    // Use the configured PAYPAL_ENV to determine which API to use
+    const verificationBase = PAYPAL_ENV === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
     const verificationUrl = `${verificationBase}/v1/notifications/verify-webhook-signature`;
     
-    // Get an access token for the correct environment
-    accessToken = await getPayPalAccessToken(isLiveCert);
+    // Use the access token that was passed in (already obtained for the correct environment)
     
     // Log detailed verification info (without sensitive data)
     console.log('Verification request details:', {
@@ -331,13 +329,13 @@ export const handler = async (event) => {
     
     let accessToken;
     try {
-      // First, determine if this is a live or sandbox webhook
-      const isLiveCert = (headers['paypal-cert-url'] || '').includes('api.paypal.com');
-      console.log('Webhook environment detected:', isLiveCert ? 'LIVE' : 'SANDBOX');
+      // Use the configured PAYPAL_ENV to determine which API to use
+      const useLiveApi = PAYPAL_ENV === 'live';
+      console.log('Using PayPal environment:', PAYPAL_ENV, '(live API:', useLiveApi + ')');
       
       // Get an access token for the correct environment
-      accessToken = await getPayPalAccessToken(isLiveCert);
-      console.log('Obtained PayPal access token for', isLiveCert ? 'LIVE' : 'SANDBOX', 'environment');
+      accessToken = await getPayPalAccessToken(useLiveApi);
+      console.log('Obtained PayPal access token for', PAYPAL_ENV, 'environment');
       
       // Verify the signature with the correct environment
       const valid = await verifyPayPalSignature({ 
