@@ -236,7 +236,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
         }
 
         setTimeout(() => {
-          const paypalUrl = `https://www.sandbox.paypal.com/ncp/payment/${encodeURIComponent(String(payPalButtonId))}`;
+          const paypalUrl = `https://www.paypal.com/ncp/payment/${encodeURIComponent(String(payPalButtonId))}`;
           window.location.assign(paypalUrl);
         }, 1200);
 
