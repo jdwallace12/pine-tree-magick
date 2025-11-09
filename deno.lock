@@ -1,0 +1,61 @@
+{
+  "version": "5",
+  "remote": {
+    "https://edge.netlify.com/": "fd941d61d88673d5f28aab283fb86fcc50f08a3bc80ee5470498fcfa88c65cfb",
+    "https://edge.netlify.com/bootstrap/config.ts": "6a2ce0e544e15e8f8883a5c18da5948e37fd0f2619f68cb31f3af53c51817025",
+    "https://edge.netlify.com/bootstrap/context.ts": "72496497b40d9e808f419efc764ecb438952a32f61ed94cd54952fc59f17f69d",
+    "https://edge.netlify.com/bootstrap/cookie.ts": "8b0baae708989ca183c6f3b4ab3d029e6abcbc2e43f93edeb0ff447b3bbc3a05",
+    "https://edge.netlify.com/bootstrap/edge_function.ts": "b8253e86aa83c67341f5cfedeba5049d77fbf84dcab7eceff7566b7728ae9b39",
+    "https://edge.netlify.com/bootstrap/globals/types.ts": "eaa6148ded3121d8dee62dd91c86e7fe76601df0f3ca8d7962243a30f4c8935f"
+  },
+  "workspace": {
+    "packageJson": {
+      "dependencies": [
+        "npm:@astrojs/check@~0.9.4",
+        "npm:@astrojs/mdx@^4.0.3",
+        "npm:@astrojs/partytown@^2.1.3",
+        "npm:@astrojs/rss@^4.0.11",
+        "npm:@astrojs/sitemap@^3.2.1",
+        "npm:@astrojs/tailwind@^5.1.4",
+        "npm:@astrolib/analytics@~0.6.1",
+        "npm:@astrolib/seo@^1.0.0-beta.6",
+        "npm:@eslint/js@^9.14.0",
+        "npm:@fontsource-variable/lora@^5.1.0",
+        "npm:@fontsource-variable/merriweather-sans@^5.1.0",
+        "npm:@iconify-json/flat-color-icons@^1.2.0",
+        "npm:@iconify-json/tabler@^1.2.3",
+        "npm:@tailwindcss/typography@~0.5.15",
+        "npm:@types/eslint__js@^8.42.3",
+        "npm:@types/js-yaml@^4.0.9",
+        "npm:@types/lodash.merge@^4.6.9",
+        "npm:@types/mdx@^2.0.13",
+        "npm:@typescript-eslint/eslint-plugin@^8.6.0",
+        "npm:@typescript-eslint/parser@^8.6.0",
+        "npm:astro-compress@2.3.1",
+        "npm:astro-embed@~0.7.2",
+        "npm:astro-eslint-parser@^1.0.3",
+        "npm:astro-icon@^1.1.2",
+        "npm:astro@^5.1.3",
+        "npm:dotenv-cli@11",
+        "npm:dotenv@^17.2.3",
+        "npm:eslint-plugin-astro@^1.2.4",
+        "npm:eslint@^9.14.0",
+        "npm:globals@^15.12.0",
+        "npm:js-yaml@^4.1.0",
+        "npm:limax@4.1.0",
+        "npm:lodash.merge@^4.6.2",
+        "npm:mdast-util-to-string@4",
+        "npm:prettier-plugin-astro@~0.14.1",
+        "npm:prettier@^3.3.3",
+        "npm:reading-time@^1.5.0",
+        "npm:sharp@0.33.5",
+        "npm:tailwind-merge@^2.5.2",
+        "npm:tailwindcss@^3.4.11",
+        "npm:typescript-eslint@^8.14.0",
+        "npm:typescript@^5.6.2",
+        "npm:unist-util-visit@5",
+        "npm:unpic@^3.18.0"
+      ]
+    }
+  }
+}
