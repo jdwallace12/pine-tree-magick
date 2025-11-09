@@ -8,10 +8,10 @@
     "node": "^18.17.1 || ^20.3.0 || >= 21.0.0"
   },
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro build",
+    "dev": "dotenv -e .env.development -- astro dev",
+    "build": "dotenv -e .env.production -- astro build",
     "preview": "astro preview",
+    "start": "netlify dev",
     "astro": "astro",
     "check": "npm run check:astro && npm run check:eslint && npm run check:prettier",
     "check:astro": "astro check",
@@ -53,6 +53,7 @@
     "astro-compress": "2.3.1",
     "astro-eslint-parser": "^1.0.3",
     "dotenv": "^17.2.3",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^9.14.0",
     "eslint-plugin-astro": "^1.2.4",
     "globals": "^15.12.0",
