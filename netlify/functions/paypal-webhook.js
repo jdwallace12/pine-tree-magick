@@ -172,7 +172,7 @@ async function verifyPayPalSignature({ headers, body, accessToken }) {
       body: JSON.stringify(verificationPayload)
     });
 
-    console.log("Raw response text:", responseText);
+    
 
     const responseText = await response.text();
     console.log(`PayPal verification response: ${response.status} ${response.statusText}`, responseText);
@@ -188,6 +188,7 @@ async function verifyPayPalSignature({ headers, body, accessToken }) {
     }
     
     const json = JSON.parse(responseText);
+    console.log("Raw response text:", responseText);
     console.log('PayPal verification details:', {
       verification_status: json.verification_status,
       verification_reason: json.verification_reason || 'No reason provided',
