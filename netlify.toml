@@ -15,3 +15,16 @@
   framework = "#custom"
   targetPort = 4321
   command = "node -r dotenv/config node_modules/.bin/astro dev"
+
+[context.development]
+  command = "NODE_ENV=development npm run dev"
+  [context.development.environment]
+    PAYPAL_ENV = "sandbox"
+
+[context.production]
+  [context.production.environment]
+    PAYPAL_ENV = "live"
+
+[functions.paypal-webhook]
+  node_bundler = "esbuild"
+  parse = false  # <-- IMPORTANT (keeps raw body)    
