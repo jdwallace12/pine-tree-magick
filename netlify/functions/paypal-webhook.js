@@ -133,7 +133,7 @@ async function verifyPayPalSignature({ headers, body, accessToken }) {
       auth_algo: authAlgo,
       transmission_sig: transmissionSig,
       webhook_id: webhookId,
-      webhook_event: body
+      webhook_event: JSON.parse(body)
     };
 
     // Use the configured PAYPAL_ENV to determine which API to use

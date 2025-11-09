@@ -28,4 +28,4 @@
 
 [functions.paypal-webhook]
   node_bundler = "esbuild"
-  parse = false  # <-- IMPORTANT (keeps raw body)    
+  parse = false
