@@ -7,6 +7,10 @@
 [functions]
   directory = "netlify/functions"
 
+[functions.paypal-webhook]
+  node_bundler = "esbuild"
+  parse = false
+
 [[headers]]
   for = "/_astro/*"
   [headers.values]
@@ -26,6 +30,3 @@
   [context.production.environment]
     PAYPAL_ENV = "live"
 
-[functions.paypal-webhook]
-  node_bundler = "esbuild"
-  parse = false

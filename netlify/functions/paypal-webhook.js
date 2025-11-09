@@ -162,6 +162,7 @@ async function verifyPayPalSignature({ headers, body, accessToken }) {
       verification_url: verificationUrl
     });
 
+    console.log("Raw verification payload sent to PayPal:", verificationPayload);
     const response = await fetch(verificationUrl, {
       method: 'POST',
       headers: {
@@ -170,6 +171,8 @@ async function verifyPayPalSignature({ headers, body, accessToken }) {
       },
       body: JSON.stringify(verificationPayload)
     });
+
+    console.log("Raw response text:", responseText);
 
     const responseText = await response.text();
     console.log(`PayPal verification response: ${response.status} ${response.statusText}`, responseText);
