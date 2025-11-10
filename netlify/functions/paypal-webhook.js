@@ -27,8 +27,6 @@ async function sendEmailViaResend({ to, buyerName, link }) {
         <p>Hi ${safeName},</p>
         <p>Thank you so much for your purchase — your ritual download is ready:</p>
         <p><a href="${link}" target="_blank" style="font-size:18px;font-weight:bold;">Click here to access your PDF</a></p>
-        <p>If you have trouble, reply to this email and I'll help right away.</p>
-        <p>With love,<br>John 🌲</p>
       </div>
     `,
     reply_to: EMAIL_FROM
