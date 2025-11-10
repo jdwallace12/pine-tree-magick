@@ -1,16 +1,13 @@
 [build]
   publish = "dist"
   command = "npm run build"
+
 [build.processing.html]
   pretty_urls = false
 
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
-
-[functions.paypal-webhook]
-  node_bundler = "esbuild"
-  parse = false
 
 [functions.paypal-ipn]
   node_bundler = "esbuild"
