@@ -1,8 +1,7 @@
+// netlify/functions/paypal-webhook.js
 /**
- * Netlify function: PayPal Webhook
+ * IMPORTANT: in netlify.toml, include:
  *
- * IMPORTANT:
- * In netlify.toml, include:
  * [functions.paypal-webhook]
  *   body = "raw"
  */
@@ -10,11 +9,10 @@
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_FROM = process.env.EMAIL_FROM || "Pine Tree Magick <no-reply@pinetreemagick.com>";
 const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
-const PAYPAL_WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID; // required in production
-const PAYPAL_ENV = process.env.PAYPAL_ENV || "sandbox"; // "live" for production
+const PAYPAL_WEBHOOK_ID = process.env.PAYPAL_WEBHOOK_ID; // Optional, needed for production verification
 const SKIP_PAYPAL_VERIFY = process.env.SKIP_PAYPAL_VERIFY === "true";
 
-// PDF mapping
+// Map product names to PDF links
 const PDF_LINKS = {
   "Highest Self Ritual": "https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view",
   "Love Spell": "https://drive.google.com/file/d/1E4nBIAqDAGsV_QyHxP2JC7Ahu8f1F7-Z/view",
@@ -55,7 +53,6 @@ async function sendEmail({ to, buyerName, link }) {
       },
       body: JSON.stringify(payload),
     });
-
     const text = await res.text();
     if (!res.ok) console.error("❌ Email failed:", text);
     else console.log(`✅ Email sent to ${to}`);
@@ -64,111 +61,100 @@ async function sendEmail({ to, buyerName, link }) {
   }
 }
 
-// Get PayPal access token
-async function getPayPalAccessToken() {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const secret = process.env.PAYPAL_SECRET;
+// Verify PayPal webhook (optional)
+async function verifyPayPalWebhook(req, body) {
+  if (SKIP_PAYPAL_VERIFY) {
+    console.log("⚠️ SKIP_PAYPAL_VERIFY enabled - skipping PayPal verification");
+    return true;
+  }
 
-  if (!clientId || !secret) throw new Error("❌ PayPal client ID or secret missing");
+  try {
+    const transmissionId = req.headers.get("paypal-transmission-id");
+    const transmissionTime = req.headers.get("paypal-transmission-time");
+    const certUrl = req.headers.get("paypal-cert-url");
+    const authAlgo = req.headers.get("paypal-auth-algo");
+    const transmissionSig = req.headers.get("paypal-transmission-sig");
 
-  const base = PAYPAL_ENV === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
+    if (!transmissionId || !transmissionTime || !certUrl || !authAlgo || !transmissionSig) {
+      console.error("❌ Missing required PayPal verification headers");
+      return false;
+    }
 
-  const auth = Buffer.from(`${clientId}:${secret}`).toString("base64");
+    const verifyPayload = {
+      auth_algo: authAlgo,
+      cert_url: certUrl,
+      transmission_id: transmissionId,
+      transmission_sig: transmissionSig,
+      transmission_time: transmissionTime,
+      webhook_id: PAYPAL_WEBHOOK_ID,
+      webhook_event: body,
+    };
 
-  const res = await fetch(`${base}/v1/oauth2/token`, {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${auth}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: "grant_type=client_credentials",
-  });
+    const tokenRes = await fetch("https://api-m.paypal.com/v1/oauth2/token", {
+      method: "POST",
+      headers: {
+        Authorization: "Basic " + Buffer.from(`${process.env.PAYPAL_CLIENT}:${process.env.PAYPAL_SECRET}`).toString("base64"),
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: "grant_type=client_credentials",
+    });
 
-  const data = await res.json();
-  if (!res.ok) throw new Error(`❌ Failed to get PayPal token: ${JSON.stringify(data)}`);
-  return data.access_token;
+    const tokenData = await tokenRes.json();
+    const accessToken = tokenData.access_token;
+    if (!accessToken) throw new Error("Could not get PayPal access token");
+
+    const verifyRes = await fetch("https://api-m.paypal.com/v1/notifications/verify-webhook-signature", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(verifyPayload),
+    });
+
+    const verifyData = await verifyRes.json();
+    if (verifyData.verification_status !== "SUCCESS") {
+      console.error("❌ PayPal verification failed:", JSON.stringify(verifyData));
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error("❌ Webhook verification failed:", err);
+    return false;
+  }
 }
 
-// Verify PayPal webhook signature
-async function verifyPayPalWebhook(rawBody, headers) {
-  if (!PAYPAL_WEBHOOK_ID) throw new Error("❌ PAYPAL_WEBHOOK_ID missing");
-
-  const accessToken = await getPayPalAccessToken();
-  const base = PAYPAL_ENV === "live" ? "https://api-m.paypal.com" : "https://api-m.sandbox.paypal.com";
-
-  console.log("📋 Verifying PayPal webhook...");
-  console.log("Incoming headers:", headers);
-
-  const payload = {
-    auth_algo: headers["paypal-auth-algo"],
-    cert_url: headers["paypal-cert-url"],
-    transmission_id: headers["paypal-transmission-id"],
-    transmission_sig: headers["paypal-transmission-sig"],
-    transmission_time: headers["paypal-transmission-time"],
-    webhook_id: PAYPAL_WEBHOOK_ID,
-    webhook_event: JSON.parse(rawBody),
-  };
-
-  const res = await fetch(`${base}/v1/notifications/verify-webhook-signature`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await res.json();
-  console.log("PayPal verification response:", data);
-  return data.verification_status === "SUCCESS";
-}
-
-// Main handler
+// Main function
 export default async function handler(req) {
   try {
     const rawBody = await req.text();
-    console.log("📦 Raw webhook body:", rawBody);
+    console.log("📝 Raw request body:", rawBody);
 
     let event;
     try {
       event = JSON.parse(rawBody);
     } catch (err) {
-      console.error("❌ Invalid JSON payload", err);
+      console.error("❌ Invalid JSON payload");
       return new Response("Invalid JSON", { status: 400 });
     }
 
     console.log("📦 PayPal Webhook Received:", event.event_type);
 
     if (event.event_type !== "PAYMENT.CAPTURE.COMPLETED") {
-      console.log("ℹ️ Ignored non-payment event");
+      console.log("ℹ️ Ignoring non-payment event");
       return new Response("Ignored non-payment event", { status: 200 });
     }
 
-    // Verify webhook (unless skipped)
-    let verified = SKIP_PAYPAL_VERIFY;
-    if (!SKIP_PAYPAL_VERIFY) {
-      try {
-        verified = await verifyPayPalWebhook(rawBody, req.headers);
-      } catch (err) {
-        console.error("❌ Webhook verification failed", err);
-        return new Response("Webhook verification failed", { status: 400 });
-      }
-    } else {
-      console.log("⚠️ SKIP_PAYPAL_VERIFY enabled - skipping PayPal verification");
-    }
+    const verified = await verifyPayPalWebhook(req, event);
+    if (!verified) return new Response("Invalid webhook", { status: 400 });
 
-    if (!verified) {
-      console.error("❌ Webhook verification failed: verification_status != SUCCESS");
-      return new Response("Invalid webhook", { status: 400 });
-    }
-
-    // Extract purchaser info
     const payer = event.resource?.payer;
     const email = payer?.email_address;
     const buyerName = payer?.name?.given_name;
     const itemName = event.resource?.purchase_units?.[0]?.items?.[0]?.name;
 
-    console.log("📋 Payer info:", { email, buyerName, itemName });
+    console.log("ℹ️ Payer info:", { email, buyerName, itemName });
 
     if (!email || !itemName) {
       console.error("❌ Missing email or item name");
