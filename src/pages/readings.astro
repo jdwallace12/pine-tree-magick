@@ -21,7 +21,6 @@ const metadata = {
   </div>
   <!-- Content Widget **************** -->
   <Content
-    isReversed
     image={{
       src: '/assets/images/natal-chart-reading.webp',
       alt: 'Hand-drawn botanical moon phases',
@@ -133,7 +132,32 @@ const metadata = {
     <p class="text-lg dark:text-slate-400">Audio readings are pre-recorded and include astrological insight, a Tarot card message from Spirit, and a guided ritual to help you work your desired manifestation. Each written ritual includes a link to a recorded meditation, journal prompts, altar suggestions, timing recommendations, and step-by-step instructions to help you manifest your intention.</p>
     <p class="text-lg dark:text-slate-400 mt-4">This type of reading is designed for those who want insight into a specific area of their natal chart and are interested in tapping into their personal power. *Please note, turnaround time for audio recordings is based on volume, Jersey will alert you when you are at the top of the waiting list.*</p>
   </div>
+    <Content
+    image={{
+      src: '/assets/images/bday-light.webp',
+      alt: 'Hand-drawn botanical moon phases',
+    }}
+    callToAction={{
+      text: 'Book Audio Reading',
+      icon: 'tabler:chevron-right',
+      href: '/audio-reading',
+    }}
+  >
+    <Fragment slot="content">
+      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Solar Return Reading</p>
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Birthday Ritual</h2>
+      <p>
+        An excellent birthday gift for yourself or someone else! This reading explores the themes that are prevalent in your life during the 12 months from one birthday to the next. Using annual profections and the solar return chart, Jersey explains the  flavor of the year ahead, including challenges and opportunities that may arise. The Birthday ritual helps you release the most recent year, while making space for your goals and growth in the year ahead.
+      </p>
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+
   <Content
+  isReversed
     image={{
       src: '/assets/images/money-reading.webp',
       alt: 'Hand-drawn botanical moon phases',
@@ -159,7 +183,6 @@ const metadata = {
   </Content>
 
   <Content
-  isReversed
   image={{
     src: '/assets/images/love-reading-venus.webp',
     alt: 'Hand-drawn botanical moon phases',
@@ -184,6 +207,7 @@ const metadata = {
 </Content>
 
 <Content
+isReversed
 image={{
   src: '/assets/images/purpose-reading.webp',
   alt: 'Hand-drawn botanical moon phases',
@@ -199,6 +223,29 @@ callToAction={{
   <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Highest Self Ritual</h2>
   <p>
    If you’ve ever wondered, “What is the purpose of all of this?” then this reading is for you. In our society, people often mistake “purpose” for “career” — but your soul purpose is much more nuanced  and layered. By looking at key points in your chart, I will reveal what your soul craves and the direction your life is meant to take. The Highest Self Ritual is designed to get you in touch with your divine being so you can feel secure and confident about what you’re meant to do in this lifetime.
+  </p>
+</Fragment>
+
+<Fragment slot="bg">
+  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+</Fragment>
+</Content>
+<Content
+image={{
+  src: '/assets/images/past-life-reading.webp',
+  alt: 'Hand-drawn botanical moon phases',
+}}
+callToAction={{
+  text: 'Book Audio Reading',
+  icon: 'tabler:chevron-right',
+  href: '/audio-reading',
+}}
+>
+<Fragment slot="content">
+  <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Past Life Reading</p>
+  <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">+Past Life Connection Ritual</h2>
+  <p>
+  This unique reading combines astrology, tarot, and astrocartography to explore your soul’s journey over lifetimes, revealing patterns from a recent past life. Tarot adds a layer of intuitive depth, uncovering themes and emotional threads from a previous incarnation, while astrocartography reveals the location that contains your karmic past. The Past Life Connection Ritual help you connect to this past incarnation and to release any lingering patterns that no longer serve you.
   </p>
 </Fragment>
 
