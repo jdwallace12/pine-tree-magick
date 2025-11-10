@@ -1,415 +1,99 @@
-/* Netlify Function: PayPal Webhook -> Email Google Drive link via Resend
- * Requirements (set as Netlify env vars):
- * - PAYPAL_ENV: 'sandbox' or 'live'
- * - PAYPAL_CLIENT_ID
- * - PAYPAL_SECRET
- * - PAYPAL_WEBHOOK_ID
- * - RESEND_API_KEY
- * - EMAIL_FROM (full email address; if you set a domain only, we'll default to no-reply@<domain>)
- * - EMAIL_BCC_INTERNAL (optional)
+/**
+ * IMPORTANT — in `netlify.toml`, include:
+ *
+ * [functions.paypal-webhook]
+ *   body = "raw"
  */
 
-const fetch = global.fetch;
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+const EMAIL_FROM = process.env.EMAIL_FROM || "Pine Tree Magick <no-reply@pinetreemagick.com>";
+const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
 
-function env(name, fallback = undefined) {
-  const v = process.env[name];
-  return v == null || v === '' ? fallback : v;
-}
-
-const PAYPAL_ENV = (env('PAYPAL_ENV', 'live') || '').toLowerCase();
-const PAYPAL_BASE = PAYPAL_ENV === 'sandbox' ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
-console.log('PayPal Configuration:', { 
-  env: PAYPAL_ENV, 
-  baseUrl: PAYPAL_BASE,
-  webhookId: env('PAYPAL_WEBHOOK_ID')
-});
-const PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID');
-const PAYPAL_SECRET = env('PAYPAL_SECRET');
-const PAYPAL_WEBHOOK_ID = env('PAYPAL_WEBHOOK_ID');
-
-const RESEND_API_KEY = env('RESEND_API_KEY');
-let EMAIL_FROM = env('EMAIL_FROM');
-const EMAIL_BCC_INTERNAL = env('EMAIL_BCC_INTERNAL');
-
-// If EMAIL_FROM is provided as a domain, convert to a sensible default sender
-if (EMAIL_FROM && !EMAIL_FROM.includes('@')) {
-  EMAIL_FROM = `no-reply@${EMAIL_FROM}`;
-}
-
-// Boot log (no secrets)
-console.log('paypal_webhook_boot', {
-  paypal_env: PAYPAL_ENV,
-  has_client_id: !!PAYPAL_CLIENT_ID,
-  has_secret: !!PAYPAL_SECRET,
-  has_webhook_id: !!PAYPAL_WEBHOOK_ID,
-  has_resend_key: !!RESEND_API_KEY,
-  has_email_from: !!EMAIL_FROM,
-});
-
-// Log all env vars (redacted) for local debugging
-if (process.env.NETLIFY_DEV === 'true') {
-  console.log('Environment variables (local):', Object.keys(process.env).filter(k => 
-    k.includes('PAYPAL_') || k.includes('RESEND_') || k === 'EMAIL_FROM' || k === 'NODE_ENV'
-  ).reduce((obj, key) => {
-    const value = process.env[key];
-    obj[key] = key.includes('SECRET') || key.includes('KEY') 
-      ? `${value ? '***' + value.slice(-4) : 'not_set'}` 
-      : value || 'not_set';
-    return obj;
-  }, {}));
-}
-
-// Map PayPal item names -> Google Drive links
-const PRODUCT_LINKS_BY_ITEM_NAME = {
-  'Highest Self Ritual': 'https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view?usp=sharing',
-  'Love Spell': 'https://drive.google.com/file/d/1E4nBIAqDAGsV_QyHxP2JC7Ahu8f1F7-Z/view?usp=drive_link',
-  'Ancestral Connection and Samhain Ritual': 'https://drive.google.com/file/d/1A4KDgpZzksUnGJa0US4HeHzPMfr9HqWJ/view?usp=drive_link',
-};
-
-async function getPayPalAccessToken(useLiveApi = false) {
-  // Determine which API endpoint to use
-  const authBase = useLiveApi ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
-  
-  const auth = Buffer.from(`${PAYPAL_CLIENT_ID}:${PAYPAL_SECRET}`).toString('base64');
-  console.log('Requesting PayPal access token from:', authBase);
-  
-  try {
-    const res = await fetch(`${authBase}/v1/oauth2/token`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${auth}`,
-      },
-      body: 'grant_type=client_credentials',
-    });
-    
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error('PayPal OAuth error:', {
-        status: res.status,
-        statusText: res.statusText,
-        body: errorText
-      });
-      throw new Error(`paypal_oauth_failed:${res.status}`);
-    }
-    
-    const json = await res.json();
-    console.log('paypal_oauth_ok', { token: json.access_token ? '***' + json.access_token.slice(-6) : 'no_token' });
-    return json.access_token;
-  } catch (error) {
-    console.error('Error getting PayPal access token:', error.message);
-    throw error;
-  }
-}
-
-async function verifyPayPalSignature({ headers, body, accessToken }) {
-  try {
-    const transmissionId = headers['paypal-transmission-id'] || headers['paypal-transmission-id'.toLowerCase()];
-    const transmissionTime = headers['paypal-transmission-time'] || headers['paypal-transmission-time'.toLowerCase()];
-    const certUrl = headers['paypal-cert-url'] || headers['paypal-cert-url'.toLowerCase()];
-    const authAlgo = headers['paypal-auth-algo'] || headers['paypal-auth-algo'.toLowerCase()];
-    const transmissionSig = headers['paypal-transmission-sig'] || headers['paypal-transmission-sig'.toLowerCase()];
-
-    console.log('Verification headers received:', {
-      hasTransmissionId: !!transmissionId,
-      hasTransmissionTime: !!transmissionTime,
-      hasCertUrl: !!certUrl,
-      hasAuthAlgo: !!authAlgo,
-      hasTransmissionSig: !!transmissionSig,
-      webhookId: PAYPAL_WEBHOOK_ID
-    });
-
-    if (!transmissionId || !transmissionTime || !certUrl || !authAlgo || !transmissionSig) {
-      console.warn('Missing required PayPal headers for verification');
-      console.log('All headers received:', JSON.stringify(headers, null, 2));
-      return false;
-    }
-
-    const webhookId = PAYPAL_WEBHOOK_ID;
-    const verificationPayload = {
-      transmission_id: transmissionId,
-      transmission_time: transmissionTime,
-      cert_url: certUrl,
-      auth_algo: authAlgo,
-      transmission_sig: transmissionSig,
-      webhook_id: webhookId,
-      webhook_event: JSON.parse(body)
-    };
-
-    // Use the configured PAYPAL_ENV to determine which API to use
-    const verificationBase = PAYPAL_ENV === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
-    const verificationUrl = `${verificationBase}/v1/notifications/verify-webhook-signature`;
-    
-    // Use the access token that was passed in (already obtained for the correct environment)
-    
-    // Log detailed verification info (without sensitive data)
-    console.log('Verification request details:', {
-      webhookId: webhookId,
-      transmissionId: transmissionId,
-      transmissionTime: transmissionTime,
-      certUrl: certUrl,
-      authAlgo: authAlgo,
-      transmissionSig: transmissionSig ? '***' + transmissionSig.slice(-4) : 'missing',
-      verificationUrl: verificationUrl,
-      bodyLength: body.length,
-      bodyStart: body.substring(0, 100) + (body.length > 100 ? '...' : '')
-    });
-    
-    console.log('Sending verification request to PayPal with payload:', {
-      ...verificationPayload,
-      transmission_sig: transmissionSig ? '***' + transmissionSig.slice(-4) : 'missing',
-      webhook_event: '[REDACTED]', // Don't log the full event payload
-      verification_url: verificationUrl
-    });
-
-    console.log("Raw verification payload sent to PayPal:", verificationPayload);
-    const response = await fetch(verificationUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify(verificationPayload)
-    });
-
-    
-
-    const responseText = await response.text();
-    console.log(`PayPal verification response: ${response.status} ${response.statusText}`, responseText);
-    
-    if (!response.ok) {
-      console.error('PayPal verification error:', {
-        status: response.status,
-        statusText: response.statusText,
-        body: responseText,
-        headers: Object.fromEntries(response.headers.entries())
-      });
-      return false;
-    }
-    
-    const json = JSON.parse(responseText);
-    console.log("Raw response text:", responseText);
-    console.log('PayPal verification details:', {
-      verification_status: json.verification_status,
-      verification_reason: json.verification_reason || 'No reason provided',
-      response_headers: Object.fromEntries(response.headers.entries()),
-      response_body: responseText,
-      request_url: verificationUrl,
-      request_headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken ? '***' + accessToken.slice(-6) : 'missing'}`,
-        'PayPal-Request-Id': verificationPayload.transmission_id
-      }
-    });
-    
-    return json.verification_status === 'SUCCESS';
-  } catch (error) {
-    console.error('Error in verifyPayPalSignature:', {
-      message: error.message,
-      stack: error.stack
-    });
-    return false;
-  }
-}
-
-async function getOrderDetails(orderId, accessToken) {
-  if (!orderId) return null;
-  const res = await fetch(`${PAYPAL_BASE}/v2/checkout/orders/${encodeURIComponent(orderId)}`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
-
-function extractBuyerAndItem({ evt, order }) {
-  const resource = evt.resource || {};
-  let buyerEmail = null;
-  let buyerName = null;
-  let itemName = null;
-
-  // Prefer order details for payer and items
-  if (order) {
-    buyerEmail = order?.payer?.email_address || buyerEmail;
-    if (order?.payer?.name) {
-      const given = order.payer.name.given_name || '';
-      const sur = order.payer.name.surname || '';
-      const composed = `${given} ${sur}`.trim();
-      if (composed) buyerName = composed;
-    }
-    const pu = Array.isArray(order.purchase_units) ? order.purchase_units[0] : null;
-    const firstItem = pu && Array.isArray(pu.items) ? pu.items[0] : null;
-    if (firstItem && firstItem.name) itemName = firstItem.name;
+// Send email via Resend
+async function sendEmailViaResend({ to, buyerName, link }) {
+  if (!RESEND_API_KEY) {
+    console.error("❌ RESEND_API_KEY missing");
+    return;
   }
 
-  // Fallback to capture resource payer if missing
-  if (!buyerEmail) buyerEmail = resource?.payer?.email_address || null;
+  const safeName = buyerName || "there";
 
-  return { buyerEmail, buyerName, itemName };
-}
-
-function chooseLink({ itemName }) {
-  if (itemName && PRODUCT_LINKS_BY_ITEM_NAME[itemName]) return PRODUCT_LINKS_BY_ITEM_NAME[itemName];
-  return null;
-}
-
-async function sendEmailViaResend({ to, subject, html }) {
-  if (!RESEND_API_KEY || !EMAIL_FROM) throw new Error('email_env_missing');
   const payload = {
     from: EMAIL_FROM,
     to: [to],
-    subject,
-    html,
+    subject: "Your Ritual Download ✨",
+    html: `
+      <div style="font-family:system-ui,Arial,sans-serif;line-height:1.6;padding:16px">
+        <p>Hi ${safeName},</p>
+        <p>Thank you so much for your purchase — your ritual download is ready:</p>
+        <p><a href="${link}" target="_blank" style="font-size:18px;font-weight:bold;">Click here to access your PDF</a></p>
+        <p>If you have trouble, reply to this email and I'll help right away.</p>
+        <p>With love,<br>John 🌲</p>
+      </div>
+    `,
+    reply_to: EMAIL_FROM
   };
+
   if (EMAIL_BCC_INTERNAL) payload.bcc = [EMAIL_BCC_INTERNAL];
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) {
-    const t = await res.text();
-    throw new Error(`resend_failed:${res.status}:${t}`);
-  }
+
+  const text = await res.text();
+  if (!res.ok) console.error("❌ Email failed:", text);
+  else console.log(`✅ Email sent to ${to}`);
 }
 
-// Test endpoint to view env vars (local only)
-const handleEnvRoute = (event) => {
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(
-      Object.keys(process.env).reduce((obj, key) => {
-        const value = process.env[key];
-        obj[key] = key.includes('SECRET') || key.includes('KEY') 
-          ? `${value ? '***' + value.slice(-4) : 'not_set'}` 
-          : value || 'not_set';
-        return obj;
-      }, {}),
-      null, 2
-    )
+// Map PayPal product → Google Drive PDF link
+function getPdfLink(itemName) {
+  const PDFs = {
+    "Highest Self Ritual": "https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view",
+    "Love Spell": "https://drive.google.com/file/d/1E4nBIAqDAGsV_QyHxP2JC7Ahu8f1F7-Z/view",
+    "Ancestral Connection and Samhain Ritual": "https://drive.google.com/file/d/1A4KDgpZzksUnGJa0US4HeHzPMfr9HqWJ/view",
   };
-};
 
-export const handler = async (event) => {
+  return PDFs[itemName] || null;
+}
+
+export default async (req) => {
   try {
-    // Handle test endpoint for local development
-    if (process.env.NETLIFY_DEV === 'true' && event?.httpMethod === 'GET' && event?.path === '/.netlify/functions/paypal-webhook/env') {
-      return handleEnvRoute(event);
+    const raw = await req.text();
+    const event = JSON.parse(raw);
+
+    console.log("📦 PayPal Webhook Received:", event.event_type);
+
+    if (event.event_type !== "PAYMENT.CAPTURE.COMPLETED") {
+      return new Response("Ignored non-payment event", { status: 200 });
     }
 
-    if (event.httpMethod !== 'POST') {
-      return { statusCode: 405, body: 'method_not_allowed' };
+    const payer = event.resource?.payer;
+    const email = payer?.email_address;
+    const buyerName = payer?.name?.given_name;
+    const itemName =
+      event.resource?.purchase_units?.[0]?.items?.[0]?.name;
+
+    if (!email || !itemName) {
+      console.error("❌ Missing email or item");
+      return new Response("Missing data", { status: 400 });
     }
 
-    if (!PAYPAL_CLIENT_ID || !PAYPAL_SECRET || !PAYPAL_WEBHOOK_ID) {
-      console.warn('paypal_env_missing', {
-        has_client_id: !!PAYPAL_CLIENT_ID,
-        has_secret: !!PAYPAL_SECRET,
-        has_webhook_id: !!PAYPAL_WEBHOOK_ID,
-      });
-      return { statusCode: 500, body: 'paypal_env_missing' };
+    const pdf = getPdfLink(itemName);
+    if (!pdf) {
+      console.error("❌ No PDF match for item:", itemName);
+      return new Response("No PDF configured", { status: 200 });
     }
 
-    const bodyStr = event.body || '';
-    const headers = Object.fromEntries(Object.entries(event.headers || {}).map(([k, v]) => [k.toLowerCase(), v]));
+    await sendEmailViaResend({ to: email, buyerName, link: pdf });
 
-    // Entry log with selective headers
-    console.log('paypal_webhook_entry', {
-      length: bodyStr.length,
-      transmission_id: headers['paypal-transmission-id'] || null,
-      transmission_time: headers['paypal-transmission-time'] || null,
-      auth_algo: headers['paypal-auth-algo'] || null,
-      cert_url: headers['paypal-cert-url'] ? '[present]' : null,
-      content_type: headers['content-type'] || null,
-    });
-
-    console.log('Verifying PayPal signature...');
-    console.log('Request headers:', JSON.stringify(headers, null, 2));
-    console.log('Request body length:', bodyStr.length);
-    
-    let accessToken;
-    try {
-      // Use the configured PAYPAL_ENV to determine which API to use
-      const useLiveApi = PAYPAL_ENV === 'live';
-      console.log('Using PayPal environment:', PAYPAL_ENV, '(live API:', useLiveApi + ')');
-      
-      // Get an access token for the correct environment
-      accessToken = await getPayPalAccessToken(useLiveApi);
-      console.log('Obtained PayPal access token for', PAYPAL_ENV, 'environment');
-      
-      // Verify the signature with the correct environment
-      const valid = await verifyPayPalSignature({ 
-        headers, 
-        body: bodyStr, 
-        accessToken 
-      });
-      if (!valid) {
-        console.warn('Invalid PayPal signature');
-        return { statusCode: 401, body: 'invalid_signature' };
-      }
-      console.log('PayPal signature verified successfully');
-    } catch (error) {
-      console.error('Error verifying PayPal signature:', error.message);
-      return { statusCode: 400, body: 'signature_verification_error' };
-    }
-
-    const evt = JSON.parse(bodyStr);
-    const type = evt.event_type || evt.event?.event_type;
-    console.log('paypal_event_type', { type });
-
-    if (type !== 'PAYMENT.CAPTURE.COMPLETED') {
-      // Ignore other event types
-      console.log('paypal_event_ignored');
-      return { statusCode: 200, body: 'ignored' };
-    }
-
-    const resource = evt.resource || {};
-    const orderId = resource?.supplementary_data?.related_ids?.order_id || null;
-    console.log('paypal_order_id', { orderId });
-
-    const order = await getOrderDetails(orderId, accessToken);
-    console.log('paypal_order_loaded', { has_order: !!order });
-    const { buyerEmail, buyerName, itemName } = extractBuyerAndItem({ evt, order });
-    console.log('paypal_buyer_and_item', {
-      has_email: !!buyerEmail,
-      buyer_name_present: !!buyerName,
-      item_name: itemName || null,
-    });
-
-    if (!buyerEmail) {
-      // Cannot deliver without email; acknowledge to avoid retries but log internally in Netlify logs
-      console.warn('No buyer email found on event/order');
-      return { statusCode: 200, body: 'no_buyer_email' };
-    }
-
-    const link = chooseLink({ itemName });
-    if (!link) {
-      console.warn('No link mapping for itemName:', itemName);
-      return { statusCode: 200, body: 'no_link_mapping' };
-    }
-
-    const safeName = buyerName || 'there';
-    const subject = 'Your download link';
-    const html = `
-      <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; line-height:1.6;">
-        <p>Hi ${safeName},</p>
-        <p>Thank you for your purchase. Your PDF is ready here:</p>
-        <p><a href="${link}" target="_blank" rel="noopener noreferrer">Open your PDF</a></p>
-        <p>If you have any trouble accessing the file, reply to this email and we'll help.</p>
-        <p>Warmly,<br/>Pine Tree Magick</p>
-      </div>
-    `;
-
-    await sendEmailViaResend({ to: buyerEmail, subject, html });
-    console.log('resend_email_sent', { to_present: !!buyerEmail, itemName });
-
-    return { statusCode: 200, body: 'sent' };
+    return new Response("OK", { status: 200 });
   } catch (err) {
-    console.error('paypal_webhook_error', { message: err?.message, stack: err?.stack });
-    return { statusCode: 500, body: 'error' };
+    console.error("❌ Webhook Error", err);
+    return new Response("Server error", { status: 500 });
   }
 };
