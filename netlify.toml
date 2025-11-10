@@ -6,10 +6,15 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [functions.paypal-webhook]
   node_bundler = "esbuild"
   parse = false
+
+[functions.paypal-ipn]
+  node_bundler = "esbuild"
+  external_node_modules = []
 
 [[headers]]
   for = "/_astro/*"
