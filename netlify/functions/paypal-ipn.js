@@ -9,7 +9,9 @@
 import querystring from "querystring";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const EMAIL_FROM = process.env.EMAIL_FROM || "Pine Tree Magick <no-reply@pinetreemagick.com>";
+const EMAIL_FROM =
+  process.env.EMAIL_FROM?.includes('<') ? process.env.EMAIL_FROM : `Pine Tree Magick <${process.env.EMAIL_FROM || 'no-reply@pinetreemagick.com'}>`;
+
 const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
 
 // Ritual PDF links
@@ -32,9 +34,6 @@ async function sendEmail({ to, buyerName, link }) {
         <p>Hi ${safeName},</p>
         <p>Thank you for your purchase — your ritual download is ready:</p>
         <p><a href="${link}" target="_blank" style="font-size:18px;font-weight:bold;">Click here to access your PDF</a></p>
-        <br>
-        <p>🍄 Blessed magick on your journey,</p>
-        <p>Pine Tree Magick</p>
       </div>
     `,
     reply_to: EMAIL_FROM,
