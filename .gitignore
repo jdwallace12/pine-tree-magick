@@ -25,5 +25,3 @@ pnpm-lock.yaml
 .astro
 # Local Netlify folder
 .netlify
-
-.env.development
