@@ -17,7 +17,7 @@ let discountCode = url.searchParams.get('discount');
 if (!discountCode) {
   const urlString = url.href;
   if (urlString.includes('?samhain') || urlString.includes('&samhain')) discountCode = 'samhain';
-  // else if (urlString.includes('?yule') || urlString.includes('&yule')) discountCode = 'yule';
+  else if (urlString.includes('?bf2025') || urlString.includes('&bf2025')) discountCode = 'bf2025';
   // else if (urlString.includes('?eclipse') || urlString.includes('&eclipse')) discountCode = 'eclipse';
 }
 
@@ -26,7 +26,8 @@ if (!discountCode) {
 // Price mapping for different discount codes
 const priceMapping = {
   default: 125,
-  samhain: 100, // Example: 20% discount
+  samhain: 100,
+  blackfriday: 100, // Example: 20% discount
   // Add more discount prices as needed
 };
 
@@ -242,6 +243,21 @@ const hasDiscount = discountCode && discountCode !== 'default';
             Select Your Audio Reading Type <span class="text-primary">*</span>
           </label>
           <div class="grid md:grid-cols-2 gap-4">
+            
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input
+                  type="radio"
+                  name="readingType"
+                  value="solar-return"
+                  required
+                />
+                <span class="radio-label">
+                  <div class="font-medium">Solar Return Reading</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400">+ Birthday Ritual</div>
+                </span>
+              </div>
+            </label>
             <label class="radio-option">
               <div class="custom-radio">
                 <input
@@ -283,6 +299,21 @@ const hasDiscount = discountCode && discountCode !== 'default';
                 <span class="radio-label">
                   <div class="font-medium">Soul Purpose Reading</div>
                   <div class="text-sm text-gray-600 dark:text-gray-400">+ Highest Self Ritual</div>
+                </span>
+              </div>
+            </label>
+
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input
+                  type="radio"
+                  name="readingType"
+                  value="past-life"
+                  required
+                />
+                <span class="radio-label">
+                  <div class="font-medium">Past Life Reading</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400">+ Past Life Connection Ritual</div>
                 </span>
               </div>
             </label>
@@ -402,11 +433,9 @@ const hasDiscount = discountCode && discountCode !== 'default';
       
       if (url.includes('?samhain') || url.includes('&samhain')) {
         discountCode = 'samhain';
-       } // else if (url.includes('?yule') || url.includes('&yule')) {
-      //   discountCode = 'yule';
-      // } else if (url.includes('?eclipse') || url.includes('&eclipse')) {
-      //   discountCode = 'eclipse';
-      // }
+       } else if (url.includes('?bf2025') || url.includes('&bf2025')) {
+          discountCode = 'bf2025';
+       } 
       
       return discountCode;
     }
@@ -417,7 +446,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
       
       if (clientDiscountCode) {
         const discountPrices = {
-          samhain: 100
+          samhain: 100,
+          bf2025: 100
           // yule: 90,
           // eclipse: 110
         };
@@ -597,8 +627,8 @@ const hasDiscount = discountCode && discountCode !== 'default';
               const discountCode = detectDiscount();
               const payPalButtonMapping = {
                 default: 'U6MBRBGJGHDAL',
-                samhain: 'QHTWD393ANQ4A'
-                // yule: 'YULE_BUTTON_ID',
+                samhain: 'QHTWD393ANQ4A',
+                bf2025: 'Z55RHQS43WESC',
                 // eclipse: 'ECLIPSE_BUTTON_ID'
               };
               const buttonId = payPalButtonMapping[discountCode || 'default'] || payPalButtonMapping.default;
