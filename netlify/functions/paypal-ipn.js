@@ -63,7 +63,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
                     Thank you for your purchase, ${safeName}! ✨
                   </h1>
                   <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;">
-                    Your ritual download is ready. Click the button below to access your PDF:
+                    Your ritual download is ready. Click the button below to download ${itemName || "Your Ritual"}, enjoy!
                   </p>
                 </td>
               </tr>
@@ -88,7 +88,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
                 <td align="center" style="padding: 0 40px 40px 40px;">
                   <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6b6b6b;">
                     If the button doesn't work, you can also 
-                    <a href="${link}" target="_blank" style="color: #f59bbb; text-decoration: underline;">click here to access your download</a>.
+                    <a href="${link}" target="_blank" style="color: #6b6b6b; text-decoration: underline;">click here to access your download</a>.
                   </p>
                 </td>
               </tr>
