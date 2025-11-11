@@ -23,7 +23,7 @@ const PDF_LINKS = {
 };
 
 // Send email via Resend
-async function sendEmail({ to, buyerName, link }) {
+async function sendEmail({ to, buyerName, link, itemName }) {
   if (!RESEND_API_KEY) {
     console.error("❌ RESEND_API_KEY missing");
     return;
@@ -36,11 +36,69 @@ async function sendEmail({ to, buyerName, link }) {
     to: [to],
     subject: "Your Ritual Download ✨",
     html: `
-      <div style="font-family:system-ui,Arial,sans-serif;line-height:1.6;padding:16px">
-        <p>Hi ${safeName},</p>
-        <p>Thank you for your purchase — your ritual download is ready:</p>
-        <p><a href="${link}" target="_blank" style="font-size:18px;font-weight:bold;">Click here to access your PDF</a></p>
-      </div>
+       <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Your Ritual Download</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #1a263a;">
+      <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #1a263a">
+        <tr>
+          <td align="center" style="padding: 40px 40px 20px 20px;">
+            <!-- Logo Header - Outside white container -->
+            <img src="https://www.pinetreemagick.com/assets/logo/logo-light-horizontal.png" alt="Pine Tree Magick" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
+          </td>
+        </tr>
+        <tr>
+          <td align="center" style="padding: 0 20px 40px 20px;">
+            <!-- Main Container -->
+            <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+              
+              <!-- Content -->
+              <tr>
+                <td style="padding: 40px 40px 30px 40px;">
+                  <h1 style="margin: 0 0 20px 0; font-size: 24px; font-weight: 600; color: #1a1a1a; line-height: 1.4;">
+                    Thank you for your purchase, ${safeName}! ✨
+                  </h1>
+                  <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;">
+                    Your ritual download is ready. Click the button below to access your PDF:
+                  </p>
+                </td>
+              </tr>
+              
+              <!-- Download Button -->
+              <tr>
+                <td align="center" style="padding: 0 40px 30px 40px;">
+                  <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                    <tr>
+                      <td align="center" style="background-color: #f59bbb; border-radius: 6px;">
+                        <a href="${link}" target="_blank" style="display: inline-block; padding: 16px 32px; font-size: 16px; font-weight: 600; color: #1a263a; text-decoration: none; border-radius: 6px; background-color: #f59bbb;">
+                          Download ${itemName || "Your Ritual"}
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              
+              <!-- Alternative Link -->
+              <tr>
+                <td align="center" style="padding: 0 40px 40px 40px;">
+                  <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #6b6b6b;">
+                    If the button doesn't work, you can also 
+                    <a href="${link}" target="_blank" style="color: #f59bbb; text-decoration: underline;">click here to access your download</a>.
+                  </p>
+                </td>
+              </tr>
+              
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
     `,
     reply_to: EMAIL_FROM,
   };
@@ -68,6 +126,30 @@ async function sendEmail({ to, buyerName, link }) {
 // Main IPN handler
 export default async function handler(req) {
   try {
+    // TEST MODE: Check for test query parameter
+    const url = new URL(req.url);
+    if (url.searchParams.get('test') === 'true') {
+      const testEmail = url.searchParams.get('email') || 'jdwallace12@gmail.com';
+      const testName = url.searchParams.get('name') || 'John';
+      const testItem = url.searchParams.get('item') || 'Highest Self Ritual';
+      
+      console.log(`🧪 TEST MODE: Sending test email to ${testEmail}`);
+      
+      const pdfLink = PDF_LINKS[testItem];
+      if (!pdfLink) {
+        return new Response(`No PDF configured for item: ${testItem}`, { status: 400 });
+      }
+      
+      await sendEmail({ 
+        to: testEmail, 
+        buyerName: testName, 
+        link: pdfLink, 
+        itemName: testItem 
+      });
+      
+      return new Response(`✅ Test email sent to ${testEmail}`, { status: 200 });
+    }
+
     const rawBody = await req.text();
     console.log("📩 Raw IPN:", rawBody);
 
@@ -110,7 +192,7 @@ export default async function handler(req) {
     }
 
     // Send the ritual email
-    await sendEmail({ to: email, buyerName, link: pdfLink });
+    await sendEmail({ to: email, buyerName, link: pdfLink, itemName });
 
     console.log(`✅ Ritual delivered: ${itemName}`);
 
