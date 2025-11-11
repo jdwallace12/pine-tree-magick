@@ -58,7 +58,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
               
               <!-- Content -->
               <tr>
-                <td style="padding: 40px 40px 30px 40px;">
+                <td style="padding: 40px 40px 20px 40px;">
                   <h1 style="margin: 0 0 20px 0; font-size: 24px; font-weight: 600; color: #1a1a1a; line-height: 1.4;">
                     Thank you for your purchase, ${safeName}! ✨
                   </h1>
