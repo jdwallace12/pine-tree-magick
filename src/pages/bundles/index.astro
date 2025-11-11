@@ -43,7 +43,7 @@ const metadata = {
     {
       bundlesWithSlug.map((bundle) => (
         <div class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
-          <a href={`/guided-bundles/${bundle.data.slug}`} class="block group">
+          <a href={`/bundles/${bundle.data.slug}`} class="block group">
             <img 
               src={bundle.data.image} 
               alt={bundle.data.title} 
