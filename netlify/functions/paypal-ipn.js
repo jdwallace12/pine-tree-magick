@@ -48,7 +48,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
         <tr>
           <td align="center" style="padding: 40px 40px 20px 20px;">
             <!-- Logo Header - Outside white container -->
-            <img src="https://www.pinetreemagick.com/assets/logo/logo-light-horizontal.png" alt="Pine Tree Magick" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
+            <img src="https://www.pinetreemagick.com/assets/global/logo/logo-light-horizontal.png" alt="Pine Tree Magick" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
           </td>
         </tr>
         <tr>
