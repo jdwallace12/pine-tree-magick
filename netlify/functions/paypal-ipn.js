@@ -14,6 +14,11 @@ const EMAIL_FROM = process.env.EMAIL_FROM?.includes('<')
   ? process.env.EMAIL_FROM
   : `Pine Tree Magick <${process.env.EMAIL_FROM || 'no-reply@pinetreemagick.com'}>`;
 
+// Reply-to address for customer emails
+// Set this to your support/contact email so replies go to the right place
+// If not set, replies will go to EMAIL_FROM
+const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM || 'no-reply@pinetreemagick.com';
+
 // Map product names to PDF links
 // IMPORTANT: The key must match exactly what PayPal sends as "item_name" in the IPN notification
 // This is typically the product name configured in your PayPal button
@@ -106,7 +111,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
     </body>
     </html>
     `,
-    reply_to: EMAIL_FROM,
+    reply_to: EMAIL_REPLY_TO,
   };
 
   if (EMAIL_BCC_INTERNAL) payload.bcc = [EMAIL_BCC_INTERNAL];
