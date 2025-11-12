@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
 import { Icon } from 'astro-icon/components';
+import PurchaseForm from '~/components/PurchaseForm.astro';
 
 export async function getStaticPaths() {
   const bundles = await getCollection('bundle');
@@ -45,7 +46,6 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
 ---
 
 <Layout metadata={metadata}>
-  
   <article class="max-w-2xl mx-auto p-6 space-y-6 mb-12">
     <div class="flex gap-8 justify-between items-center sticky top-16 bg-dark py-2">
       <a href="/shop" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop</a>
@@ -84,176 +84,12 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
 
     <!-- Purchase Form -->
     {!isExpired && (
-    <div class="text-center mt-2" id="purchase">
-      <div class="bg-primary/10 p-8 rounded-lg mt-6">
-        <form 
-          name="bundle-purchase"
-          method="POST"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          data-netlify-recaptcha="false"
-          class="needs-validation form-component"
-          accept-charset="UTF-8"
-          action="/"
-        >
-          <input type="hidden" name="form-name" value="bundle-purchase" />
-          <input type="hidden" name="Bundle Title" value={title} />
-          <p class="hidden">
-            <label>
-              Don't fill this out if you're human: <input name="bot-field" />
-            </label>
-          </p>
-          <div class="grid md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label for="name" class="block text-sm font-medium mb-2 text-left md:text-center">
-                Full Name <span class="text-primary">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                required
-                minlength="2"
-                class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-                placeholder="Your name"
-              />
-            </div>
-            <div>
-              <label for="email" class="block text-sm font-medium mb-2 text-left md:text-center">
-                Email Address <span class="text-primary">*</span>
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-                placeholder="you@email.com"
-              />
-            </div>
-          </div>
-          <div class="mt-6 grid">
-            <button
-              type="submit"
-              id="submit-btn"
-              class="inline-flex items-center justify-center px-8 py-4 bg-primary dark:text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <div id="spinner" class="hidden w-5 h-5 mr-2">
-                <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              </div>
-              <span id="submit-text">Proceed to Payment</span>
-            </button>
-          </div>
-        </form>
-      </div>
-      <p class="text-sm text-gray-300 text-center w-3/4 mx-auto mt-8">You will be redirected to PayPal checkout after submitting your information.</p>
-    </div>
+      <PurchaseForm 
+        title={title}
+        payPalButtonId={payPalButtonId}
+        formName="bundle-purchase"
+        itemType="Bundle Title"
+      />
     )}
   </article>
 </Layout>
-
-<!-- Success Overlay -->
-<div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
-  <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-xl">
-    <div class="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
-      <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-      </svg>
-    </div>
-    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Form Submitted Successfully!</h3>
-    <p class="text-gray-600 dark:text-gray-400 mb-6">You will be redirected to PayPal checkout shortly...</p>
-    <div class="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-      <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-      <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
-      <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
-    </div>
-  </div>
-</div>
-
-<script define:vars={{ payPalButtonId }}>
-  function initBundleForm() {
-    const form = document.querySelector('form.form-component');
-    if (!form) return;
-
-    const submitBtn = document.getElementById('submit-btn');
-    const spinner = document.getElementById('spinner');
-    const submitText = document.getElementById('submit-text');
-    const successOverlay = document.getElementById('success-overlay');
-
-    const messageContainer = document.createElement('div');
-    messageContainer.className = 'mt-4 hidden text-center';
-    messageContainer.innerHTML = `
-      <p class="text-red-600 dark:text-red-400 hidden" data-error-message>
-        There was an error submitting the form. Please try again.
-      </p>
-    `;
-    form.appendChild(messageContainer);
-    const errorMessage = messageContainer.querySelector('[data-error-message]');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      messageContainer.classList.add('hidden');
-
-      if (submitBtn) submitBtn.disabled = true;
-      if (spinner) spinner.classList.remove('hidden');
-      if (submitText) submitText.textContent = 'Submitting...';
-
-      try {
-        const formEl = e.currentTarget || form;
-        const formData = new FormData(formEl);
-        const formNameAttr = formEl.getAttribute('name') || 'bundle-purchase';
-        formData.set('form-name', String(formNameAttr));
-        if (!formData.get('bot-field')) formData.set('bot-field', '');
-
-        const getVal = (id) => {
-          const el = document.getElementById(id);
-          const raw = (el && 'value' in el ? el.value : formData.get(id));
-          return raw == null ? '' : String(raw);
-        };
-        formData.set('name', String(getVal('name')));
-        formData.set('email', String(getVal('email')));
-
-        const params = new URLSearchParams();
-        params.append('form-name', String(formData.get('form-name') || 'bundle-purchase'));
-        params.append('bot-field', String(formData.get('bot-field') || ''));
-        for (const [key, value] of formData.entries()) {
-          if (key === 'form-name' || key === 'bot-field') continue;
-          params.append(key, String(value));
-        }
-
-        await fetch(`${window.location.pathname}?no-cache=1`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-          body: params.toString()
-        });
-
-        if (successOverlay) {
-          successOverlay.classList.remove('hidden');
-          successOverlay.classList.add('flex');
-        }
-
-        setTimeout(() => {
-          const paypalUrl = `https://www.paypal.com/ncp/payment/${encodeURIComponent(String(payPalButtonId))}`;
-          window.location.assign(paypalUrl);
-        }, 1200);
-
-        if (typeof formEl.reset === 'function') formEl.reset();
-      } catch (err) {
-        if (submitBtn) submitBtn.disabled = false;
-        if (spinner) spinner.classList.add('hidden');
-        if (submitText) submitText.textContent = 'Proceed to Payment';
-        messageContainer.classList.remove('hidden');
-        if (errorMessage) errorMessage.classList.remove('hidden');
-      }
-    });
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initBundleForm);
-  } else {
-    initBundleForm();
-  }
-</script>
