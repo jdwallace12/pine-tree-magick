@@ -14,12 +14,23 @@ const EMAIL_FROM = process.env.EMAIL_FROM?.includes('<')
   ? process.env.EMAIL_FROM
   : `Pine Tree Magick <${process.env.EMAIL_FROM || 'no-reply@pinetreemagick.com'}>`;
 
+// Reply-to address for customer emails
+// Set this to your support/contact email so replies go to the right place
+// If not set, replies will go to EMAIL_FROM
+const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM || 'no-reply@pinetreemagick.com';
+
 // Map product names to PDF links
+// IMPORTANT: The key must match exactly what PayPal sends as "item_name" in the IPN notification
+// This is typically the product name configured in your PayPal button
 const PDF_LINKS = {
+  // Guided Rituals
   "Highest Self Ritual": "https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view",
   "Love Spell": "https://drive.google.com/file/d/1E4nBIAqDAGsV_QyHxP2JC7Ahu8f1F7-Z/view",
   "Ancestral Connection and Samhain Ritual": "https://drive.google.com/file/d/1A4KDgpZzksUnGJa0US4HeHzPMfr9HqWJ/view",
   "Money Manifestation Ritual": "https://drive.google.com/file/d/1hs5bWRueAJAZmd5MFCMsdrRE7Tws0IFc/view",
+  
+  // Bundles
+  // "Venus Retrograde Bundle": "https://drive.google.com/file/d/YOUR_FILE_ID/view",
 };
 
 // Send email via Resend
@@ -34,14 +45,14 @@ async function sendEmail({ to, buyerName, link, itemName }) {
   const payload = {
     from: EMAIL_FROM,
     to: [to],
-    subject: "Your Ritual Download ✨",
+    subject: "Your Download ✨",
     html: `
        <!DOCTYPE html>
     <html lang="en">
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Your Ritual Download</title>
+      <title>Your Download | Pine Tree Magick</title>
     </head>
     <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #1a263a;">
       <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #1a263a">
@@ -63,7 +74,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
                     Thank you for your purchase, ${safeName}! ✨
                   </h1>
                   <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.6; color: #4a4a4a;">
-                    Your ritual download is ready. Click the button below to download ${itemName || "Your Ritual"}, enjoy!
+                    Your download is ready! Click the button below to access ${itemName || "your purchase"}, enjoy!
                   </p>
                 </td>
               </tr>
@@ -75,7 +86,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
                     <tr>
                       <td align="center" style="background-color: #f59bbb; border-radius: 6px;">
                         <a href="${link}" target="_blank" style="display: inline-block; padding: 16px 32px; font-size: 16px; font-weight: 600; color: #1a263a; text-decoration: none; border-radius: 6px; background-color: #f59bbb;">
-                          Download ${itemName || "Your Ritual"}
+                          Download ${itemName || "Your Purchase"}
                         </a>
                       </td>
                     </tr>
@@ -100,7 +111,7 @@ async function sendEmail({ to, buyerName, link, itemName }) {
     </body>
     </html>
     `,
-    reply_to: EMAIL_FROM,
+    reply_to: EMAIL_REPLY_TO,
   };
 
   if (EMAIL_BCC_INTERNAL) payload.bcc = [EMAIL_BCC_INTERNAL];
@@ -191,10 +202,10 @@ export default async function handler(req) {
       return new Response("No PDF configured", { status: 200 });
     }
 
-    // Send the ritual email
+    // Send the download email
     await sendEmail({ to: email, buyerName, link: pdfLink, itemName });
 
-    console.log(`✅ Ritual delivered: ${itemName}`);
+    console.log(`✅ Download delivered: ${itemName}`);
 
     return new Response("OK", { status: 200 });
   } catch (err) {
