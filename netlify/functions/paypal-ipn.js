@@ -6,6 +6,39 @@
  *   body = "raw"
  */
 
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import yaml from 'js-yaml';
+
+// Get the project root directory
+// In Netlify, process.cwd() should be the project root
+const getProjectRoot = () => {
+  const cwd = process.cwd();
+  
+  // Check if we're in the project root by looking for package.json or netlify.toml
+  if (fs.existsSync(path.join(cwd, 'package.json')) || fs.existsSync(path.join(cwd, 'netlify.toml'))) {
+    return cwd;
+  }
+  
+  // If not, try going up from the function directory
+  try {
+    const functionDir = path.dirname(fileURLToPath(import.meta.url));
+    // Go up to find project root (look for package.json or netlify.toml)
+    let currentDir = functionDir;
+    for (let i = 0; i < 5; i++) {
+      if (fs.existsSync(path.join(currentDir, 'package.json')) || fs.existsSync(path.join(currentDir, 'netlify.toml'))) {
+        return currentDir;
+      }
+      currentDir = path.dirname(currentDir);
+    }
+  } catch {
+    // Fallback to cwd
+  }
+  
+  return cwd;
+};
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
 
@@ -19,19 +52,70 @@ const EMAIL_FROM = process.env.EMAIL_FROM?.includes('<')
 // If not set, replies will go to EMAIL_FROM
 const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM || 'no-reply@pinetreemagick.com';
 
-// Map product names to PDF links
-// IMPORTANT: The key must match exactly what PayPal sends as "item_name" in the IPN notification
-// This is typically the product name configured in your PayPal button
-const PDF_LINKS = {
-  // Guided Rituals
-  "Highest Self Ritual": "https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view",
-  "Love Spell": "https://drive.google.com/file/d/1E4nBIAqDAGsV_QyHxP2JC7Ahu8f1F7-Z/view",
-  "Ancestral Connection and Samhain Ritual": "https://drive.google.com/file/d/1A4KDgpZzksUnGJa0US4HeHzPMfr9HqWJ/view",
-  "Money Manifestation Ritual": "https://drive.google.com/file/d/1hs5bWRueAJAZmd5MFCMsdrRE7Tws0IFc/view",
+// Cache for PDF links map
+let PDF_LINKS_CACHE = null;
+
+/**
+ * Read PDF links from markdown files in content collections
+ * IMPORTANT: The title in the markdown frontmatter must match exactly what PayPal sends as "item_name"
+ */
+function getPdfLinks() {
+  if (PDF_LINKS_CACHE) {
+    return PDF_LINKS_CACHE;
+  }
+
+  const pdfLinks = {};
   
-  // Bundles
-  // "Venus Retrograde Bundle": "https://drive.google.com/file/d/YOUR_FILE_ID/view",
-};
+  // Path to content directory (from project root to src/content)
+  const projectRoot = getProjectRoot();
+  const contentBasePath = path.join(projectRoot, 'src/content');
+  
+  // Read from ritual and bundle collections
+  const collections = ['ritual', 'bundle'];
+  
+  for (const collection of collections) {
+    const collectionPath = path.join(contentBasePath, collection);
+    
+    try {
+      if (!fs.existsSync(collectionPath)) {
+        console.warn(`⚠️ Content directory not found: ${collectionPath}`);
+        continue;
+      }
+      
+      const files = fs.readdirSync(collectionPath);
+      const mdFiles = files.filter(file => file.endsWith('.md'));
+      
+      for (const file of mdFiles) {
+        const filePath = path.join(collectionPath, file);
+        const content = fs.readFileSync(filePath, 'utf-8');
+        
+        // Parse frontmatter (between --- markers)
+        const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
+        if (frontmatterMatch) {
+          try {
+            const frontmatter = yaml.load(frontmatterMatch[1]);
+            const title = frontmatter?.title;
+            const pdfUrl = frontmatter?.pdfUrl;
+            
+            if (title && pdfUrl) {
+              pdfLinks[title] = pdfUrl;
+              console.log(`✅ Loaded PDF link: ${title} -> ${pdfUrl}`);
+            } else if (title && !pdfUrl) {
+              console.warn(`⚠️ No pdfUrl found for: ${title}`);
+            }
+          } catch (err) {
+            console.error(`❌ Error parsing frontmatter in ${file}:`, err.message);
+          }
+        }
+      }
+    } catch (err) {
+      console.error(`❌ Error reading collection ${collection}:`, err.message);
+    }
+  }
+  
+  PDF_LINKS_CACHE = pdfLinks;
+  return pdfLinks;
+}
 
 // Send email via Resend
 async function sendEmail({ to, buyerName, link, itemName }) {
@@ -146,6 +230,7 @@ export default async function handler(req) {
       
       console.log(`🧪 TEST MODE: Sending test email to ${testEmail}`);
       
+      const PDF_LINKS = getPdfLinks();
       const pdfLink = PDF_LINKS[testItem];
       if (!pdfLink) {
         return new Response(`No PDF configured for item: ${testItem}`, { status: 400 });
@@ -196,9 +281,11 @@ export default async function handler(req) {
     console.log("👤 Buyer:", email, buyerName);
     console.log("📦 Item:", itemName);
 
+    const PDF_LINKS = getPdfLinks();
     const pdfLink = PDF_LINKS[itemName];
     if (!pdfLink) {
       console.error("❌ No PDF for item:", itemName);
+      console.log("Available items:", Object.keys(PDF_LINKS));
       return new Response("No PDF configured", { status: 200 });
     }
 
