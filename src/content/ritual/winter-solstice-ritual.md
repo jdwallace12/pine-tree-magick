@@ -6,5 +6,6 @@ slug: 'winter-solstice-ritual'
 image: '/assets/images/winter-solstice.webp'
 price: 11.11
 payPalButtonId: AWWRM9KBCWCHG
+pdfUrl: 'https://drive.google.com/file/d/1hQ1hAiSZIxcSd26JXEovaapvsGFq6_hc/view'
 ---
 Pine Tree Magick’s Winter Solstice Ritual will provide you with everything you need to leverage this powerful solar event, including altar suggestions, guided video meditations, journal prompts, incantations, and a ritual tailored to the season’s magick. Use  this guide to release 2024  and manifest for the year ahead.  
