@@ -11,19 +11,24 @@ const {
   isDark = false,
   classes = {},
   expirationDate,
+  items,
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-const bundles = await getCollection('bundle');
+// Use items prop if provided (from shop page), otherwise fetch and filter
+let activeBundles = items || [];
 
-// Filter out expired bundles
-const currentDate = new Date();
-const activeBundles = bundles.filter((bundle) => {
-  if (!bundle.data.expirationDate) return true;
-  const [month, day, year] = bundle.data.expirationDate.split('/');
-  const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-  return currentDate <= expirationDate;
-});
+if (!items) {
+  const bundles = await getCollection('bundle');
+  // Filter out expired bundles
+  const currentDate = new Date();
+  activeBundles = bundles.filter((bundle) => {
+    if (!bundle.data.expirationDate) return true;
+    const [month, day, year] = bundle.data.expirationDate.split('/');
+    const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return currentDate <= expirationDate;
+  });
+}
 
 ---
 <WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>
@@ -39,8 +44,10 @@ const activeBundles = bundles.filter((bundle) => {
   />
   {activeBundles.length > 0 ? (
     <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mx-auto max-w-7xl px-0">
-      {activeBundles.map((bundle) => (
-        <a href={`/bundles/${bundle.id.replace(/\.md$/, '')}`} class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
+      {activeBundles.map((bundle) => {
+        const bundleSlug = bundle.data.slug || bundle.id.replace(/\.md$/, '');
+        return (
+        <a href={`/bundles/${bundleSlug}`} class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
           <div class="overflow-hidden">
             <img 
               src={bundle.data.image} 
@@ -65,7 +72,8 @@ const activeBundles = bundles.filter((bundle) => {
             </div>
           </div>
         </a>
-      ))}
+        );
+      })}
     </div>
   ) : (
     <div class="w-full text-center py-12">
