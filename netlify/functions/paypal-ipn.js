@@ -9,35 +9,6 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import yaml from 'js-yaml';
-
-// Get the project root directory
-// In Netlify, process.cwd() should be the project root
-const getProjectRoot = () => {
-  const cwd = process.cwd();
-  
-  // Check if we're in the project root by looking for package.json or netlify.toml
-  if (fs.existsSync(path.join(cwd, 'package.json')) || fs.existsSync(path.join(cwd, 'netlify.toml'))) {
-    return cwd;
-  }
-  
-  // If not, try going up from the function directory
-  try {
-    const functionDir = path.dirname(fileURLToPath(import.meta.url));
-    // Go up to find project root (look for package.json or netlify.toml)
-    let currentDir = functionDir;
-    for (let i = 0; i < 5; i++) {
-      if (fs.existsSync(path.join(currentDir, 'package.json')) || fs.existsSync(path.join(currentDir, 'netlify.toml'))) {
-        return currentDir;
-      }
-      currentDir = path.dirname(currentDir);
-    }
-  } catch {
-    // Fallback to cwd
-  }
-  
-  return cwd;
-};
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
@@ -56,94 +27,49 @@ const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM || '
 let PDF_LINKS_CACHE = null;
 
 /**
- * Read PDF links from markdown files in content collections
+ * Read PDF links from the generated JSON file
  * IMPORTANT: The title in the markdown frontmatter must match exactly what PayPal sends as "item_name"
+ * The JSON file is generated during build by scripts/generate-pdf-links.js
  */
 function getPdfLinks() {
   if (PDF_LINKS_CACHE) {
-    console.log(`📦 Using cached PDF links: ${Object.keys(PDF_LINKS_CACHE).length} items`);
     return PDF_LINKS_CACHE;
   }
 
-  const pdfLinks = {};
+  // Get the path to the JSON file (same directory as this function)
+  const functionDir = path.dirname(fileURLToPath(import.meta.url));
+  const jsonPath = path.join(functionDir, 'pdf-links.json');
   
-  // Path to content directory (from project root to src/content)
-  const projectRoot = getProjectRoot();
-  const contentBasePath = path.join(projectRoot, 'src/content');
+  // Try alternative paths in case the function is bundled differently
+  const altPaths = [
+    jsonPath,
+    path.join(process.cwd(), 'netlify/functions/pdf-links.json'),
+    path.join(process.cwd(), 'pdf-links.json'),
+  ];
   
-  console.log(`🔍 Looking for content at: ${contentBasePath}`);
-  console.log(`🔍 Project root: ${projectRoot}`);
-  console.log(`🔍 Current working directory: ${process.cwd()}`);
+  let pdfLinks = {};
+  let found = false;
   
-  // Read from ritual and bundle collections
-  const collections = ['ritual', 'bundle'];
-  
-  for (const collection of collections) {
-    let collectionPath = path.join(contentBasePath, collection);
-    
+  for (const altPath of altPaths) {
     try {
-      if (!fs.existsSync(collectionPath)) {
-        console.warn(`⚠️ Content directory not found: ${collectionPath}`);
-        // Try alternative paths
-        const altPaths = [
-          path.join(process.cwd(), 'src/content', collection),
-          path.join(process.cwd(), 'dist/src/content', collection),
-        ];
-        let found = false;
-        for (const altPath of altPaths) {
-          if (fs.existsSync(altPath)) {
-            console.log(`✅ Found content at alternative path: ${altPath}`);
-            collectionPath = altPath;
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          console.warn(`⚠️ Could not find content directory for ${collection}, trying to continue...`);
-          continue;
-        }
-      }
-      
-      console.log(`📂 Reading collection: ${collection} from ${collectionPath}`);
-      const files = fs.readdirSync(collectionPath);
-      const mdFiles = files.filter(file => file.endsWith('.md'));
-      console.log(`📄 Found ${mdFiles.length} markdown files in ${collection}`);
-      
-      for (const file of mdFiles) {
-        const filePath = path.join(collectionPath, file);
-        const content = fs.readFileSync(filePath, 'utf-8');
-        
-        // Parse frontmatter (between --- markers)
-        const frontmatterMatch = content.match(/^---\s*\n([\s\S]*?)\n---/);
-        if (frontmatterMatch) {
-          try {
-            const frontmatter = yaml.load(frontmatterMatch[1]);
-            const title = frontmatter?.title;
-            const pdfUrl = frontmatter?.pdfUrl;
-            
-            console.log(`📋 Processing ${file}: title="${title}", pdfUrl=${pdfUrl ? 'present' : 'missing'}`);
-            
-            if (title && pdfUrl) {
-              pdfLinks[title] = pdfUrl;
-              console.log(`✅ Loaded PDF link: ${title} -> ${pdfUrl}`);
-            } else if (title && !pdfUrl) {
-              console.warn(`⚠️ No pdfUrl found for: ${title}`);
-            }
-          } catch (err) {
-            console.error(`❌ Error parsing frontmatter in ${file}:`, err.message);
-          }
-        } else {
-          console.warn(`⚠️ No frontmatter found in ${file}`);
-        }
+      if (fs.existsSync(altPath)) {
+        const content = fs.readFileSync(altPath, 'utf-8');
+        pdfLinks = JSON.parse(content);
+        console.log(`✅ Loaded PDF links from: ${altPath}`);
+        console.log(`📊 Total PDF links: ${Object.keys(pdfLinks).length}`);
+        console.log(`📊 PDF link titles:`, Object.keys(pdfLinks));
+        found = true;
+        break;
       }
     } catch (err) {
-      console.error(`❌ Error reading collection ${collection}:`, err.message);
-      console.error(`❌ Stack:`, err.stack);
+      console.warn(`⚠️ Error reading ${altPath}:`, err.message);
     }
   }
   
-  console.log(`📊 Total PDF links loaded: ${Object.keys(pdfLinks).length}`);
-  console.log(`📊 PDF link titles:`, Object.keys(pdfLinks));
+  if (!found) {
+    console.error(`❌ PDF links file not found. Tried:`, altPaths);
+    console.error(`❌ Make sure to run 'npm run generate-pdf-links' during build`);
+  }
   
   PDF_LINKS_CACHE = pdfLinks;
   return pdfLinks;
