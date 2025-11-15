@@ -89,6 +89,7 @@ const ritualCollection = defineCollection({
     price: z.number(),
     payPalButtonId: z.string(),
     expirationDate: z.string().optional(),
+    pdfUrl: z.string().optional(),
     metadata: metadataDefinition(),
   }),
 });
@@ -101,6 +102,7 @@ const bundleCollection = defineCollection({
     price: z.number(),
     payPalButtonId: z.string(),
     expirationDate: z.string().optional(),
+    pdfUrl: z.string().optional(),
     metadata: metadataDefinition(),
   }),
 });

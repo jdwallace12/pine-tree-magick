@@ -6,6 +6,10 @@
  *   body = "raw"
  */
 
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
 
@@ -19,19 +23,57 @@ const EMAIL_FROM = process.env.EMAIL_FROM?.includes('<')
 // If not set, replies will go to EMAIL_FROM
 const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM || 'no-reply@pinetreemagick.com';
 
-// Map product names to PDF links
-// IMPORTANT: The key must match exactly what PayPal sends as "item_name" in the IPN notification
-// This is typically the product name configured in your PayPal button
-const PDF_LINKS = {
-  // Guided Rituals
-  "Highest Self Ritual": "https://drive.google.com/file/d/1Qo8WyvgfgZPbN5qVtX-Op2BXLCq-mdWY/view",
-  "Love Spell": "https://drive.google.com/file/d/1E4nBIAqDAGsV_QyHxP2JC7Ahu8f1F7-Z/view",
-  "Ancestral Connection and Samhain Ritual": "https://drive.google.com/file/d/1A4KDgpZzksUnGJa0US4HeHzPMfr9HqWJ/view",
-  "Money Manifestation Ritual": "https://drive.google.com/file/d/1hs5bWRueAJAZmd5MFCMsdrRE7Tws0IFc/view",
+// Cache for PDF links map
+let PDF_LINKS_CACHE = null;
+
+/**
+ * Read PDF links from the generated JSON file
+ * IMPORTANT: The title in the markdown frontmatter must match exactly what PayPal sends as "item_name"
+ * The JSON file is generated during build by scripts/generate-pdf-links.js
+ */
+function getPdfLinks() {
+  if (PDF_LINKS_CACHE) {
+    return PDF_LINKS_CACHE;
+  }
+
+  // Get the path to the JSON file (same directory as this function)
+  const functionDir = path.dirname(fileURLToPath(import.meta.url));
+  const jsonPath = path.join(functionDir, 'pdf-links.json');
   
-  // Bundles
-  // "Venus Retrograde Bundle": "https://drive.google.com/file/d/YOUR_FILE_ID/view",
-};
+  // Try alternative paths in case the function is bundled differently
+  const altPaths = [
+    jsonPath,
+    path.join(process.cwd(), 'netlify/functions/pdf-links.json'),
+    path.join(process.cwd(), 'pdf-links.json'),
+  ];
+  
+  let pdfLinks = {};
+  let found = false;
+  
+  for (const altPath of altPaths) {
+    try {
+      if (fs.existsSync(altPath)) {
+        const content = fs.readFileSync(altPath, 'utf-8');
+        pdfLinks = JSON.parse(content);
+        console.log(`✅ Loaded PDF links from: ${altPath}`);
+        console.log(`📊 Total PDF links: ${Object.keys(pdfLinks).length}`);
+        console.log(`📊 PDF link titles:`, Object.keys(pdfLinks));
+        found = true;
+        break;
+      }
+    } catch (err) {
+      console.warn(`⚠️ Error reading ${altPath}:`, err.message);
+    }
+  }
+  
+  if (!found) {
+    console.error(`❌ PDF links file not found. Tried:`, altPaths);
+    console.error(`❌ Make sure to run 'npm run generate-pdf-links' during build`);
+  }
+  
+  PDF_LINKS_CACHE = pdfLinks;
+  return pdfLinks;
+}
 
 // Send email via Resend
 async function sendEmail({ to, buyerName, link, itemName }) {
@@ -146,6 +188,7 @@ export default async function handler(req) {
       
       console.log(`🧪 TEST MODE: Sending test email to ${testEmail}`);
       
+      const PDF_LINKS = getPdfLinks();
       const pdfLink = PDF_LINKS[testItem];
       if (!pdfLink) {
         return new Response(`No PDF configured for item: ${testItem}`, { status: 400 });
@@ -196,9 +239,11 @@ export default async function handler(req) {
     console.log("👤 Buyer:", email, buyerName);
     console.log("📦 Item:", itemName);
 
+    const PDF_LINKS = getPdfLinks();
     const pdfLink = PDF_LINKS[itemName];
     if (!pdfLink) {
       console.error("❌ No PDF for item:", itemName);
+      console.log("Available items:", Object.keys(PDF_LINKS));
       return new Response("No PDF configured", { status: 200 });
     }
 
