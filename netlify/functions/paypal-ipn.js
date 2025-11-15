@@ -61,6 +61,7 @@ let PDF_LINKS_CACHE = null;
  */
 function getPdfLinks() {
   if (PDF_LINKS_CACHE) {
+    console.log(`📦 Using cached PDF links: ${Object.keys(PDF_LINKS_CACHE).length} items`);
     return PDF_LINKS_CACHE;
   }
 
@@ -70,20 +71,43 @@ function getPdfLinks() {
   const projectRoot = getProjectRoot();
   const contentBasePath = path.join(projectRoot, 'src/content');
   
+  console.log(`🔍 Looking for content at: ${contentBasePath}`);
+  console.log(`🔍 Project root: ${projectRoot}`);
+  console.log(`🔍 Current working directory: ${process.cwd()}`);
+  
   // Read from ritual and bundle collections
   const collections = ['ritual', 'bundle'];
   
   for (const collection of collections) {
-    const collectionPath = path.join(contentBasePath, collection);
+    let collectionPath = path.join(contentBasePath, collection);
     
     try {
       if (!fs.existsSync(collectionPath)) {
         console.warn(`⚠️ Content directory not found: ${collectionPath}`);
-        continue;
+        // Try alternative paths
+        const altPaths = [
+          path.join(process.cwd(), 'src/content', collection),
+          path.join(process.cwd(), 'dist/src/content', collection),
+        ];
+        let found = false;
+        for (const altPath of altPaths) {
+          if (fs.existsSync(altPath)) {
+            console.log(`✅ Found content at alternative path: ${altPath}`);
+            collectionPath = altPath;
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          console.warn(`⚠️ Could not find content directory for ${collection}, trying to continue...`);
+          continue;
+        }
       }
       
+      console.log(`📂 Reading collection: ${collection} from ${collectionPath}`);
       const files = fs.readdirSync(collectionPath);
       const mdFiles = files.filter(file => file.endsWith('.md'));
+      console.log(`📄 Found ${mdFiles.length} markdown files in ${collection}`);
       
       for (const file of mdFiles) {
         const filePath = path.join(collectionPath, file);
@@ -97,6 +121,8 @@ function getPdfLinks() {
             const title = frontmatter?.title;
             const pdfUrl = frontmatter?.pdfUrl;
             
+            console.log(`📋 Processing ${file}: title="${title}", pdfUrl=${pdfUrl ? 'present' : 'missing'}`);
+            
             if (title && pdfUrl) {
               pdfLinks[title] = pdfUrl;
               console.log(`✅ Loaded PDF link: ${title} -> ${pdfUrl}`);
@@ -106,12 +132,18 @@ function getPdfLinks() {
           } catch (err) {
             console.error(`❌ Error parsing frontmatter in ${file}:`, err.message);
           }
+        } else {
+          console.warn(`⚠️ No frontmatter found in ${file}`);
         }
       }
     } catch (err) {
       console.error(`❌ Error reading collection ${collection}:`, err.message);
+      console.error(`❌ Stack:`, err.stack);
     }
   }
+  
+  console.log(`📊 Total PDF links loaded: ${Object.keys(pdfLinks).length}`);
+  console.log(`📊 PDF link titles:`, Object.keys(pdfLinks));
   
   PDF_LINKS_CACHE = pdfLinks;
   return pdfLinks;
