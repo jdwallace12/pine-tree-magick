@@ -15,12 +15,10 @@ const {
   bg = await Astro.slots.render('bg'),
 } = Astro.props;
 
-// Use items prop if provided (from shop page), otherwise fetch and filter
+// Use passed items or fetch from collection with default empty array
 let activeBundles = items || [];
-
 if (!items) {
   const bundles = await getCollection('bundle');
-  // Filter out expired bundles
   const currentDate = new Date();
   activeBundles = bundles.filter((bundle) => {
     if (!bundle.data.expirationDate) return true;
@@ -28,6 +26,7 @@ if (!items) {
     const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
     return currentDate <= expirationDate;
   });
+  // Note: We're not sorting here anymore as it's handled in getShopComponents
 }
 
 ---
@@ -43,19 +42,21 @@ if (!items) {
     }}
   />
   {activeBundles.length > 0 ? (
-    <div class="flex flex-wrap gap-12 row-gap-5 lg:gap-14 mx-auto max-w-7xl px-0">
-      {activeBundles.map((bundle) => {
-        const bundleSlug = bundle.data.slug || bundle.id.replace(/\.md$/, '');
-        return (
-        <a href={`/bundles/${bundleSlug}`} class="relative flex flex-col w-[100%] md:w-[calc(50%-2rem)] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
-          <div class="overflow-hidden">
+    <div class="flex flex-col gap-6 lg:gap-8 mx-auto max-w-3xl px-0 w-full">
+      {activeBundles.map((bundle) => (
+        <a href={`/bundles/${bundle.id.replace(/\.md$/, '')}`} class="relative flex flex-row w-full dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group">
+          <div class="w-1/3 overflow-hidden">
             <img 
               src={bundle.data.image} 
               alt={bundle.data.title} 
-              class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-110"
+              class="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-110"
             />
           </div>
-          <div class="px-6 py-6 overflow-hidden">
+          <div class="w-2/3 px-4 py-4 overflow-hidden">
+            <div class="flex justify-between items-start">
+              <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">{bundle.data.title}</h3>
+              <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded font-bold text-sm whitespace-nowrap ml-2">${bundle.data.price}</span>
+            </div>
             <h3 class="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{bundle.data.title}</h3>
             <p class="text-muted dark:text-slate-400 mb-4">{bundle.data.description}</p>
             <div class="mb-4">
@@ -66,14 +67,12 @@ if (!items) {
                 </div>
               ))}
             </div>
-            <div class="flex justify-between items-center mt-6">
-              <span class="text-base font-heading text-gray-200 uppercase tracking-wide">Bundles</span>
-              <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded font-bold">${bundle.data.price}</span>
+            <div class="mt-2">
+              <span class="text-xs font-heading text-gray-400 dark:text-gray-400 uppercase tracking-wide">Bundles</span>
             </div>
           </div>
         </a>
-        );
-      })}
+      ))}
     </div>
   ) : (
     <div class="w-full text-center py-12">

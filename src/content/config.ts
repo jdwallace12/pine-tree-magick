@@ -90,6 +90,9 @@ const ritualCollection = defineCollection({
     payPalButtonId: z.string(),
     expirationDate: z.string().optional(),
     pdfUrl: z.string().optional(),
+    order: z.number().optional(),
+    updatedAt: z.string().optional(),
+    createdAt: z.string().optional(),
     metadata: metadataDefinition(),
   }),
 });
@@ -103,6 +106,9 @@ const bundleCollection = defineCollection({
     payPalButtonId: z.string(),
     expirationDate: z.string().optional(),
     pdfUrl: z.string().optional(),
+    order: z.number().optional(),
+    updatedAt: z.string().optional(),
+    createdAt: z.string().optional(),
     metadata: metadataDefinition(),
   }),
 });
@@ -114,6 +120,9 @@ const freebieCollection = defineCollection({
     image: z.string(),
     expirationDate: z.string().optional(),
     pdfUrl: z.string(),
+    order: z.number().optional(),
+    updatedAt: z.string().optional(),
+    createdAt: z.string().optional(),
     metadata: metadataDefinition(),
   }),
 });

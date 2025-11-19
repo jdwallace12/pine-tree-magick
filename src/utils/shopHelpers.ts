@@ -10,6 +10,18 @@ export function hasItems(items: any[]): boolean {
       const [month, day, year] = bundle.data.expirationDate.split('/');
       const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       return currentDate <= expirationDate;
+    }).sort((a, b) => {
+      // Custom order first, then newest first
+      const aOrder = a.data.order ?? 999;
+      const bOrder = b.data.order ?? 999;
+      
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder;
+      }
+      
+      const aTime = a.data.updatedAt || a.data.createdAt || 0;
+      const bTime = b.data.updatedAt || b.data.createdAt || 0;
+      return new Date(bTime).getTime() - new Date(aTime).getTime();
     });
   
     // Filter out expired rituals
@@ -18,6 +30,18 @@ export function hasItems(items: any[]): boolean {
       const [month, day, year] = ritual.data.expirationDate.split('/');
       const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       return currentDate <= expirationDate;
+    }).sort((a, b) => {
+      // Custom order first, then newest first
+      const aOrder = a.data.order ?? 999;
+      const bOrder = b.data.order ?? 999;
+      
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder;
+      }
+      
+      const aTime = a.data.updatedAt || a.data.createdAt || 0;
+      const bTime = b.data.updatedAt || b.data.createdAt || 0;
+      return new Date(bTime).getTime() - new Date(aTime).getTime();
     });
      // Filter out expired freebies
      const activeFreebies = (freebies || []).filter((freebie) => {
@@ -25,6 +49,18 @@ export function hasItems(items: any[]): boolean {
       const [month, day, year] = freebie.data.expirationDate.split('/');
       const expirationDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
       return currentDate <= expirationDate;
+    }).sort((a, b) => {
+      // Custom order first, then newest first
+      const aOrder = a.data.order ?? 999;
+      const bOrder = b.data.order ?? 999;
+      
+      if (aOrder !== bOrder) {
+        return aOrder - bOrder;
+      }
+      
+      const aTime = a.data.updatedAt || a.data.createdAt || 0;
+      const bTime = b.data.updatedAt || b.data.createdAt || 0;
+      return new Date(bTime).getTime() - new Date(aTime).getTime();
     });
   
     // Create array of components with their data
@@ -62,5 +98,14 @@ export function hasItems(items: any[]): boolean {
     ];
   
     // Filter out empty components and sort by those with content
-    return components.filter(comp => comp.hasContent);
+    const result = components.filter(comp => comp.hasContent);
+    
+    // Log the final result for debugging
+    console.log('getShopComponents returning:', {
+      bundles: result.find(c => c.type === 'bundles')?.data?.items?.map((i: any) => i.slug) || [],
+      rituals: result.find(c => c.type === 'rituals')?.data?.items?.map((i: any) => i.slug) || [],
+      freebies: result.find(c => c.type === 'freebies')?.data?.items?.map((i: any) => i.slug) || []
+    });
+    
+    return result;
   }
