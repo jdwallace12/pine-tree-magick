@@ -1,0 +1,329 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+const metadata = {
+  title: 'Group Bookings | Pine Tree Magick',
+  description: 'Book a group reading or workshop with Pine Tree Magick.'
+};
+
+const date = new Date().toISOString().split('T')[0];
+---
+
+<style>
+  /* Custom checkbox styles */
+  .custom-checkbox {
+    @apply relative flex items-start;
+  }
+
+  .custom-checkbox input[type="checkbox"] {
+    @apply absolute opacity-0 w-5 h-5 cursor-pointer;
+  }
+
+  .custom-checkbox .checkbox-label {
+    @apply pl-7 relative select-none;
+  }
+
+  .custom-checkbox .checkbox-label::before {
+    content: '';
+    @apply absolute left-0 top-1 w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded transition-all duration-200;
+  }
+
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::before {
+    @apply bg-primary border-primary;
+  }
+
+  .custom-checkbox .checkbox-label::after {
+    content: '';
+    @apply absolute left-[6px] top-[9px] w-2.5 h-1.5 border-gray-900 dark:border-gray-900 border-l-2 border-b-2 transform -rotate-45 opacity-0 transition-all duration-200;
+  }
+
+  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::after {
+    @apply opacity-100;
+  }
+
+  .custom-checkbox input[type="checkbox"]:focus + .checkbox-label::before {
+    @apply ring-2 ring-opacity-50 ring-primary;
+  }
+</style>
+
+<Layout metadata={metadata}>
+  <Fragment slot="announcement"></Fragment>
+  
+  <div class="mx-auto max-w-4xl p-4 md:px-8">
+    <div class="text-center mb-12">
+      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase mt-12">Group Bookings</p>
+      <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl mb-4">
+        Gather Your Coven
+      </h1>
+      <p class="text-xl mb-6 text-muted">Interested in booking a group reading or workshop? Fill out the form below and I'll be in touch to coordinate the details.</p>
+    </div>
+
+    <!-- Booking Form -->
+    <div class="bg-primary/10 p-8 rounded-lg mt-12">
+      <form 
+        name="group-bookings"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="needs-validation form-component"
+        accept-charset="UTF-8"
+        action="/success"
+      >
+        <input type="hidden" name="form-name" value="group-bookings" />
+        <p class="hidden">
+          <label>
+            Don't fill this out if you're human: <input name="bot-field" />
+          </label>
+        </p>
+
+        <!-- Personal Information -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="name" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Name <span class="text-primary">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              minlength="2"
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="Your name"
+            />
+          </div>
+          
+          <div>
+            <label for="email" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Email <span class="text-primary">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              required
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="your@email.com"
+            />
+          </div>
+        </div>
+
+        <!-- Group Information -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="organization" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Organization (Optional)
+            </label>
+            <input
+              type="text"
+              id="organization"
+              name="organization"
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="Organization Name"
+            />
+          </div>
+          
+          <div>
+            <label for="group_size" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Estimated Group Size <span class="text-primary">*</span>
+            </label>
+            <input
+              type="number"
+              id="group_size"
+              name="group_size"
+              required
+              min="1"
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="Number of people"
+            />
+          </div>
+        </div>
+
+        <!-- Date Selection -->
+        <!-- Event Details: Location & Date -->
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label for="location" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Event Location <span class="text-primary">*</span>
+            </label>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              required
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+              placeholder="City, State or Virtual"
+            />
+          </div>
+
+          <div>
+            <label for="requested_date" class="block text-sm font-medium mb-2 text-left md:text-center">
+              Requested Date <span class="text-primary">*</span>
+            </label>
+            <input
+              type="date"
+              id="requested_date"
+              name="requested_date"
+              required
+              min={date}
+              class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+            />
+          </div>
+        </div>
+
+        <!-- Additional Notes -->
+        <div class="mb-6">
+          <label for="message" class="block text-sm font-medium mb-2 text-left md:text-center">
+            Tell me about your event <span class="text-primary">*</span>
+          </label>
+          <textarea
+            required
+            id="message"
+            name="message"
+            rows="5"
+            class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+            placeholder="What kind of experience are you looking for? Do you have a specific theme or focus in mind?"
+          ></textarea>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="mb-6">
+          <label class="custom-checkbox text-left md:text-center">
+            <input
+              type="checkbox"
+              id="disclaimer"
+              name="disclaimer"
+              required
+            />
+            <span class="checkbox-label">
+              I agree to the 
+              <a
+                target="_blank" 
+                href="/privacy" 
+                class="text-primary hover:underline"
+              >
+                privacy policy
+              </a>
+            </span>
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-10 grid">
+          <button
+            type="submit"
+            id="submit-btn"
+            class="inline-flex items-center justify-center px-8 py-4 bg-primary dark:text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <div id="spinner" class="hidden w-5 h-5 mr-2">
+              <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+            </div>
+            <span id="submit-text">Request Booking</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Overlay -->
+  <div id="success-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-xl">
+      <div class="w-16 h-16 mx-auto mb-4 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+        <svg class="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Request Sent Successfully!</h3>
+      <p class="text-gray-600 dark:text-gray-400 mb-6">I'll be in touch soon to coordinate everything.</p>
+      <button 
+        id="close-overlay"
+        class="px-6 py-2 bg-primary text-dark rounded-lg hover:bg-primary/90 transition-colors"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function initGroupBookingForm() {
+      const form = document.querySelector('.form-component');
+      if (!form) return;
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const spinner = document.getElementById('spinner');
+      const submitText = document.getElementById('submit-text');
+      const successOverlay = document.getElementById('success-overlay');
+      const closeOverlayBtn = document.getElementById('close-overlay');
+      
+      const messageContainer = document.createElement('div');
+      messageContainer.className = 'mt-4 hidden text-center';
+      messageContainer.innerHTML = `
+        <p class="text-red-600 dark:text-red-400 hidden" data-error-message>
+          There was an error submitting the form. Please try again.
+        </p>
+      `;
+      form.appendChild(messageContainer);
+      
+      const errorMessage = messageContainer.querySelector('[data-error-message]');
+
+      if (closeOverlayBtn && successOverlay) {
+        closeOverlayBtn.addEventListener('click', () => {
+          successOverlay.classList.remove('flex');
+          successOverlay.classList.add('hidden');
+          window.location.reload();
+        });
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        messageContainer.classList.add('hidden');
+        
+        if (submitBtn) submitBtn.disabled = true;
+        if (spinner) spinner.classList.remove('hidden');
+        if (submitText) submitText.textContent = 'Sending...';
+        
+        try {
+          const formData = new FormData(e.target);
+          const params = new URLSearchParams();
+          for (const [key, value] of formData.entries()) {
+            params.append(key, String(value));
+          }
+
+          const response = await fetch(`${window.location.pathname}?no-cache=1`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
+            body: params.toString()
+          });
+
+          if (response.ok) {
+            if (successOverlay) {
+                successOverlay.classList.remove('hidden');
+                successOverlay.classList.add('flex');
+            }
+            form.reset();
+          } else {
+            throw new Error('Form submission failed');
+          }
+        } catch (error) {
+          console.error('Error submitting form:', error);
+          messageContainer.classList.remove('hidden');
+          if (errorMessage) errorMessage.classList.remove('hidden');
+        } finally {
+             if (submitBtn) submitBtn.disabled = false;
+             if (spinner) spinner.classList.add('hidden');
+             if (submitText) submitText.textContent = 'Request Booking';
+        }
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGroupBookingForm);
+    } else {
+      initGroupBookingForm();
+    }
+  </script>
+</Layout>

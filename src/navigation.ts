@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 
 async function getActiveShopLinks() {
   const currentDate = new Date();
-  
+
   // Get collections
   const bundles = await getCollection('bundle');
   const rituals = await getCollection('ritual');
@@ -70,16 +70,16 @@ export const headerData = {
       href: "https://pinetreemagick.substack.com/",
     },
   ],
-  actions: [{          
+  actions: [{
     text: 'Book a Reading',
     href: '/readings',
-    variant: 'primary', 
+    variant: 'primary',
   }],
 };
 
 export const getFooterData = async () => {
   const shopLinks = await getActiveShopLinks();
-  
+
   return {
     links: [
       {
@@ -88,6 +88,7 @@ export const getFooterData = async () => {
           { text: 'Readings', href: '/readings' },
           { text: 'Book Private Sessions', href: '/private-sessions' },
           { text: 'Book Audio Readings', href: '/audio-reading' },
+          { text: 'Group Bookings', href: '/group-bookings' },
           { text: 'About', href: '/about' },
           { text: 'Workshops', href: '/workshops' },
           { text: 'Substack', href: 'https://pinetreemagick.substack.com/' },
@@ -111,8 +112,8 @@ export const getFooterData = async () => {
       { text: 'Privacy Policy', href: getPermalink('/privacy') },
     ],
     socialLinks: [
-      { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: 'https://www.instagram.com/pinetreemagick/'},
-      { ariaLabel: 'TikTok', icon: 'tabler:brand-tiktok', href: 'https://www.tiktok.com/@pinetreemagick?lang=en'},
+      { ariaLabel: 'Instagram', icon: 'tabler:brand-instagram', href: 'https://www.instagram.com/pinetreemagick/' },
+      { ariaLabel: 'TikTok', icon: 'tabler:brand-tiktok', href: 'https://www.tiktok.com/@pinetreemagick?lang=en' },
     ],
     footNote: `Pine Tree Magick All rights reserved.`,
   };
