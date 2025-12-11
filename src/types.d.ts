@@ -59,7 +59,7 @@ export interface Workshop {
   category?: string;
   tags?: string[];
   body: string;
-} 
+}
 export interface Ritual {
   title: string;
   description: string;
@@ -69,7 +69,7 @@ export interface Ritual {
   expirationDate?: string;
   payPalButtonId: string;
   body: string;
-} 
+}
 
 export interface Bundle {
   title: string;
@@ -80,7 +80,7 @@ export interface Bundle {
   expirationDate?: string;
   payPalButtonId: string;
   body: string;
-} 
+}
 
 export interface Freebie {
   title: string;
@@ -89,7 +89,7 @@ export interface Freebie {
   pdfUrl: string;
   slug: string;
   body: string;
-} 
+}
 
 export interface Taxonomy {
   slug: string;
@@ -156,7 +156,7 @@ export interface Headline {
   title?: string;
   subtitle?: string;
   tagline?: string;
-  titleMotifImage?: string; 
+  titleMotifImage?: string;
   classes?: Record<string, string>;
 }
 
@@ -332,12 +332,7 @@ export interface Faqs extends Omit<Headline, 'classes'>, Widget {
 }
 
 export interface Steps extends Omit<Headline, 'classes'>, Widget {
-  items: Array<{
-    title: string;
-    description?: string;
-    icon?: string;
-    classes?: Record<string, string>;
-  }>;
+  items: Array<Item>;
   callToAction?: string | CallToAction;
   image?: string | Image;
   isReversed?: boolean;
@@ -356,7 +351,7 @@ export interface Content extends Omit<Headline, 'classes'>, Widget {
   wrapperClass?: string;
 }
 
-export interface Contact extends Omit<Headline, 'classes'>, Form, Widget {}
+export interface Contact extends Omit<Headline, 'classes'>, Form, Widget { }
 
 export interface RitualFrontmatter {
   title: string;
