@@ -1,10 +1,11 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import { Icon } from 'astro-icon/components';
+import Pricing from '~/components/widgets/Pricing.astro';
 
 const metadata = {
   title: 'Group Bookings | Pine Tree Magick',
-  description: 'Book a group reading or workshop with Pine Tree Magick.'
+  description: 'Book a group reading or workshop with Pine Tree Magick.',
 };
 
 const date = new Date().toISOString().split('T')[0];
@@ -16,7 +17,7 @@ const date = new Date().toISOString().split('T')[0];
     @apply relative flex items-start;
   }
 
-  .custom-checkbox input[type="checkbox"] {
+  .custom-checkbox input[type='checkbox'] {
     @apply absolute opacity-0 w-5 h-5 cursor-pointer;
   }
 
@@ -29,7 +30,7 @@ const date = new Date().toISOString().split('T')[0];
     @apply absolute left-0 top-1 w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded transition-all duration-200;
   }
 
-  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::before {
+  .custom-checkbox input[type='checkbox']:checked + .checkbox-label::before {
     @apply bg-primary border-primary;
   }
 
@@ -38,30 +39,131 @@ const date = new Date().toISOString().split('T')[0];
     @apply absolute left-[6px] top-[9px] w-2.5 h-1.5 border-gray-900 dark:border-gray-900 border-l-2 border-b-2 transform -rotate-45 opacity-0 transition-all duration-200;
   }
 
-  .custom-checkbox input[type="checkbox"]:checked + .checkbox-label::after {
+  .custom-checkbox input[type='checkbox']:checked + .checkbox-label::after {
     @apply opacity-100;
   }
 
-  .custom-checkbox input[type="checkbox"]:focus + .checkbox-label::before {
+  .custom-checkbox input[type='checkbox']:focus + .checkbox-label::before {
     @apply ring-2 ring-opacity-50 ring-primary;
   }
 </style>
 
 <Layout metadata={metadata}>
   <Fragment slot="announcement"></Fragment>
-  
+
   <div class="mx-auto max-w-4xl p-4 md:px-8">
-    <div class="text-center mb-12">
+    <div class="text-center">
       <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase mt-12">Group Bookings</p>
       <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl mb-4">
         Gather Your Coven
       </h1>
-      <p class="text-xl mb-6 text-muted">Interested in booking a group reading or workshop? Fill out the form below and I'll be in touch to coordinate the details.</p>
+      <p class="text-xl mb-0 text-muted">
+        Interested in booking a group reading or workshop? Choose the perfect experience for your group and then fill
+        out the form below and I'll be in touch to coordinate the details.
+      </p>
+    </div>
+
+    <!-- Pricing Options -->
+    <Pricing
+      id="pricing"
+      prices={[
+        {
+          title: 'Astrology + Tarot Mini-Readings',
+          subtitle: 'Individual Big Three OR Transit readings (approx. 20-25 minutes per person)',
+          price: 350,
+          period: 'for 3 people',
+          items: [
+            { description: '$75 per additional person' },
+            {
+              description: 'Additional tarot card pull with astrology readings',
+            },
+            {
+              description: 'Facilitated group experience',
+            },
+          ],
+        },
+        {
+          title: 'Candle Magick Tutorial + Tarot Readings',
+          subtitle: 'Lesson on magick and tutorial on sigil-making and candle carving',
+          price: 250,
+          period: 'for 3 people',
+          items: [
+            { description: '$50 per additional person, up to 8 people' },
+            {
+              description: 'Intention setting and guided meditation',
+            },
+            {
+              description: 'Individual tarot readings (10-15 minutes per person)',
+            },
+          ],
+        },
+        {
+          title: 'Magick Ritual + Tarot Readings',
+          subtitle: 'A bespoke group ritual aligned with current lunar or solar calendar',
+          price: 250,
+          period: 'for 3 people',
+          items: [
+            { description: '$50 per additional person' },
+            {
+              description: 'Group altar setup, guided meditation and journal prompts',
+            },
+            {
+              description: 'Individual tarot readings (10 minutes per person)',
+            },
+          ],
+        },
+      ]}
+    />
+
+    <!-- Add-Ons and Notes -->
+    <div class="max-w-7xl mx-auto mb-12 grid md:grid-cols-2 gap-8 px-4 md:px-0">
+      <div class="bg-blue-50 dark:bg-slate-800 p-6 rounded-lg text-left">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <Icon name="tabler:plus" class="w-6 h-6 text-primary" />
+          Add-Ons
+        </h3>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-2">
+            <Icon name="tabler:clock" class="w-5 h-5 mt-1 text-primary shrink-0" />
+            <span><strong>Extended time:</strong> $100 per 30 minutes over 3.5 hours</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <Icon name="tabler:car" class="w-5 h-5 mt-1 text-primary shrink-0" />
+            <span><strong>Travel fee:</strong> For off-site events outside of Southern Maine (based on distance)</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="bg-blue-50 dark:bg-slate-800 p-6 rounded-lg text-left">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+          <Icon name="tabler:info-circle" class="w-6 h-6 text-primary" />
+          Booking Notes
+        </h3>
+        <ul class="space-y-3 text-sm">
+          <li class="flex items-start gap-2">
+            <Icon name="tabler:check" class="w-5 h-5 mt-0.5 text-primary shrink-0" />
+            <span>Customized themes or special requests are welcome and can be quoted individually.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <Icon name="tabler:check" class="w-5 h-5 mt-0.5 text-primary shrink-0" />
+            <span>Birth information for all participants must be provided two weeks before scheduled event.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <Icon name="tabler:check" class="w-5 h-5 mt-0.5 text-primary shrink-0" />
+            <span>8 Person maximum unless otherwise specified.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <Icon name="tabler:check" class="w-5 h-5 mt-0.5 text-primary shrink-0" />
+            <span>Base pay is required at time of booking, with the remaining balance due on the day of the event.</span
+            >
+          </li>
+        </ul>
+      </div>
     </div>
 
     <!-- Booking Form -->
     <div class="bg-primary/10 p-8 rounded-lg mt-12">
-      <form 
+      <form
         name="group-bookings"
         method="POST"
         data-netlify="true"
@@ -93,7 +195,7 @@ const date = new Date().toISOString().split('T')[0];
               placeholder="Your name"
             />
           </div>
-          
+
           <div>
             <label for="email" class="block text-sm font-medium mb-2 text-left md:text-center">
               Email <span class="text-primary">*</span>
@@ -123,7 +225,7 @@ const date = new Date().toISOString().split('T')[0];
               placeholder="Organization Name"
             />
           </div>
-          
+
           <div>
             <label for="group_size" class="block text-sm font-medium mb-2 text-left md:text-center">
               Estimated Group Size <span class="text-primary">*</span>
@@ -190,21 +292,10 @@ const date = new Date().toISOString().split('T')[0];
         <!-- Disclaimer -->
         <div class="mb-6">
           <label class="custom-checkbox text-left md:text-center">
-            <input
-              type="checkbox"
-              id="disclaimer"
-              name="disclaimer"
-              required
-            />
+            <input type="checkbox" id="disclaimer" name="disclaimer" required />
             <span class="checkbox-label">
-              I agree to the 
-              <a
-                target="_blank" 
-                href="/privacy" 
-                class="text-primary hover:underline"
-              >
-                privacy policy
-              </a>
+              I agree to the
+              <a target="_blank" href="/privacy" class="text-primary hover:underline"> privacy policy </a>
             </span>
           </label>
         </div>
@@ -219,7 +310,12 @@ const date = new Date().toISOString().split('T')[0];
             <div id="spinner" class="hidden w-5 h-5 mr-2">
               <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                >
+                </path>
               </svg>
             </div>
             <span id="submit-text">Request Booking</span>
@@ -239,7 +335,7 @@ const date = new Date().toISOString().split('T')[0];
       </div>
       <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Request Sent Successfully!</h3>
       <p class="text-gray-600 dark:text-gray-400 mb-6">I'll be in touch soon to coordinate everything.</p>
-      <button 
+      <button
         id="close-overlay"
         class="px-6 py-2 bg-primary text-dark rounded-lg hover:bg-primary/90 transition-colors"
       >
@@ -252,13 +348,13 @@ const date = new Date().toISOString().split('T')[0];
     function initGroupBookingForm() {
       const form = document.querySelector('.form-component');
       if (!form) return;
-      
+
       const submitBtn = document.getElementById('submit-btn');
       const spinner = document.getElementById('spinner');
       const submitText = document.getElementById('submit-text');
       const successOverlay = document.getElementById('success-overlay');
       const closeOverlayBtn = document.getElementById('close-overlay');
-      
+
       const messageContainer = document.createElement('div');
       messageContainer.className = 'mt-4 hidden text-center';
       messageContainer.innerHTML = `
@@ -267,7 +363,7 @@ const date = new Date().toISOString().split('T')[0];
         </p>
       `;
       form.appendChild(messageContainer);
-      
+
       const errorMessage = messageContainer.querySelector('[data-error-message]');
 
       if (closeOverlayBtn && successOverlay) {
@@ -281,11 +377,11 @@ const date = new Date().toISOString().split('T')[0];
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         messageContainer.classList.add('hidden');
-        
+
         if (submitBtn) submitBtn.disabled = true;
         if (spinner) spinner.classList.remove('hidden');
         if (submitText) submitText.textContent = 'Sending...';
-        
+
         try {
           const formData = new FormData(e.target);
           const params = new URLSearchParams();
@@ -296,13 +392,13 @@ const date = new Date().toISOString().split('T')[0];
           const response = await fetch(`${window.location.pathname}?no-cache=1`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-            body: params.toString()
+            body: params.toString(),
           });
 
           if (response.ok) {
             if (successOverlay) {
-                successOverlay.classList.remove('hidden');
-                successOverlay.classList.add('flex');
+              successOverlay.classList.remove('hidden');
+              successOverlay.classList.add('flex');
             }
             form.reset();
           } else {
@@ -313,9 +409,9 @@ const date = new Date().toISOString().split('T')[0];
           messageContainer.classList.remove('hidden');
           if (errorMessage) errorMessage.classList.remove('hidden');
         } finally {
-             if (submitBtn) submitBtn.disabled = false;
-             if (spinner) spinner.classList.add('hidden');
-             if (submitText) submitText.textContent = 'Request Booking';
+          if (submitBtn) submitBtn.disabled = false;
+          if (spinner) spinner.classList.add('hidden');
+          if (submitText) submitText.textContent = 'Request Booking';
         }
       });
     }
