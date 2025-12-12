@@ -46,6 +46,54 @@ const date = new Date().toISOString().split('T')[0];
   .custom-checkbox input[type='checkbox']:focus + .checkbox-label::before {
     @apply ring-2 ring-opacity-50 ring-primary;
   }
+
+  /* Custom radio button styles */
+  .custom-radio {
+    @apply relative flex items-start;
+  }
+
+  .custom-radio input[type='radio'] {
+    @apply absolute opacity-0 w-5 h-5 cursor-pointer;
+  }
+
+  .custom-radio .radio-label {
+    @apply pl-7 relative select-none;
+  }
+
+  .custom-radio .radio-label::before {
+    content: '';
+    @apply absolute left-0 top-1 w-5 h-5 border-2 border-gray-300 dark:border-gray-600 rounded-full transition-all duration-200;
+  }
+
+  .custom-radio input[type='radio']:checked + .radio-label::before {
+    @apply bg-primary border-primary;
+  }
+
+  .custom-radio .radio-label::after {
+    content: '';
+    @apply absolute left-[6px] top-[9px] w-2 h-2 bg-white dark:bg-gray-900 rounded-full opacity-0 transition-all duration-200;
+  }
+
+  .custom-radio input[type='radio']:checked + .radio-label::after {
+    @apply opacity-100;
+  }
+
+  .custom-radio input[type='radio']:focus + .radio-label::before {
+    @apply ring-2 ring-opacity-50 ring-primary;
+  }
+
+  /* Radio button container styling */
+  .radio-option {
+    @apply p-4 border border-gray-200 dark:border-gray-600 rounded-lg cursor-pointer transition-all duration-200;
+  }
+
+  .radio-option:hover {
+    @apply bg-gray-50 dark:bg-gray-800/50 border-primary;
+  }
+
+  .radio-option:has(input[type='radio']:checked) {
+    @apply bg-pink-50 dark:bg-pink-900/20 border-primary ring-1 ring-primary;
+  }
 </style>
 
 <Layout metadata={metadata}>
@@ -271,6 +319,50 @@ const date = new Date().toISOString().split('T')[0];
               min={date}
               class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
             />
+          </div>
+        </div>
+
+        <!-- Activity Selection -->
+        <div class="mb-6 py-8">
+          <label class="block text-sm font-medium mb-4 text-left md:text-center">
+            Select Your Activity <span class="text-primary">*</span>
+          </label>
+          <div class="grid md:grid-cols-3 gap-4">
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input type="radio" name="activityType" value="mini-readings" required />
+                <span class="radio-label">
+                  <div class="font-medium">Astrology + Tarot Mini-Readings</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400 text-left mt-1">
+                    Individual Big Three OR Transit readings
+                  </div>
+                </span>
+              </div>
+            </label>
+
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input type="radio" name="activityType" value="candle-magick" required />
+                <span class="radio-label">
+                  <div class="font-medium">Candle Magick Tutorial + Tarot Readings</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400 text-left mt-1">
+                    Lesson on magick and tutorial on sigil-making
+                  </div>
+                </span>
+              </div>
+            </label>
+
+            <label class="radio-option">
+              <div class="custom-radio">
+                <input type="radio" name="activityType" value="magick-ritual" required />
+                <span class="radio-label">
+                  <div class="font-medium">Magick Ritual + Tarot Readings</div>
+                  <div class="text-sm text-gray-600 dark:text-gray-400 text-left mt-1">
+                    A bespoke group ritual aligned with current cycle
+                  </div>
+                </span>
+              </div>
+            </label>
           </div>
         </div>
 
