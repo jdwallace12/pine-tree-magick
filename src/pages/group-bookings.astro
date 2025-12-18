@@ -94,6 +94,25 @@ const date = new Date().toISOString().split('T')[0];
   .radio-option:has(input[type='radio']:checked) {
     @apply bg-pink-50 dark:bg-pink-900/20 border-primary ring-1 ring-primary;
   }
+
+  /* Date input normalization */
+  input[type='date'] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    min-width: 0;
+    display: block;
+    width: 100%;
+  }
+
+  input[type='date']::-webkit-calendar-picker-indicator {
+    @apply dark:invert;
+  }
+
+  input[type='date']::-webkit-date-and-time-value {
+    min-height: 1.5em;
+    text-align: left;
+  }
 </style>
 
 <Layout metadata={metadata}>
