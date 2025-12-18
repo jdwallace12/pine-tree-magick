@@ -121,6 +121,7 @@ const date = new Date().toISOString().split('T')[0];
         subtitle: 'Individual Big Three OR Transit readings (approx. 20-25 minutes per person)',
         price: 350,
         period: 'for 3 people',
+        icon: '/assets/icons/moon-stars.svg',
         items: [
           { description: '$75 per additional person' },
           {
@@ -136,6 +137,7 @@ const date = new Date().toISOString().split('T')[0];
         subtitle: 'Lesson on magick and tutorial on sigil-making and candle carving',
         price: 250,
         period: 'for 3 people',
+        icon: '/assets/icons/diamond.svg',
         items: [
           { description: '$50 per additional person, up to 8 people' },
           {
@@ -151,6 +153,7 @@ const date = new Date().toISOString().split('T')[0];
         subtitle: 'A bespoke group ritual aligned with current lunar or solar calendar',
         price: 250,
         period: 'for 3 people',
+        icon: '/assets/icons/stars-small.svg',
         items: [
           { description: '$50 per additional person' },
           {
@@ -212,7 +215,7 @@ const date = new Date().toISOString().split('T')[0];
     </div>
 
     <!-- Booking Form -->
-    <div class="bg-primary/10 p-8 rounded-lg mt-12">
+    <div class="px-4 md:px-6 py-12 md:py-16 mt-12 mx-auto max-w-sm md:max-w-none">
       <form
         name="group-bookings"
         method="POST"

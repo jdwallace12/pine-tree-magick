@@ -51,7 +51,7 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
 
 <header
   class:list={[
-    { sticky: isSticky, relative: !isSticky, dark: isDark, useLightLogo: useLightLogo},
+    { sticky: isSticky, relative: !isSticky, dark: isDark, useLightLogo: useLightLogo },
     'top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out',
   ]}
   {...isSticky ? { 'data-aw-sticky-header': true } : {}}
@@ -113,16 +113,16 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
                   </ul>
                 </>
               ) : (
-              <a
-                class:list={[
-                  'hover:text-link dark:hover:text-primary py-3 flex items-center',
-                  'px-4 md:px-2 [@media(min-width:910px)]:px-4',
-                  { 'aw-link-active': href === currentPath },
-                ]}
-                href={href}
-              >
-                {text}
-              </a>
+                <a
+                  class:list={[
+                    'hover:text-link dark:hover:text-primary py-3 flex items-center',
+                    'px-4 md:px-2 [@media(min-width:910px)]:px-4',
+                    { 'aw-link-active': href === currentPath },
+                  ]}
+                  href={href}
+                >
+                  {text}
+                </a>
               )}
             </li>
           ))
