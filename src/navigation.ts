@@ -1,4 +1,4 @@
-import { getPermalink, getAsset } from './utils/permalinks';
+import { getPermalink } from './utils/permalinks';
 import { getCollection } from 'astro:content';
 
 async function getActiveShopLinks() {
@@ -51,7 +51,12 @@ export const headerData = {
   links: [
     {
       text: 'Readings',
-      href: getPermalink('/readings')
+      links: [
+        { text: 'Readings Overview', href: getPermalink('/readings') },
+        { text: 'Private Sessions', href: getPermalink('/private-sessions') },
+        { text: 'Audio Readings', href: getPermalink('/audio-reading') },
+        { text: 'Group Bookings', href: getPermalink('/group-bookings') },
+      ],
     },
     {
       text: 'About',
