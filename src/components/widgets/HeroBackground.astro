@@ -22,13 +22,13 @@ const {
 <section class="relative md:-mt-[108px] lg:-mt-[132px] not-prose curved-hero overflow-hidden" {...id ? { id } : {}}>
   <!-- Canvas-based animations for improved performance -->
   <CanvasAnimations />
-  
+
   <!-- Enhanced Background with Effects -->
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
     <slot name="bg">
       {bg ? <Fragment set:html={bg} /> : null}
     </slot>
-    
+
     <!-- Simplified floating stars (CSS-only for mobile) -->
     <div class="absolute inset-0 overflow-hidden floating-stars-mobile">
       <div class="star star-1"></div>
@@ -37,24 +37,31 @@ const {
       <div class="star star-4"></div>
       <div class="star star-5"></div>
     </div>
-    
+
     <!-- Background Layer -->
-    <div class="absolute inset-0" style="background-image: url('/assets/images/night-sky.webp'); background-size: cover; background-position: center; opacity: 0.3;"></div>
-    
+    <div
+      class="absolute inset-0"
+      style="background-image: url('/assets/images/night-sky.webp'); background-size: cover; background-position: center; opacity: 0.3;"
+    >
+    </div>
+
     <!-- Animated Gradient Overlay -->
     <div class="absolute inset-0 bg-gradient-to-b from-primary/20 via-transparent to-dark/30 animate-gradient"></div>
-    
+
     <!-- Pink Brand Gradient Overlay -->
     <div class="absolute inset-0 pink-gradient-overlay"></div>
   </div>
-  
+
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
     <div class="pt-0 md:pt-[160px] pointer-events-none"></div>
     <div class="py-12 md:py-20">
-      <div class="text-center pb-10 md:pb-16 max-w-5xl mx-auto">
+      <div class="text-center pb-10 md:pb-16 max-w-5xl mx-auto select-none">
         {
           tagline && (
-            <p class="text-base text-secondary dark:text-secondary tracking-wide uppercase animate-fade-in-up" set:html={tagline} />
+            <p
+              class="text-base text-secondary dark:text-secondary tracking-wide uppercase animate-fade-in-up"
+              set:html={tagline}
+            />
           )
         }
         {
@@ -66,15 +73,24 @@ const {
           )
         }
         <div class="max-w-3xl mx-auto">
-        
-          {subtitle && <p class="mb-12 text-2xl bg-gradient-to-r from-secondary via-primary to-primary bg-clip-text text-transparent animate-subtitle-fade" set:html={subtitle} />}
+          {
+            subtitle && (
+              <p
+                class="mb-12 text-2xl bg-gradient-to-r from-secondary via-primary to-primary bg-clip-text text-transparent animate-subtitle-fade"
+                set:html={subtitle}
+              />
+            )
+          }
           {
             actions && (
               <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 md:mt-14 animate-fade-in-up-delayed">
                 {Array.isArray(actions) ? (
                   actions.map((action) => (
                     <div class="flex w-full sm:w-auto">
-                      <Button {...(action || {})} class="w-full sm:mb-0 hover:scale-105 transition-transform duration-300" />
+                      <Button
+                        {...(action || {})}
+                        class="w-full sm:mb-0 hover:scale-105 transition-transform duration-300"
+                      />
                     </div>
                   ))
                 ) : (
@@ -118,7 +134,7 @@ const {
     width: 100%;
     height: 100%;
   }
-  
+
   .star {
     position: absolute;
     width: 2px;
@@ -127,18 +143,45 @@ const {
     border-radius: 50%;
     animation: twinkle 3s infinite;
   }
-  
-  .star-1 { top: 10%; left: 10%; animation-delay: 0s; }
-  .star-2 { top: 20%; left: 80%; animation-delay: 0.5s; }
-  .star-3 { top: 30%; left: 20%; animation-delay: 1s; }
-  .star-4 { top: 40%; left: 70%; animation-delay: 1.5s; }
-  .star-5 { top: 50%; left: 15%; animation-delay: 2s; }
-  
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.5); }
+
+  .star-1 {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
   }
-  
+  .star-2 {
+    top: 20%;
+    left: 80%;
+    animation-delay: 0.5s;
+  }
+  .star-3 {
+    top: 30%;
+    left: 20%;
+    animation-delay: 1s;
+  }
+  .star-4 {
+    top: 40%;
+    left: 70%;
+    animation-delay: 1.5s;
+  }
+  .star-5 {
+    top: 50%;
+    left: 15%;
+    animation-delay: 2s;
+  }
+
+  @keyframes twinkle {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+
   /* Pink Brand Gradient Overlay */
   .pink-gradient-overlay {
     background: linear-gradient(
@@ -151,41 +194,47 @@ const {
     );
     animation: gradientShift 12s ease infinite;
   }
-  
+
   /* Gradient Animation */
   .animate-gradient {
     background-size: 400% 400%;
     animation: gradientShift 8s ease infinite;
   }
-  
+
   @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
-  
+
   /* Text Animations */
   .animate-fade-in-up {
     animation: fadeInUp 1s ease-out;
   }
-  
+
   .animate-title-glow {
     animation: titleGlow 2s ease-out;
     text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   }
-  
+
   .animate-subtitle-fade {
     animation: subtitleFade 1.5s ease-out 0.5s both;
   }
-  
+
   .animate-fade-in-up-delayed {
     animation: fadeInUp 1s ease-out 1s both;
   }
-  
+
   .animate-float {
     animation: float 6s ease-in-out infinite;
   }
-  
+
   @keyframes fadeInUp {
     from {
       opacity: 0;
@@ -196,7 +245,7 @@ const {
       transform: translateY(0);
     }
   }
-  
+
   @keyframes titleGlow {
     from {
       opacity: 0;
@@ -209,7 +258,7 @@ const {
       text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     }
   }
-  
+
   @keyframes subtitleFade {
     from {
       opacity: 0;
@@ -220,19 +269,24 @@ const {
       transform: translateY(0);
     }
   }
-  
+
   @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
-  
+
   /* Hide mobile stars on desktop (canvas handles desktop) */
   @media (min-width: 769px) {
     .floating-stars-mobile {
       display: none;
     }
   }
-  
+
   /* Responsive adjustments */
   @media (max-width: 768px) {
     .star {
@@ -247,23 +301,23 @@ const {
   function initializeHeroEffects() {
     const heroSection = document.querySelector('.curved-hero');
     if (!heroSection) return;
-    
+
     // Only add subtle hover effects for enhanced interactivity
     heroSection.addEventListener('mouseenter', () => {
       (heroSection as HTMLElement).style.transition = 'all 0.3s ease';
     });
-    
+
     heroSection.addEventListener('mouseleave', () => {
       (heroSection as HTMLElement).style.transition = 'all 0.3s ease';
     });
   }
-  
+
   // Initialize on page load
   document.addEventListener('DOMContentLoaded', initializeHeroEffects);
-  
+
   // Initialize on Astro navigation (for SPA-like behavior)
   document.addEventListener('astro:page-load', initializeHeroEffects);
-  
+
   // Also initialize immediately if DOM is already ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeHeroEffects);
