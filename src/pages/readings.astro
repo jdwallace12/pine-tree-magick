@@ -2,6 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 
 import Content from '~/components/widgets/Content.astro';
+import Button from '~/components/ui/Button.astro';
 
 const metadata = {
   title: 'Readings | Pine Tree Magick',
@@ -10,8 +11,38 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
+  <style is:global>
+    html {
+      scroll-padding-top: 180px;
+    }
+  </style>
   <Fragment slot="announcement"></Fragment>
-  <div class="mx-auto max-w-3xl px-8">
+  <!-- Submenu -->
+  <div
+    class="sticky top-[72px] z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-gray-100 dark:border-slate-800 hidden md:block"
+  >
+    <div class="max-w-3xl mx-auto px-8 py-3">
+      <nav class="flex justify-center space-x-12 text-sm font-medium tracking-wide">
+        <a
+          href="#private"
+          class="readings-nav-link text-muted hover:text-primary transition-all duration-200 border-b-2 border-transparent hover:border-primary/30 py-1"
+          >Private Sessions</a
+        >
+        <a
+          href="#audio"
+          class="readings-nav-link text-muted hover:text-primary transition-all duration-200 border-b-2 border-transparent hover:border-primary/30 py-1"
+          >Audio Readings</a
+        >
+        <a
+          href="#group"
+          class="readings-nav-link text-muted hover:text-primary transition-all duration-200 border-b-2 border-transparent hover:border-primary/30 py-1"
+          >Group Bookings</a
+        >
+      </nav>
+    </div>
+  </div>
+
+  <div id="private" class="mx-auto max-w-3xl px-8">
     <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Book A Written Reading</p> -->
     <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">
       <span class="dark:text-primary text-primary">Private Sessions</span>
@@ -33,6 +64,9 @@ const metadata = {
       crave actionable guidance and are interested in the art of ritual. An audio file of our time together is included
       with this package.
     </p>
+    <div class="flex justify-center mt-8">
+      <Button text="Book a Private Session" href="/private-sessions" variant="primary" />
+    </div>
   </div>
   <!-- Content Widget **************** -->
   <Content
@@ -153,7 +187,7 @@ const metadata = {
     </div>
   </div>
 
-  <div class="mx-auto max-w-3xl px-8">
+  <div id="audio" class="mx-auto max-w-3xl px-8">
     <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">
       <span class="dark:text-primary text-primary">Audio Readings</span>
     </h1>
@@ -169,6 +203,9 @@ const metadata = {
       interested in tapping into their personal power. *Please note, turnaround time for audio recordings is based on
       volume, Jersey will alert you when you are at the top of the waiting list.*
     </p>
+    <div class="flex justify-center mt-8">
+      <Button text="Book an Audio Reading" href="/audio-reading" variant="primary" />
+    </div>
   </div>
   <Content
     image={{
@@ -369,7 +406,7 @@ const metadata = {
     </div>
   </div>
 
-  <div class="mx-auto max-w-3xl px-8">
+  <div id="group" class="mx-auto max-w-3xl px-8">
     <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">
       <span class="dark:text-primary text-primary">Group Bookings</span>
     </h1>
@@ -379,31 +416,141 @@ const metadata = {
       it’s an intimate celebration or a girls night in, I’ll guide your guests through a mystical experience that
       inspires connection and reflection.
     </p>
+    <div class="flex justify-center mt-8">
+      <Button text="Book Your Next Gathering" href="/group-bookings" variant="primary" />
+    </div>
   </div>
 
+  <!-- Astrology + Tarot Mini-Readings -->
   <Content
+    isReversed
     image={{
-      src: '/assets/images/scotland-square.webp',
-      alt: 'Mystical landscape',
+      src: '/assets/images/zodiac.webp',
+      alt: 'Astrology and Tarot readings',
     }}
     callToAction={{
-      text: 'Explore Group Bookings',
-      icon: 'tabler:chevron-right',
+      text: 'Book Your Next Gathering',
       href: '/group-bookings',
+      icon: 'tabler:chevron-right',
     }}
   >
     <Fragment slot="content">
-      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Private Events</p>
-      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Gather Your Coven</h2>
+      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">
+        Interactive Experience
+      </p>
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">
+        Astrology + Tarot Mini-Readings
+      </h2>
       <p>
-        Perfect for those seeking a unique and mystical addition to their next celebration. I offer customized
-        experiences for small groups, including mini-readings, tutorials, and bespoke rituals. Let's create something
-        magical together.
+        Bring insights to every guest with individual "Big Three" or personal transit readings. Each person receives a
+        focused session exploring their Sun, Moon, and Rising signs, or a look at current planetary influences on their
+        chart, rounded off with a clarifying Tarot pull. It's a high-vibe, engaging way to spark conversation and
+        self-reflection within your group.
       </p>
     </Fragment>
+  </Content>
 
-    <Fragment slot="bg">
-      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+  <!-- Candle Magick Tutorial -->
+  <Content
+    image={{
+      src: '/assets/images/manifestation-workshop.webp',
+      alt: 'Candle magick tools',
+    }}
+    callToAction={{
+      text: 'Book Your Next Gathering',
+      href: '/group-bookings',
+      icon: 'tabler:chevron-right',
+    }}
+  >
+    <Fragment slot="content">
+      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Hands-On Magick</p>
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Candle Magick Tutorial</h2>
+      <p>
+        Learn the ancient art of candle magick in this hands-on workshop. I'll guide your group through the process of
+        intention setting, sigil creation, and specific techniques for carving and dressing your own ritual candles.
+        Each participant leaves with their own empowered candle and a deeper understanding of how to work with the
+        element of fire.
+      </p>
     </Fragment>
   </Content>
+
+  <!-- Magick Ritual -->
+  <Content
+    isReversed
+    image={{
+      src: '/assets/images/tarot.webp',
+      alt: 'Group ritual setting',
+    }}
+    callToAction={{
+      text: 'Book Your Next Gathering',
+      href: '/group-bookings',
+      icon: 'tabler:chevron-right',
+    }}
+  >
+    <Fragment slot="content">
+      <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Sacred Space</p>
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">
+        Magick Ritual + Tarot Readings
+      </h2>
+      <p>
+        Elevate your gathering with a bespoke group ritual aligned with the current lunar cycle or solar transition. I
+        provide a complete sacred experience including a group altar setup, guided meditation, and journal prompts
+        designed to help your group connect with the collective energy of the moment. We'll close the ritual with
+        individual 10-minute tarot readings for each guest.
+      </p>
+    </Fragment>
+  </Content>
+
+  <script>
+    function initScrollspy() {
+      const links = document.querySelectorAll('.readings-nav-link');
+      const sections = ['private', 'audio', 'group'].map((id) => document.getElementById(id));
+
+      const observerOptions = {
+        root: null,
+        rootMargin: '-10% 0px -70% 0px',
+        threshold: 0,
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('id');
+            links.forEach((link) => {
+              const isActive = link.getAttribute('href') === `#${id}`;
+              link.classList.toggle('text-primary', isActive);
+              link.classList.toggle('border-primary', isActive);
+              link.classList.toggle('text-muted', !isActive);
+              link.classList.toggle('border-transparent', !isActive);
+            });
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach((section) => {
+        if (section) observer.observe(section);
+      });
+
+      // Smooth scroll handling
+      links.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const href = link.getAttribute('href');
+          if (href) {
+            const id = href.substring(1);
+            const element = document.getElementById(id);
+            if (element) {
+              element.scrollIntoView({
+                behavior: 'smooth',
+              });
+            }
+          }
+        });
+      });
+    }
+
+    // Initialize on page load and after view transitions if using them
+    document.addEventListener('DOMContentLoaded', initScrollspy);
+    document.addEventListener('astro:after-swap', initScrollspy);
+  </script>
 </Layout>
