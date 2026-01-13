@@ -131,31 +131,37 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
       if (submitText) submitText.textContent = 'Submitting...';
 
       try {
-        const formEl = e.currentTarget || form;
-        const formData = new FormData(formEl);
-        const formNameAttr = formEl.getAttribute('name') || formName;
-        formData.set('form-name', String(formNameAttr));
-        if (!formData.get('bot-field')) formData.set('bot-field', '');
+        const formData = new FormData(e.target);
 
-        // Ensure explicit fields
+        // Ensure Netlify form-name matches the form's name attribute
+        const formEl = e.target;
+        const formNameAttr = formEl.getAttribute('name') || formName;
+        formData.set('form-name', formNameAttr);
+
+        // Make sure honeypot is empty
+        if (!formData.get('bot-field')) {
+          formData.set('bot-field', '');
+        }
+
+        // Ensure explicit fields are correctly captured
         const getVal = (id) => {
           const el = document.getElementById(id);
-          const raw = el && 'value' in el ? el.value : formData.get(id);
-          return raw == null ? '' : String(raw);
+          return el && 'value' in el ? el.value : formData.get(id) || '';
         };
-        formData.set('name', String(getVal('name')));
-        formData.set('email', String(getVal('email')));
+        formData.set('name', getVal('name'));
+        formData.set('email', getVal('email'));
 
+        // Build params with form-name first
         const params = new URLSearchParams();
-        params.append('form-name', String(formData.get('form-name') || formName));
-        params.append('bot-field', String(formData.get('bot-field') || ''));
+        params.append('form-name', formData.get('form-name'));
+        params.append('bot-field', formData.get('bot-field') || '');
         for (const [key, value] of formData.entries()) {
           if (key === 'form-name' || key === 'bot-field') continue;
           params.append(key, String(value));
         }
 
-        // Submit to root path for Netlify forms (more reliable than page path)
-        const response = await fetch('/', {
+        // Submit to Netlify Forms (current path with cache buster)
+        const response = await fetch(`${window.location.pathname}?no-cache=1`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
           body: params.toString(),
@@ -171,13 +177,11 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
         }
 
         setTimeout(() => {
-          const paypalUrl = `https://www.paypal.com/ncp/payment/${encodeURIComponent(String(payPalButtonId))}`;
+          const paypalUrl = `https://www.paypal.com/ncp/payment/${payPalButtonId}`;
           window.location.assign(paypalUrl);
         }, 1200);
 
-        if (typeof formEl.reset === 'function') {
-          formEl.reset();
-        }
+        form.reset();
       } catch (err) {
         console.error('Error submitting form to Netlify:', err);
         if (submitBtn) submitBtn.disabled = false;
