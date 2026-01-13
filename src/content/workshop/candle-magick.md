@@ -4,7 +4,7 @@ description: 'Learn how to unlock the elemental power of fire and manifest your 
 slug: 'candle-magick'
 excerpt: 'A hands-on magickal experience'
 image: '/assets/images/manifestation-workshop.webp'
-date: 'January 28, 2026'
+date: 'January 29, 2026'
 time: '4:30 to 6:00pm'
 price: 45
 payPalButtonId: 'NSHPCE9D7AXPY'
