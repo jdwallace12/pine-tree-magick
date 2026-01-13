@@ -17,13 +17,13 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
       method="POST"
       data-netlify="true"
       netlify-honeypot="bot-field"
-      data-netlify-recaptcha="false"
       class="needs-validation form-component"
       accept-charset="UTF-8"
       action="/"
     >
       <input type="hidden" name="form-name" value={formName} />
-      <input type="hidden" name={itemType} value={title} />
+      <input type="hidden" name="product_title" value={title} />
+      <input type="hidden" name="product_type" value={itemType} />
       <p class="hidden">
         <label>
           Don't fill this out if you're human: <input name="bot-field" />
@@ -124,6 +124,7 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const formEl = e.currentTarget;
       messageContainer.classList.add('hidden');
 
       if (submitBtn) submitBtn.disabled = true;
@@ -131,40 +132,21 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
       if (submitText) submitText.textContent = 'Submitting...';
 
       try {
-        const formData = new FormData(e.target);
+        const formData = new FormData(formEl);
 
         // Ensure Netlify form-name matches the form's name attribute
-        const formEl = e.target;
-        const formNameAttr = formEl.getAttribute('name') || formName;
-        formData.set('form-name', formNameAttr);
+        formData.set('form-name', formEl.getAttribute('name') || formName);
 
         // Make sure honeypot is empty
         if (!formData.get('bot-field')) {
           formData.set('bot-field', '');
         }
 
-        // Ensure explicit fields are correctly captured
-        const getVal = (id) => {
-          const el = document.getElementById(id);
-          return el && 'value' in el ? el.value : formData.get(id) || '';
-        };
-        formData.set('name', getVal('name'));
-        formData.set('email', getVal('email'));
-
-        // Build params with form-name first
-        const params = new URLSearchParams();
-        params.append('form-name', formData.get('form-name'));
-        params.append('bot-field', formData.get('bot-field') || '');
-        for (const [key, value] of formData.entries()) {
-          if (key === 'form-name' || key === 'bot-field') continue;
-          params.append(key, String(value));
-        }
-
-        // Submit to Netlify Forms (current path with cache buster)
-        const response = await fetch(`${window.location.pathname}?no-cache=1`, {
+        // Submit to Netlify Forms using standard AJAX pattern
+        const response = await fetch('/', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-          body: params.toString(),
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams(formData).toString(),
         });
 
         if (!response.ok) {
@@ -181,7 +163,7 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
           window.location.assign(paypalUrl);
         }, 1200);
 
-        form.reset();
+        formEl.reset();
       } catch (err) {
         console.error('Error submitting form to Netlify:', err);
         if (submitBtn) submitBtn.disabled = false;
