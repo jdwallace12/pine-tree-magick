@@ -3,7 +3,7 @@ interface Props {
   title: string;
   payPalButtonId: string;
   formName: string;
-  itemType: string; // "Ritual Title" or "Bundle Title"
+  itemType: string; // "Ritual Title", "Bundle Title", or "Workshop Title"
 }
 
 const { title, payPalButtonId, formName, itemType } = Astro.props;
@@ -12,7 +12,7 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
 <!-- Purchase Form -->
 <div class="text-center mt-2" id="purchase">
   <div class="bg-primary/10 p-8 rounded-lg mt-6">
-    <form 
+    <form
       name={formName}
       method="POST"
       data-netlify="true"
@@ -67,7 +67,11 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
           <div id="spinner" class="hidden w-5 h-5 mr-2">
             <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              ></path>
             </svg>
           </div>
           <span id="submit-text">Proceed to Payment</span>
@@ -75,7 +79,9 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
       </div>
     </form>
   </div>
-  <p class="text-sm text-gray-300 text-center w-3/4 mx-auto mt-8">You will be redirected to PayPal checkout after submitting your information.</p>
+  <p class="text-sm text-gray-300 text-center w-3/4 mx-auto mt-8">
+    You will be redirected to PayPal checkout after submitting your information.
+  </p>
 </div>
 
 <!-- Success Overlay -->
@@ -134,7 +140,7 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
         // Ensure explicit fields
         const getVal = (id) => {
           const el = document.getElementById(id);
-          const raw = (el && 'value' in el ? el.value : formData.get(id));
+          const raw = el && 'value' in el ? el.value : formData.get(id);
           return raw == null ? '' : String(raw);
         };
         formData.set('name', String(getVal('name')));
@@ -152,7 +158,7 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
         const response = await fetch('/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-          body: params.toString()
+          body: params.toString(),
         });
 
         if (!response.ok) {
@@ -189,4 +195,3 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
     initPurchaseForm();
   }
 </script>
-

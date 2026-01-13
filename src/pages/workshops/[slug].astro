@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Layout from '~/layouts/PageLayout.astro';
 import { Icon } from 'astro-icon/components';
+import PurchaseForm from '~/components/PurchaseForm.astro';
 
 export async function getStaticPaths() {
   const workshops = await getCollection('workshop');
@@ -21,7 +22,7 @@ if (!workshop) {
   throw new Error('Workshop not found');
 }
 
-const { title, description, image, price, date, time, location, signupLink } = workshop.data;
+const { title, description, image, price, date, time, location, signupLink, payPalButtonId, isPaid } = workshop.data;
 const body = workshop.body;
 const { Content } = await workshop.render();
 
@@ -29,17 +30,31 @@ const metadata = {
   title: title,
   description: description,
 };
+
+const hasPurchase = payPalButtonId || isPaid;
 ---
 
 <Layout metadata={metadata}>
   <article class="max-w-2xl mx-auto p-6 space-y-6">
-    <div class="flex justify-between items-center sticky top-[4.5rem] bg-dark py-4">
-    <a href="/workshops#workshops" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to All Workshops</a>
-    { signupLink && (
-      <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href={signupLink}>Sign Up</a>
-      )
-    }
-  </div>
+    <div class="flex justify-between items-center sticky top-[4.5rem] bg-dark py-4 z-10">
+      <a href="/workshops#workshops" class="flex underline w-max"
+        ><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to All Workshops</a
+      >
+      {
+        signupLink && (
+          <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href={signupLink}>
+            Sign Up
+          </a>
+        )
+      }
+      {
+        hasPurchase && (
+          <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href="#purchase">
+            Register Now
+          </a>
+        )
+      }
+    </div>
     <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
     <h1 class="text-4xl mt-4 font-heading">{title}</h1>
     <div class="text-lg">
@@ -49,13 +64,40 @@ const metadata = {
       <p><strong>Price:</strong> ${price}</p>
     </div>
     <div>
-      <div class="prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
+      <div
+        class="prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none"
+      >
         <Content />
-        { signupLink && (
-          <a class="btn-primary py-2.5 px-5.5 md:px-6 font-semibold shadow-none no-underline text-sm w-36 block mx-auto" href={signupLink} target="_blank">Sign Up</a>
+        {
+          signupLink && (
+            <a
+              class="btn-primary py-2.5 px-5.5 md:px-6 font-semibold shadow-none no-underline text-sm w-36 block mx-auto mt-8"
+              href={signupLink}
+              target="_blank"
+            >
+              Sign Up
+            </a>
           )
         }
       </div>
     </div>
+
+    {
+      hasPurchase && payPalButtonId && (
+        <div class="mt-12">
+          <h2 class="text-3xl font-heading text-center mb-4">Reserve Your Spot</h2>
+          <p class="text-center text-muted mb-8">
+            Register below to secure your place in this workshop. After submission, you'll be redirected to PayPal to
+            complete your purchase.
+          </p>
+          <PurchaseForm
+            title={title}
+            payPalButtonId={payPalButtonId}
+            formName={`workshop-purchase-${slug}`}
+            itemType="Workshop Title"
+          />
+        </div>
+      )
+    }
   </article>
 </Layout>
