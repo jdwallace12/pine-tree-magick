@@ -96,12 +96,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
       <!-- Purchase Form -->
       {
         !isExpired && (
-          <PurchaseForm
-            title={title}
-            payPalButtonId={payPalButtonId}
-            formName="guided-ritual"
-            itemType="Ritual Title"
-          />
+          <PurchaseForm title={title} payPalButtonId={payPalButtonId} formName="guided-ritual" itemType={title} />
         )
       }
     </div>
