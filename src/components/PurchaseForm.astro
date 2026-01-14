@@ -119,7 +119,7 @@ const { title, payPalButtonId, formName, itemType, showAllergies = false } = Ast
   </div>
 </div>
 
-<script define:vars={{ payPalButtonId, formName }}>
+<script define:vars={{ payPalButtonId, formName, title, itemType }}>
   function initPurchaseForm() {
     const form = document.querySelector('form.form-component');
     if (!form) return;
@@ -150,6 +150,10 @@ const { title, payPalButtonId, formName, itemType, showAllergies = false } = Ast
 
       try {
         const formData = new FormData(formEl);
+
+        // Explicitly set product title and type to ensure they are captured
+        formData.set('product_title', title);
+        formData.set('product_type', itemType);
 
         // Ensure Netlify form-name matches the form's name attribute
         formData.set('form-name', formEl.getAttribute('name') || formName);
