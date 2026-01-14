@@ -23,8 +23,8 @@ const { title, payPalButtonId, formName, itemType, showAllergies = false } = Ast
       action="/"
     >
       <input type="hidden" name="form-name" value={formName} />
-      <input type="hidden" name="product_title" value={title} />
-      <input type="hidden" name="product_type" value={itemType} />
+      <input type="hidden" name="Product" value={title} />
+      <input type="hidden" name="Category" value={itemType} />
       <p class="hidden">
         <label>
           Don't fill this out if you're human: <input name="bot-field" />
@@ -151,12 +151,9 @@ const { title, payPalButtonId, formName, itemType, showAllergies = false } = Ast
       try {
         const formData = new FormData(formEl);
 
-        // Get values directly from form elements for maximum reliability
-        const productTitle = formEl.querySelector('[name="product_title"]')?.value || title;
-        const itemTypeVal = formEl.querySelector('[name="product_type"]')?.value || itemType;
-
-        formData.set('product_title', productTitle);
-        formData.set('product_type', itemTypeVal);
+        // Force Product and Category values from props
+        formData.set('Product', title);
+        formData.set('Category', itemType);
 
         // Ensure Netlify form-name matches the form's name attribute
         formData.set('form-name', formEl.getAttribute('name') || formName);
