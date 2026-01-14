@@ -1,0 +1,46 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
+
+const metadata = {
+  title: 'Workshop Registration Confirmed | Pine Tree Magick',
+  description: "Thank you for registering! I can't wait to see you there.",
+};
+---
+
+<Layout metadata={metadata}>
+  <section class="flex items-center h-full p-16">
+    <div class="container flex flex-col items-center justify-center px-5 mx-auto my-8">
+      <div class="max-w-md text-center">
+        <div class="mb-8">
+          <div class="w-20 h-20 mx-auto bg-primary/20 rounded-full flex items-center justify-center text-primary">
+            <Icon name="tabler:check" class="w-12 h-12" />
+          </div>
+        </div>
+        <h2 class="mb-4 font-bold text-4xl">
+          <span class="text-primary">Registration Confirmed!</span>
+        </h2>
+        <p class="text-2xl font-semibold mb-4">You're all set.</p>
+        <div class="space-y-4 text-lg text-muted dark:text-slate-400 mb-10">
+          <p>
+            Thank you for registering for the workshop! If you have any questions, please reach out to me at
+            <a href="mailto:jerseygriggs.writes@gmail.com" class="text-primary hover:underline"
+              >jerseygriggs.writes@gmail.com</a
+            >
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+          <a rel="noopener noreferrer" href="/workshops" class="btn-primary px-8 py-3 rounded-lg font-semibold"
+            >Back to Workshops</a
+          >
+          <a
+            rel="noopener noreferrer"
+            href="/"
+            class="btn px-8 py-3 rounded-lg font-semibold border border-primary text-primary hover:bg-primary/10 transition-colors"
+            >Home</a
+          >
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

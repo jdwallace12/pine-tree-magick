@@ -16,7 +16,7 @@ const { slug } = Astro.params as { slug: string };
 const bundles = await getCollection('bundle');
 
 // Find the bundle based on the slug
-const bundle = bundles.find((bundle) => (bundle.id.replace(/\.md$/, '')) === slug);
+const bundle = bundles.find((bundle) => bundle.id.replace(/\.md$/, '') === slug);
 
 if (!bundle) {
   throw new Error('bundle not found');
@@ -32,13 +32,15 @@ const metadata = {
   openGraph: {
     url: image,
     siteName: title,
-    images: [{
-      url: image,
-      width: 1200,
-      height: 630
-    }],
-    type: "website"
-  }
+    images: [
+      {
+        url: image,
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: 'website',
+  },
 };
 
 // Add expiration check
@@ -48,48 +50,55 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
 <Layout metadata={metadata}>
   <article class="max-w-2xl mx-auto p-6 space-y-6 mb-12">
     <div class="flex gap-8 justify-between items-center sticky top-16 bg-dark py-2">
-      <a href="/shop" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop</a>
-      
+      <a href="/shop" class="flex underline w-max"><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop</a
+      >
+
       <div class="text-2xl md:text-4xl text-gray-400 mt-2 flex flex-col gap-0 relative top-[-.3rem]">
-        {!isExpired && (
-        <div>
-            <a
-              href="#purchase"
-              style="text-align: center; border: none; height: 2.625rem; color: #f59bbb; font-family: 'Merriweather Sans Variable', Arial, sans-serif; font-size: 1.5rem; line-height: 1.25rem; cursor: pointer; display: inline-grid; place-items: center;"
-            >
-              Buy Now
-            </a>
-            <p>${price}</p>
-        </div>
-        )}
+        {
+          !isExpired && (
+            <div>
+              <a
+                href="#purchase"
+                style="text-align: center; border: none; height: 2.625rem; color: #f59bbb; font-family: 'Merriweather Sans Variable', Arial, sans-serif; font-size: 1.5rem; line-height: 1.25rem; cursor: pointer; display: inline-grid; place-items: center;"
+              >
+                Buy Now
+              </a>
+              <p>${price}</p>
+            </div>
+          )
+        }
       </div>
     </div>
     <div class="flex flex-col gap-8">
       <div>
-        <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Bundles</p>
+        <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">
+          Bundles
+        </p>
         <h1 class="text-4xl md:text-5xl font-heading text-center">{title}</h1>
         <p class="text-xl text-muted text-center mt-2">{description}</p>
       </div>
-   
-    <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
-    
-    <div class="mb-2 prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
-      <Content />
-      {isExpired && (
-        <div class="bg-red-900/50 text-red-200 p-4 rounded-lg text-center mb-6">
-          This bundle has expired and is no longer available for purchase.
-        </div>
-      )}
-    </div>
 
-    <!-- Purchase Form -->
-    {!isExpired && (
-      <PurchaseForm 
-        title={title}
-        payPalButtonId={payPalButtonId}
-        formName="bundle-purchase"
-        itemType="Bundle Title"
-      />
-    )}
+      <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
+
+      <div
+        class="mb-2 prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none"
+      >
+        <Content />
+        {
+          isExpired && (
+            <div class="bg-red-900/50 text-red-200 p-4 rounded-lg text-center mb-6">
+              This bundle has expired and is no longer available for purchase.
+            </div>
+          )
+        }
+      </div>
+
+      <!-- Purchase Form -->
+      {
+        !isExpired && (
+          <PurchaseForm title={title} payPalButtonId={payPalButtonId} formName="bundles" itemType="Bundle" />
+        )
+      }
+    </div>
   </article>
 </Layout>
