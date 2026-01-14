@@ -22,7 +22,8 @@ if (!workshop) {
   throw new Error('Workshop not found');
 }
 
-const { title, description, image, price, date, time, location, signupLink, payPalButtonId, isPaid } = workshop.data;
+const { title, description, image, price, date, time, location, signupLink, payPalButtonId, isPaid, showAllergies } =
+  workshop.data;
 const body = workshop.body;
 const { Content } = await workshop.render();
 
@@ -95,6 +96,7 @@ const hasPurchase = payPalButtonId || isPaid;
             payPalButtonId={payPalButtonId}
             formName={`workshop-purchase-${slug}`}
             itemType="Workshop Title"
+            showAllergies={showAllergies}
           />
         </div>
       )

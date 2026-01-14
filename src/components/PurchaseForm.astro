@@ -4,9 +4,10 @@ interface Props {
   payPalButtonId: string;
   formName: string;
   itemType: string; // "Ritual Title", "Bundle Title", or "Workshop Title"
+  showAllergies?: boolean;
 }
 
-const { title, payPalButtonId, formName, itemType } = Astro.props;
+const { title, payPalButtonId, formName, itemType, showAllergies = false } = Astro.props;
 ---
 
 <!-- Purchase Form -->
@@ -57,6 +58,22 @@ const { title, payPalButtonId, formName, itemType } = Astro.props;
             placeholder="you@email.com"
           />
         </div>
+        {
+          showAllergies && (
+            <div>
+              <label for="allergies" class="block text-sm font-medium mb-2 text-left md:text-center">
+                Allergies I should be aware of for the tea that will be served?
+              </label>
+              <input
+                type="text"
+                id="allergies"
+                name="allergies"
+                class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+                placeholder="Any allergies?"
+              />
+            </div>
+          )
+        }
       </div>
       <div class="mt-6 grid">
         <button
