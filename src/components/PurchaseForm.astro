@@ -151,9 +151,12 @@ const { title, payPalButtonId, formName, itemType, showAllergies = false } = Ast
       try {
         const formData = new FormData(formEl);
 
-        // Explicitly set product title and type to ensure they are captured
-        formData.set('product_title', title);
-        formData.set('product_type', itemType);
+        // Get values directly from form elements for maximum reliability
+        const productTitle = formEl.querySelector('[name="product_title"]')?.value || title;
+        const itemTypeVal = formEl.querySelector('[name="product_type"]')?.value || itemType;
+
+        formData.set('product_title', productTitle);
+        formData.set('product_type', itemTypeVal);
 
         // Ensure Netlify form-name matches the form's name attribute
         formData.set('form-name', formEl.getAttribute('name') || formName);
