@@ -2,6 +2,7 @@
 import { Icon } from 'astro-icon/components';
 import { twMerge } from 'tailwind-merge';
 import type { Item } from '~/types';
+import Button from './Button.astro';
 import ScrollAnimation from './ScrollAnimation.astro';
 
 export interface Props {
@@ -24,7 +25,7 @@ const {
 {
   items && items.length && (
     <div class={containerClass}>
-      {items.map(({ title, description, icon, classes: itemClasses = {} }, index = 0) => (
+      {items.map(({ title, description, icon, classes: itemClasses = {}, callToAction }, index = 0) => (
         <ScrollAnimation delay={index * 200} class="w-full">
           <div class={twMerge('flex', panelClass, itemClasses?.panel)}>
             <div class="flex flex-col items-center mr-4 rtl:mr-0 rtl:ml-4">
@@ -47,6 +48,11 @@ const {
                   class={twMerge('text-muted mt-2', descriptionClass, itemClasses?.description)}
                   set:html={description}
                 />
+              )}
+              {callToAction && (
+                <div class="mt-4">
+                  <Button {...callToAction} />
+                </div>
               )}
             </div>
           </div>

@@ -56,7 +56,11 @@ const {
   data-netlify="true"
   netlify-honeypot="bot-field"
   class="needs-validation form-component"
-  action={formName === 'contact' ? '/success' : '/download/' + redirectUrl.split('/').pop()}
+  action={
+    redirectUrl 
+      ? '/download/' + redirectUrl.split('/').pop() 
+      : '/success'
+  }
 >
   <input type="hidden" name="form-name" value={formName} />
   <p class="hidden">
@@ -152,7 +156,7 @@ const {
   <!-- Add these elements for messages -->
   <div class="mt-4 hidden text-center" data-form-message>
     <p class="text-green-600 dark:text-green-400 hidden" data-success-message>
-      {formName === 'freebie-download' 
+      {redirectUrl 
         ? 'Form submitted successfully! Your download will begin shortly...'
         : 'Message sent successfully! We\'ll get back to you soon.'}
     </p>
@@ -192,12 +196,12 @@ const {
             errorMessage.classList.add('hidden');
             
             // For freebie downloads, redirect after successful form submission
-            if (formName === 'freebie-download' && redirectUrl) {
+            if (redirectUrl) {
               setTimeout(() => {
                 window.location.href = redirectUrl;
               }, 1500);
             } else {
-              // For contact form, redirect to success page
+              // For other forms, redirect to success page
               setTimeout(() => {
                 window.location.href = '/success';
               }, 1500);
