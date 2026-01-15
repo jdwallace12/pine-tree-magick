@@ -66,6 +66,7 @@ const postCollection = defineCollection({
 const workshopCollection = defineCollection({
   schema: z.object({
     title: z.string(),
+    slug: z.string().optional(),
     description: z.string(),
     excerpt: z.string(),
     image: z.string(),
