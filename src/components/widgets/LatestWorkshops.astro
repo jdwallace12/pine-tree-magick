@@ -50,7 +50,10 @@ const sortedWorkshops = filteredWorkshops.sort(
                   <img
                     src={workshop.data.image}
                     alt={workshop.data.title}
-                    class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-110"
+                    class={twMerge(
+                      'w-full flex object-cover transform transition-transform duration-300 group-hover:scale-110',
+                      sortedWorkshops.length === 1 ? 'h-64 md:h-80' : 'h-48'
+                    )}
                   />
                 </div>
                 <div class="px-4 py-6 overflow-hidden">
