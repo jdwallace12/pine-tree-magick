@@ -25,7 +25,7 @@ const metadata = {
       <nav class="flex justify-center space-x-12 text-sm font-medium tracking-wide">
         <a
           href="#private"
-          class="readings-nav-link text-muted hover:text-primary transition-all duration-200 border-b-2 border-transparent hover:border-primary/30 py-1"
+          class="readings-nav-link text-primary border-primary hover:text-primary transition-all duration-200 border-b-2 hover:border-primary/30 py-1"
           >Private Sessions</a
         >
         <a
@@ -526,6 +526,17 @@ const metadata = {
           }
         });
       }, observerOptions);
+
+      // Initial check in case we are already at a section
+      const currentHash = window.location.hash;
+      if (!currentHash) {
+        // Default to first link active if no hash
+        const firstLink = links[0];
+        if (firstLink) {
+          firstLink.classList.add('text-primary', 'border-primary');
+          firstLink.classList.remove('text-muted', 'border-transparent');
+        }
+      }
 
       sections.forEach((section) => {
         if (section) observer.observe(section);
