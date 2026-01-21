@@ -22,8 +22,20 @@ if (!workshop) {
   throw new Error('Workshop not found');
 }
 
-const { title, description, image, price, date, time, location, signupLink, payPalButtonId, isPaid, showAllergies } =
-  workshop.data;
+const {
+  title,
+  description,
+  image,
+  price,
+  date,
+  time,
+  location,
+  signupLink,
+  payPalButtonId,
+  isPaid,
+  showAllergies,
+  soldOut,
+} = workshop.data;
 const body = workshop.body;
 const { Content } = await workshop.render();
 
@@ -32,7 +44,7 @@ const metadata = {
   description: description,
 };
 
-const hasPurchase = payPalButtonId || isPaid;
+const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
 ---
 
 <Layout metadata={metadata}>
@@ -42,7 +54,7 @@ const hasPurchase = payPalButtonId || isPaid;
         ><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to All Workshops</a
       >
       {
-        signupLink && (
+        signupLink && !soldOut && (
           <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href={signupLink}>
             Sign Up
           </a>
@@ -56,7 +68,16 @@ const hasPurchase = payPalButtonId || isPaid;
         )
       }
     </div>
-    <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
+    <div class="relative">
+      <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
+      {
+        soldOut && (
+          <div class="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-md font-bold shadow-lg transform rotate-3 uppercase tracking-wider border-2 border-white">
+            Sold Out
+          </div>
+        )
+      }
+    </div>
     <h1 class="text-4xl mt-4 font-heading">{title}</h1>
     <div class="text-lg">
       <p><strong>Date:</strong> {date}</p>
@@ -70,7 +91,7 @@ const hasPurchase = payPalButtonId || isPaid;
       >
         <Content />
         {
-          signupLink && (
+          signupLink && !soldOut && (
             <a
               class="btn-primary py-2.5 px-5.5 md:px-6 font-semibold shadow-none no-underline text-sm w-36 block mx-auto mt-8"
               href={signupLink}
@@ -84,7 +105,18 @@ const hasPurchase = payPalButtonId || isPaid;
     </div>
 
     {
-      hasPurchase && payPalButtonId && (
+      soldOut && (
+        <div class="mt-12 p-8 border-2 border-dashed border-gray-300 dark:border-slate-700 rounded-lg text-center">
+          <h2 class="text-3xl font-heading mb-4">Sold Out</h2>
+          <p class="text-muted text-lg">
+            This workshop is currently sold out. Follow me on social media or check back later for future dates!
+          </p>
+        </div>
+      )
+    }
+
+    {
+      hasPurchase && payPalButtonId && !soldOut && (
         <div class="mt-12">
           <h2 class="text-3xl font-heading text-center mb-4">Reserve Your Spot</h2>
           <p class="text-center text-muted mb-8">

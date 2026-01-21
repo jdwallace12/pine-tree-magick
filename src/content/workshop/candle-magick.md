@@ -13,6 +13,7 @@ location: 'Botanically Curious - 419 Congress St, Portland, ME'
 maxParticipants: 10
 category: 'Candle Magick'
 showAllergies: true
+soldOut: true
 ---
 
 Join me for a cozy gathering of magick-making, intention setting, crafting, tea, and conversation! This hands-on candle magick workshop will guide you through the process of creating your own magickal sigil and carving and anointing candles to bring a dream to fruition.
