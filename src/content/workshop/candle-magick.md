@@ -4,16 +4,16 @@ description: 'Learn how to unlock the elemental power of fire and manifest your 
 slug: 'candle-magick'
 excerpt: 'A hands-on magickal experience'
 image: '/assets/images/manifestation-workshop.webp'
-date: 'January 29, 2026'
+date: 'March 26, 2026'
 time: '4:30 to 6:00pm'
 price: 45
 payPalButtonId: 'NSHPCE9D7AXPY'
 isPaid: true
 location: 'Botanically Curious - 419 Congress St, Portland, ME'
-maxParticipants: 10
 category: 'Candle Magick'
 showAllergies: true
-soldOut: true
+maxParticipants: 12
+soldOut: false
 ---
 
 Join me for a cozy gathering of magick-making, intention setting, crafting, tea, and conversation! This hands-on candle magick workshop will guide you through the process of creating your own magickal sigil and carving and anointing candles to bring a dream to fruition.
