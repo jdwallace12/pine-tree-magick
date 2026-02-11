@@ -77,6 +77,7 @@ const workshopCollection = defineCollection({
     signupLink: z.string().optional(),
     payPalButtonId: z.string().optional(),
     isPaid: z.boolean().optional(),
+    soldOut: z.boolean().optional(),
     showAllergies: z.boolean().optional(),
     maxParticipants: z.number(),
     category: z.string().optional(),

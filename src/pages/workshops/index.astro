@@ -14,6 +14,7 @@ interface Workshop {
     location: string;
     price: number;
     image: string;
+    soldOut?: boolean;
   };
 }
 
@@ -27,7 +28,9 @@ const workshopsWithSlug = workshops.map((workshop) => ({
   },
 }));
 
-const sortedWorkshops = workshopsWithSlug.sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+const sortedWorkshops = workshopsWithSlug.sort(
+  (a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf()
+);
 
 const metadata = {
   title: 'Workshops | Pine Tree Magick',
@@ -37,101 +40,123 @@ const metadata = {
 
 <Layout metadata={metadata}>
   <div class="mx-auto max-w-7xl p-4 md:px-8">
-    <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Join our Live Workshops</p>
-    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center">Workshops and Events</h1>
+    <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">
+      Join our Live Workshops
+    </p>
+    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center">
+      Workshops and Events
+    </h1>
   </div>
-<!-- Content Widget **************** -->
-<ContentOverlap
-isReversed
-image={{
-  src: '/assets/images/monthly-moon-workshop.webp',
-  alt: 'Hand-drawn botanical moon phases',
-}}
->
-<Fragment slot="content">
-  <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Monthly Moon Circles</h2>
-  <p>
-    Working with the lunar cycles is a powerful way to manifest intentions. Each month, the new moon invites us to embrace new beginnings, while the full moon encourages us to release what no longer serves us. When practiced consistently, aligning with lunar rhythms can foster positive change into our daily lives.
-  </p>
-  <br/>
-  <p>
-    Every monthly moon circle aligns with the current lunation and astrological chart, creating a unique and meaningful experience tailored specifically by Jersey. Through divination, guided meditation, reflective journaling, and a manifestation ritual, Jersey guides participants to connect deeply with themselves to set clear intentions and align themselves with their purpose.
-  </p>
-</Fragment>
+  <!-- Content Widget **************** -->
+  <ContentOverlap
+    isReversed
+    image={{
+      src: '/assets/images/monthly-moon-workshop.webp',
+      alt: 'Hand-drawn botanical moon phases',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Monthly Moon Circles</h2>
+      <p>
+        Working with the lunar cycles is a powerful way to manifest intentions. Each month, the new moon invites us to
+        embrace new beginnings, while the full moon encourages us to release what no longer serves us. When practiced
+        consistently, aligning with lunar rhythms can foster positive change into our daily lives.
+      </p>
+      <br />
+      <p>
+        Every monthly moon circle aligns with the current lunation and astrological chart, creating a unique and
+        meaningful experience tailored specifically by Jersey. Through divination, guided meditation, reflective
+        journaling, and a manifestation ritual, Jersey guides participants to connect deeply with themselves to set
+        clear intentions and align themselves with their purpose.
+      </p>
+    </Fragment>
 
-<Fragment slot="bg">
-  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-</Fragment>
-</ContentOverlap>
-<!-- Content Widget **************** -->
-<ContentOverlap
-isReversed
-image={{
-  src: '/assets/images/manifestation-workshop.webp',
-  alt: 'Hand-drawn botanical moon phases',
-}}
->
-<Fragment slot="content">
-  <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Manifestation Workshops</h2>
-  <p>
-    Join a manifestation workshop and discover that magick is real! Magick is best achieved by setting clear, grounded intentions that align with your authentic self. In these workshops, Jersey guides participants in connecting to their inner power to create meaningful changes in their external world. Blending practical techniques with magickal practices, Jersey’s workshops cover topics such as money manifestation, candle magick, plant magick, and other manifestation rituals designed to inspire transformation and initiate lasting change.
-  </p>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </ContentOverlap>
+  <!-- Content Widget **************** -->
+  <ContentOverlap
+    isReversed
+    image={{
+      src: '/assets/images/manifestation-workshop.webp',
+      alt: 'Hand-drawn botanical moon phases',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Manifestation Workshops</h2>
+      <p>
+        Join a manifestation workshop and discover that magick is real! Magick is best achieved by setting clear,
+        grounded intentions that align with your authentic self. In these workshops, Jersey guides participants in
+        connecting to their inner power to create meaningful changes in their external world. Blending practical
+        techniques with magickal practices, Jersey’s workshops cover topics such as money manifestation, candle magick,
+        plant magick, and other manifestation rituals designed to inspire transformation and initiate lasting change.
+      </p>
+    </Fragment>
 
-</Fragment>
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </ContentOverlap>
+  <!-- Content Widget **************** -->
+  <ContentOverlap
+    isReversed
+    image={{
+      src: '/assets/images/astrology-workshop.webp',
+      alt: 'Hand-drawn botanical moon phases',
+    }}
+  >
+    <Fragment slot="content">
+      <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Astrology Workshops**</h2>
+      <p>
+        Even without a professional reading, beginners can learn the basics of astrology to bring ease and empowerment
+        into their lives. Whether by teaching participants how to best align their schedules or how to unlock the
+        potential of their birth charts, Jersey makes astrology accessible to all. Her grounded approach to teaching
+        empowers others to seek clarity and insight, helping them navigate daily lives with ease and confidence.
+      </p>
+      <br />
+      <p class="text-sm">**Astrology Workshops require a specific birth time and birth location</p>
+    </Fragment>
 
-<Fragment slot="bg">
-  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-</Fragment>
-</ContentOverlap>
-<!-- Content Widget **************** -->
-<ContentOverlap
-isReversed
-image={{
-  src: '/assets/images/astrology-workshop.webp',
-  alt: 'Hand-drawn botanical moon phases',
-}}
->
-<Fragment slot="content">
-  <h2 class="tracking-tight dark:text-white text-3xl sm:text-4xl mb-2 font-heading">Astrology Workshops**</h2>
-  <p>
-    Even without a professional reading, beginners can learn the basics of astrology to bring ease and empowerment into their lives. Whether by teaching participants how to best align their schedules or how to unlock the potential of their birth charts, Jersey makes astrology accessible to all. Her grounded approach to teaching empowers others to seek clarity and insight, helping them navigate daily lives with ease and confidence.
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </ContentOverlap>
+  <p
+    id="workshops"
+    class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-8 md:mt-12"
+  >
+    All Future, Past, and Present Workshops
   </p>
-  <br/>
-  <p class="text-sm">
-    **Astrology Workshops require a specific birth time and birth location
-  </p>
-</Fragment>
-
-<Fragment slot="bg">
-  <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
-</Fragment>
-</ContentOverlap>
-<p id="workshops" class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-8 md:mt-12">All Future, Past, and Present Workshops</p>
   <h2 class="text-3xl md:text-4xl font-heading text-center mb-12">All Workshops</h2>
-  <div class=" grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 mx-auto max-w-7xl px-8 md:px-12">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-16 mx-auto max-w-7xl px-8 md:px-12">
     {
       sortedWorkshops.map((workshop) => (
         <div class="relative w-[100%] dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md dark:hover:border-1 dark:hover:border-primary transition-all duration-300">
           <a href={`/workshops/${workshop.data.slug}`} class="block group">
             <div class="overflow-hidden">
-              <img 
-                src={workshop.data.image} 
-                alt={workshop.data.title} 
+              <img
+                src={workshop.data.image}
+                alt={workshop.data.title}
                 class="w-full flex h-48 object-cover transform transition-transform duration-300 group-hover:scale-110"
               />
             </div>
             <div class="px-4 py-6 overflow-hidden">
-              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">{workshop.data.title}</h3>
+              <h3 class="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">
+                {workshop.data.title}
+              </h3>
               <span class="text-gray-600 dark:text-gray-400">{workshop.data.date}</span>
               <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">{workshop.data.excerpt}</p>
               <div class="flex justify-between items-center text-sm">
                 <div class="text-sm text-gray-600 dark:text-gray-400">{workshop.data.location}</div>
-                <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded font-bold">${workshop.data.price}</span>
+                <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded font-bold">
+                  ${workshop.data.price}
+                </span>
               </div>
             </div>
           </a>
         </div>
       ))
     }
-  </div>  
+  </div>
 </Layout>
