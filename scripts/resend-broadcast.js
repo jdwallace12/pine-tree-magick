@@ -48,7 +48,7 @@ const getHtmlTemplate = (title, content, imageUrl) => `
           <tr>
             <td align="center" style="padding: 0 40px 40px 40px; border-top: 1px solid #f0f0f0;">
                <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                © 2026 You're receiving this because your past interest in Pine Tree Magick. All rights reserved.<br>
+                © 2026 Pine Tree Magick. All rights reserved.<br>
                 <br>
                 <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
               </p>
@@ -62,11 +62,15 @@ const getHtmlTemplate = (title, content, imageUrl) => `
 </html>
 `;
 
-// Configure marked to style images
+// Configure marked to style images and links
 const renderer = new marked.Renderer();
 renderer.image = function(token) {
   const { href, title, text } = token;
   return `<img src="${href}" alt="${text}" title="${title || ''}" style="max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 24px auto;" />`;
+};
+renderer.link = function(token) {
+  const { href, title, text } = token;
+  return `<a href="${href}" title="${title || ''}" style="color: #f59bbb; text-decoration: underline;">${text}</a>`;
 };
 marked.setOptions({ renderer });
 
