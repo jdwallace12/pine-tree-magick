@@ -3,6 +3,16 @@ import { Resend } from 'resend';
 export const handler = async (event) => {
   const { payload } = JSON.parse(event.body);
   const { email, name, first_name, last_name } = payload.data;
+  const formName = payload.form_name;
+
+  // Skip lead sync for the general contact form
+  if (formName === 'contact') {
+    console.log('Skipping Resend sync for contact form.');
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Sync skipped for contact form' }),
+    };
+  }
 
   const resendApiKey = process.env.RESEND_API_KEY;
   const audienceId = process.env.RESEND_AUDIENCE_ID;

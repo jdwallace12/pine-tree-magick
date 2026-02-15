@@ -5,7 +5,7 @@ excerpt: "Welcome to our very first newsletter. Here's what we have in store for
 image: 'https://pinetreemagick.com/assets/images/manifestation-workshop.webp'
 ---
 
-# Hello and Welcome!
+# Hello and Welcome this is the second newsletter!
 
 I am so glad you've joined the **Pine Tree Magick** community.
 
@@ -20,6 +20,8 @@ Each month, I'll be sending out:
 - **Tarot & Astrology Insights**: Seasonal guidance for your journey.
 
 ### Join our next Workshop
+
+![Description](https://pinetreemagick.com/assets/images/manifestation-workshop.webp)
 
 Don't forget to check out our upcoming [Candle Magick Workshop](https://pinetreemagick.com/workshop/candle-magick).
 
