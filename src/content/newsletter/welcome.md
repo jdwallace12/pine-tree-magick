@@ -5,7 +5,7 @@ excerpt: "Welcome to our very first newsletter. Here's what we have in store for
 image: 'https://pinetreemagick.com/assets/images/purpose-reading.webp'
 ---
 
-# Hello and Welcome this is the first Pine Tree Magick newsletter!
+# Welcome to Pine Tree Magick!
 
 I am so glad you've joined the **Pine Tree Magick** community.
 
