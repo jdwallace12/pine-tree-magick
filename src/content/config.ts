@@ -132,6 +132,15 @@ const freebieCollection = defineCollection({
   }),
 });
 
+const newsletterCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    publishDate: z.date().optional(),
+    excerpt: z.string().optional(),
+    image: z.string().optional(),
+  }),
+});
+
 
 export const collections = {
   post: postCollection,
@@ -139,4 +148,5 @@ export const collections = {
   ritual: ritualCollection,
   bundle: bundleCollection,
   freebie: freebieCollection,
+  newsletter: newsletterCollection,
 };
