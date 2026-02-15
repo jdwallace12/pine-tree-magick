@@ -23,7 +23,7 @@ Each month, I'll be sending out:
 
 ![Description](https://pinetreemagick.com/assets/images/manifestation-workshop.webp)
 
-Don't forget to check out our upcoming [Candle Magick Workshop](https://pinetreemagick.com/workshop/candle-magick).
+Don't forget to check out our upcoming [Candle Magick Workshop](https://pinetreemagick.com/workshops/candle-magick).
 
 With love and magick,
 _Jersey_
