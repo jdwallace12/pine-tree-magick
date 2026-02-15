@@ -2,10 +2,10 @@
 title: 'Welcome to Pine Tree Magick! ✨'
 publishDate: 2026-02-14
 excerpt: "Welcome to our very first newsletter. Here's what we have in store for you."
-image: 'https://pinetreemagick.com/assets/images/manifestation-workshop.webp'
+image: 'https://pinetreemagick.com/assets/images/purpose-reading.webp'
 ---
 
-# Hello and Welcome this is the second newsletter!
+# Hello and Welcome this is the first Pine Tree Magick newsletter!
 
 I am so glad you've joined the **Pine Tree Magick** community.
 

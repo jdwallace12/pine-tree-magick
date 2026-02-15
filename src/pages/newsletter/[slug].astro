@@ -1,0 +1,24 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import { getNewsletterHtml } from '~/utils/newsletter';
+
+export async function getStaticPaths() {
+  const newsletters = await getCollection('newsletter');
+  return newsletters.map((newsletter) => ({
+    params: { slug: newsletter.id.replace(/\.md$/, '') },
+  }));
+}
+
+const { slug } = Astro.params;
+const newsletter = await getEntry('newsletter', slug);
+
+if (!newsletter) {
+  return Astro.redirect('/404');
+}
+
+const html = getNewsletterHtml(newsletter.data.title, newsletter.body, newsletter.data.image);
+
+// We want to serve just the raw HTML for the email preview
+---
+
+<Fragment set:html={html} />
