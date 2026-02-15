@@ -33,11 +33,24 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title} | Pine Tree Magick</title>
+  <style>
+    @media screen and (max-width: 600px) {
+      .content-cell {
+        padding: 24px 20px 30px 20px !important;
+      }
+      .footer-cell {
+        padding: 0 20px 30px 20px !important;
+      }
+      .logo-cell {
+        padding: 30px 20px 10px 20px !important;
+      }
+    }
+  </style>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #1a263a;">
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #1a263a">
     <tr>
-      <td align="center" style="padding: 40px 40px 20px 20px;">
+      <td align="center" class="logo-cell" style="padding: 40px 40px 20px 20px;">
         <img src="https://pinetreemagick.com/assets/logo/logo-light.png" alt="Pine Tree Magick" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
       </td>
     </tr>
@@ -45,7 +58,7 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
       <td align="center" style="padding: 0 20px 40px 20px;">
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <tr>
-            <td style="padding: ${padding} 40px 40px 40px;">
+            <td class="content-cell" style="padding: ${padding} 40px 40px 40px;">
               ${imgHtml}
               <div class="newsletter-content" style="font-size: 16px; line-height: 1.6; color: #4a4a4a;">
                 ${htmlBody}
@@ -53,7 +66,7 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
             </td>
           </tr>
           <tr>
-            <td align="center" style="padding: 0 40px 40px 40px; border-top: 1px solid #f0f0f0;">
+            <td align="center" class="footer-cell" style="padding: 0 40px 40px 40px; border-top: 1px solid #f0f0f0;">
                <p style="margin-top: 20px; font-size: 12px; color: #999;">
                 © 2026 Pine Tree Magick. All rights reserved.<br>
                 <br>
