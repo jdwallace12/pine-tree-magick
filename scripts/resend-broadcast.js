@@ -70,7 +70,7 @@ renderer.image = function(token) {
 };
 renderer.link = function(token) {
   const { href, title, text } = token;
-  return `<a href="${href}" title="${title || ''}" style="color: #f59bbb; text-decoration: underline;">${text}</a>`;
+  return `<a href="${href}" title="${title || ''}" style="color: #f59bbb; text-decoration: underline; font-weight: bold;">${text}</a>`;
 };
 marked.setOptions({ renderer });
 
