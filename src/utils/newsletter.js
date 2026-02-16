@@ -139,7 +139,18 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
         padding: 0 20px 30px 20px !important;
       }
       .logo-cell {
-        padding: 30px 20px 10px 20px !important;
+        padding: 30px 20px 30px 20px !important;
+        text-align: left !important;
+      }
+      .logo-img {
+        margin: 0 !important;
+      }
+      .content-wrapper {
+        width: 100% !important;
+        border-radius: 0 !important;
+      }
+      .outer-wrapper-cell {
+        padding: 0 !important;
       }
     }
     /* Dark mode overrides */
@@ -151,17 +162,29 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
         background-color: #ffffff !important;
       }
     }
+    /* Gmail-specific dark mode overrides */
+    [data-ogsc] .body-table, [data-ogsb] .body-table {
+      background-color: #1a263a !important;
+      background-image: linear-gradient(#1a263a, #1a263a) !important;
+    }
+    [data-ogsc] .content-wrapper, [data-ogsb] .content-wrapper {
+      background-color: #ffffff !important;
+      color: #4a4a4a !important;
+    }
+    [data-ogsc] .logo-img, [data-ogsb] .logo-img {
+      filter: none !important;
+    }
   </style>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #1a263a;">
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="body-table" style="background-color: #1a263a">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="body-table" style="background-color: #1a263a; background-image: linear-gradient(#1a263a, #1a263a);">
     <tr>
-      <td align="center" class="logo-cell" style="padding: 40px 40px 20px 20px;">
-        <img src="https://pinetreemagick.com/assets/logo/logo-light.png" alt="Pine Tree Magick" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
+      <td align="center" class="logo-cell" style="padding: 40px 40px 20px 20px; background-image: linear-gradient(#1a263a, #1a263a);">
+        <img src="https://pinetreemagick.com/assets/logo/logo-light.png" alt="Pine Tree Magick" class="logo-img" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
       </td>
     </tr>
     <tr>
-      <td align="center" style="padding: 0 20px 40px 20px;">
+      <td align="center" class="outer-wrapper-cell" style="padding: 0 20px 40px 20px;">
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" class="content-wrapper" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
           <tr>
             <td class="content-cell" style="padding: ${padding} 40px 40px 40px;">
