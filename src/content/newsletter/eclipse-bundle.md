@@ -25,7 +25,7 @@ The next two years will transform themes related to the Leo/Aquarius houses of y
 
 As an astrologer who specializes in timing, I look to where the nodes are transiting to understand where a person is experiencing a lot of change in their life.
 
-**But here’s the thing — I can tell you the weather report, but YOU are the one that has to live through it. That’s why I’ve created my [2026 FREE Eclipse Season Bundle](https://drive.google.com/file/d/1mePUCujc4YXOzDXTRWZF5zbQgkHrZzv2/view) – my gift to you.**
+**But here’s the thing — I can tell you the weather report, but YOU are the one that has to live through it. That’s why I’ve created my [2026 FREE Eclipse Season Bundle](https://drive.google.com/file/d/1qgW2vS-QVYLSVsE73Z92ODzFHvZSJq7U/view?usp=sharing) – my gift to you.**
 
 > Inside the bundle you’ll find everything you need to get through eclipse season, including a lesson on eclipses, key dates, journal prompts, and tracking and reference sheets to help you make sense of what’s going on. I’ve also included a free meditation so you can ground yourself during this chaotic time.
 
@@ -47,9 +47,9 @@ _This is especially poignant, because as we move through these eclipses over the
 
 **This is a perfect example of how we can use astrology, and these eclipses, as tools for self-growth.**
 
-I invite you to do the same in your own life. Whether you’re a seasoned practitioner or a newbie, my [2026 FREE Eclipse Season Bundle](https://drive.google.com/file/d/1mePUCujc4YXOzDXTRWZF5zbQgkHrZzv2/view) is meant to help you decipher the messages the cosmos is sending.
+I invite you to do the same in your own life. Whether you’re a seasoned practitioner or a newbie, my [2026 FREE Eclipse Season Bundle](https://drive.google.com/file/d/1qgW2vS-QVYLSVsE73Z92ODzFHvZSJq7U/view?usp=sharing) is meant to help you decipher the messages the cosmos is sending.
 
-[Download the Eclipse Bundle](https://drive.google.com/file/d/1mePUCujc4YXOzDXTRWZF5zbQgkHrZzv2/view 'button')
+[Download the Eclipse Bundle](https://drive.google.com/file/d/1qgW2vS-QVYLSVsE73Z92ODzFHvZSJq7U/view?usp=sharing 'button')
 
 ---
 
