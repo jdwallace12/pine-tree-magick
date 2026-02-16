@@ -19,8 +19,6 @@ Each month, I'll be sending out:
 - **Workshop Updates**: Be the first to know about new sessions.
 - **Tarot & Astrology Insights**: Seasonal guidance for your journey.
 
----
-
 ### Join our next Workshop
 
 Don't forget to check out our upcoming [Candle Magick Workshop](https://pinetreemagick.com/workshops/candle-magick).
@@ -39,6 +37,8 @@ Use `[Text](url "button")` to create a prominent call-to-action button:
 [Book a Private Session](https://pinetreemagick.com/private-sessions 'button')
 
 #### Horizontal Dividers
+
+---
 
 Use `---` to create a delicate divider line (like the one above this section).
 

@@ -23,7 +23,7 @@ const renderer = {
         </table>
       `;
     }
-    return `<a href="${href}" title="${title || ''}" style="color: #f59bbb; text-decoration: underline; font-weight: bold;">${this.parser.parseInline(token.tokens)}</a>`;
+    return `<a href="${href}" title="${title || ''}" style="color: #d16a8d; text-decoration: underline; font-weight: bold;">${this.parser.parseInline(token.tokens)}</a>`;
   },
   heading(token) {
     const { depth } = token;
@@ -157,10 +157,10 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
           </tr>
           <tr>
             <td align="center" class="footer-cell" style="padding: 0 40px 40px 40px; border-top: 1px solid #f0f0f0;">
-               <p style="margin-top: 20px; font-size: 12px; color: #999;">
+               <p style="margin-top: 20px; font-size: 12px; color: #666;">
                 © ${new Date().getFullYear()} Pine Tree Magick. All rights reserved.<br>
                 <br>
-                <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
+                <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color: #666; text-decoration: underline;">Unsubscribe</a>
               </p>
             </td>
           </tr>
