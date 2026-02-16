@@ -36,9 +36,9 @@ You can now use these elements in your newsletter content:
 Use `[Text](url "button")` to create a prominent call-to-action button:
 [Book a Private Session](https://pinetreemagick.com/private-sessions 'button')
 
-#### Horizontal Dividers
-
 ---
+
+#### Horizontal Dividers
 
 Use `---` to create a delicate divider line (like the one above this section).
 

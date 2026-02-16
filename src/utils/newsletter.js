@@ -29,7 +29,7 @@ const renderer = {
     const { depth } = token;
     const sizes = { 1: '32px', 2: '24px', 3: '20px' };
     const size = sizes[depth] || '18px';
-    return `<h${depth} style="margin-top: 32px; margin-bottom: 16px; font-weight: bold; line-height: 1.3; color: #1a263a; font-size: ${size};">${this.parser.parseInline(token.tokens)}</h${depth}>`;
+    return `<h${depth} style="margin-top: 8px; margin-bottom: 16px; font-weight: bold; line-height: 1.3; color: #1a263a; font-size: ${size};">${this.parser.parseInline(token.tokens)}</h${depth}>`;
   },
   hr() {
     return `<hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 32px 0;" />`;
