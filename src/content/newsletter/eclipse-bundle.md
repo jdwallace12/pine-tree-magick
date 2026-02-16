@@ -1,5 +1,5 @@
 ---
-title: 'Your Free Eclipse Bundle + How to Deal with Change'
+title: 'Your Free Eclipse Bundle + How to Navigate Change'
 publishDate: 2026-02-18
 excerpt: 'The only constant in life is change. Discover how to navigate the upcoming eclipse season with our free bundle.'
 #image: 'https://pinetreemagick.com/assets/images/eclipse.webp'
