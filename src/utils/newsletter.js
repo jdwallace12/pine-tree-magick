@@ -162,17 +162,17 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
                 <tr>
                   <td style="padding: 0 10px;">
                     <a href="https://www.instagram.com/pinetreemagick/" target="_blank">
-                      <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/instagram.svg" alt="Instagram" width="24" height="24" style="display: block; width: 24px; height: 24px; filter: invert(13%) sepia(22%) saturate(1910%) hue-rotate(186deg) brightness(101%) contrast(98%);" />
+                      <img src="https://img.icons8.com/ios-filled/50/1A263A/instagram.png" alt="Instagram" width="24" height="24" style="display: block; width: 24px; height: 24px;" />
                     </a>
                   </td>
                   <td style="padding: 0 10px;">
                     <a href="https://www.tiktok.com/@pinetreemagick?lang=en" target="_blank">
-                      <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tiktok.svg" alt="TikTok" width="24" height="24" style="display: block; width: 24px; height: 24px; filter: invert(13%) sepia(22%) saturate(1910%) hue-rotate(186deg) brightness(101%) contrast(98%);" />
+                      <img src="https://img.icons8.com/ios-filled/50/1A263A/tiktok.png" alt="TikTok" width="24" height="24" style="display: block; width: 24px; height: 24px;" />
                     </a>
                   </td>
                   <td style="padding: 0 10px;">
                     <a href="https://pinetreemagick.substack.com/" target="_blank">
-                      <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/substack.svg" alt="Substack" width="24" height="24" style="display: block; width: 24px; height: 24px; filter: invert(13%) sepia(22%) saturate(1910%) hue-rotate(186deg) brightness(101%) contrast(98%);" />
+                      <img src="https://img.icons8.com/ios-filled/50/1A263A/substack.png" alt="Substack" width="24" height="24" style="display: block; width: 24px; height: 24px;" />
                     </a>
                   </td>
                 </tr>
