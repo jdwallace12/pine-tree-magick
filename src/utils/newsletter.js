@@ -157,7 +157,7 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="body-table" style="background-color: #1a263a">
     <tr>
       <td align="center" class="logo-cell" style="padding: 40px 40px 20px 20px;">
-        <img src="https://pinetreemagick.com/assets/logo/logo-light.png" alt="Pine Tree Magick" style="max-width: 200px; height: auto; display: block; margin: 0 auto; filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff);" />
+        <img src="https://pinetreemagick.com/assets/logo/logo-light.png" alt="Pine Tree Magick" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
       </td>
     </tr>
     <tr>
