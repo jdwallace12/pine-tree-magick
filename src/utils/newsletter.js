@@ -139,7 +139,7 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
         padding: 0 20px 30px 20px !important;
       }
       .logo-cell {
-        padding: 30px 20px 30px 20px !important;
+        padding: 24px 20px 24px 20px !important;
         text-align: left !important;
       }
       .logo-img {
