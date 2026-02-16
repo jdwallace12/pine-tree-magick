@@ -1,22 +1,112 @@
 import { marked } from 'marked';
 
 // Configure marked to style images and links exactly as in broadcasts
-const renderer = new marked.Renderer();
-renderer.image = function(token) {
-  const { href, title, text } = token;
-  return `<img src="${href}" alt="${text}" title="${title || ''}" style="max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 24px auto;" />`;
+const renderer = {
+  image(token) {
+    const { href, title, text } = token;
+    return `<img src="${href}" alt="${text}" title="${title || ''}" style="max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 24px auto;" />`;
+  },
+  link(token) {
+    const { href, title } = token;
+    const cleanTitle = (title || '').toLowerCase().trim();
+    
+    if (cleanTitle === 'button') {
+      return `
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 24px 0;">
+          <tr>
+            <td align="center" style="border-radius: 6px; background-color: #f59bbb;">
+              <a href="${href}" target="_blank" style="padding: 12px 24px; border: 1px solid #f59bbb; border-radius: 6px; font-family: sans-serif; font-size: 16px; color: #1a263a; text-decoration: none; font-weight: bold; display: inline-block;">
+                ${this.parser.parseInline(token.tokens)}
+              </a>
+            </td>
+          </tr>
+        </table>
+      `;
+    }
+    return `<a href="${href}" title="${title || ''}" style="color: #f59bbb; text-decoration: underline; font-weight: bold;">${this.parser.parseInline(token.tokens)}</a>`;
+  },
+  heading(token) {
+    const { depth } = token;
+    const sizes = { 1: '32px', 2: '24px', 3: '20px' };
+    const size = sizes[depth] || '18px';
+    return `<h${depth} style="margin-top: 32px; margin-bottom: 16px; font-weight: bold; line-height: 1.3; color: #1a263a; font-size: ${size};">${this.parser.parseInline(token.tokens)}</h${depth}>`;
+  },
+  hr() {
+    return `<hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 32px 0;" />`;
+  },
+  blockquote(token) {
+    return `<blockquote style="margin: 24px 0; padding: 16px 24px; border-left: 4px solid #f59bbb; background-color: #fafafa; color: #4a4a4a; font-style: italic;">${this.parser.parse(token.tokens)}</blockquote>`;
+  },
+  paragraph(token) {
+    return `<p style="margin-bottom: 16px; font-size: 16px; line-height: 1.6; color: #4a4a4a;">${this.parser.parseInline(token.tokens)}</p>`;
+  },
+  list(token) {
+    const type = token.ordered ? 'ol' : 'ul';
+    const margin = 'margin-bottom: 24px; margin-top: 8px; padding-left: 20px;';
+    let body = '';
+    for (const item of token.items) {
+      body += this.listitem(item);
+    }
+    return `<${type} style="${margin}">${body}</${type}>`;
+  },
+  listitem(token) {
+    return `<li style="margin-bottom: 8px; font-size: 16px; line-height: 1.6; color: #4a4a4a;">${this.parser.parse(token.tokens)}</li>`;
+  },
+  codespan(token) {
+    return `<code style="background-color: #fce7ef; color: #b03a64; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 14px;">${token.text}</code>`;
+  },
+  del(token) {
+    return `<del style="color: #999; text-decoration: strike-through;">${this.parser.parseInline(token.tokens)}</del>`;
+  },
+  code(token) {
+    return `
+      <div style="margin: 32px 0; padding: 24px; background-color: #1a263a; border-radius: 8px; text-align: center;">
+        <pre style="margin: 0; color: #f59bbb; font-family: 'Courier New', Courier, monospace; font-size: 18px; line-height: 1.4; white-space: pre-wrap; font-style: italic;">${token.text}</pre>
+      </div>
+    `;
+  },
+  table(token) {
+    let header = '';
+    // token.header is an array of cells
+    let headerRow = '';
+    for (const cell of token.header) {
+      headerRow += this.tablecell(cell);
+    }
+    header = `<thead><tr>${headerRow}</tr></thead>`;
+
+    let body = '';
+    for (const row of token.rows) {
+      let bodyRow = '';
+      for (const cell of row) {
+        bodyRow += this.tablecell(cell);
+      }
+      body += `<tr>${bodyRow}</tr>`;
+    }
+    body = `<tbody>${body}</tbody>`;
+
+    return `
+      <div style="margin: 32px 0; overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; border: 1px solid #f0f0f0; font-size: 14px;">
+          ${header}
+          ${body}
+        </table>
+      </div>
+    `;
+  },
+  tablecell(token) {
+    const type = token.header ? 'th' : 'td';
+    const align = token.align ? `text-align: ${token.align};` : '';
+    const weight = token.header ? 'font-weight: bold;' : 'font-weight: normal;';
+    const background = token.header ? 'background-color: #fafafa;' : '';
+    return `
+      <${type} style="padding: 12px; border: 1px solid #f0f0f0; ${align} ${weight} ${background} color: #4a4a4a;">
+        ${this.parser.parseInline(token.tokens)}
+      </${type}>
+    `;
+  }
 };
-renderer.link = function(token) {
-  const { href, title, text } = token;
-  return `<a href="${href}" title="${title || ''}" style="color: #f59bbb; text-decoration: underline; font-weight: bold;">${text}</a>`;
-};
-renderer.heading = function(token) {
-  const { text, depth } = token;
-  const sizes = { 1: '32px', 2: '24px', 3: '20px' };
-  const size = sizes[depth] || '18px';
-  return `<h${depth} style="margin-top: 0; margin-bottom: 16px; font-weight: bold; line-height: 1.2; color: #1a263a; font-size: ${size};">${text}</h${depth}>`;
-};
-marked.setOptions({ renderer });
+
+marked.use({ renderer });
 
 /**
  * Generates the full HTML for a newsletter using the brand template.
