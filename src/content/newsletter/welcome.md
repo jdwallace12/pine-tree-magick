@@ -2,7 +2,7 @@
 title: 'Welcome to Pine Tree Magick! ✨'
 publishDate: 2026-02-14
 excerpt: "Welcome to our very first newsletter. Here's what we have in store for you."
-# image: 'https://pinetreemagick.com/assets/images/forest.webp'
+#image: 'https://pinetreemagick.com/assets/images/forest.webp'
 ---
 
 # Welcome to Pine Tree Magick!
@@ -27,7 +27,7 @@ Don't forget to check out our upcoming [Candle Magick Workshop](https://pinetree
 
 ---
 
-### Newsletter Styles
+## Newsletter Styles
 
 You can now use these elements in your newsletter content:
 

@@ -157,7 +157,30 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
             </td>
           </tr>
           <tr>
-            <td align="center" class="footer-cell" style="padding: 0 40px 40px 40px; border-top: 1px solid #f0f0f0;">
+            <td align="center" style="padding: 20px 40px 16px 40px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                <tr>
+                  <td style="padding: 0 10px;">
+                    <a href="https://www.instagram.com/pinetreemagick/" target="_blank">
+                      <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/instagram.svg" alt="Instagram" width="24" height="24" style="display: block; width: 24px; height: 24px; filter: invert(13%) sepia(22%) saturate(1910%) hue-rotate(186deg) brightness(101%) contrast(98%);" />
+                    </a>
+                  </td>
+                  <td style="padding: 0 10px;">
+                    <a href="https://www.tiktok.com/@pinetreemagick?lang=en" target="_blank">
+                      <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/tiktok.svg" alt="TikTok" width="24" height="24" style="display: block; width: 24px; height: 24px; filter: invert(13%) sepia(22%) saturate(1910%) hue-rotate(186deg) brightness(101%) contrast(98%);" />
+                    </a>
+                  </td>
+                  <td style="padding: 0 10px;">
+                    <a href="https://pinetreemagick.substack.com/" target="_blank">
+                      <img src="https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/substack.svg" alt="Substack" width="24" height="24" style="display: block; width: 24px; height: 24px; filter: invert(13%) sepia(22%) saturate(1910%) hue-rotate(186deg) brightness(101%) contrast(98%);" />
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" class="footer-cell" style="padding: 10px 40px 40px 40px; border-top: 1px solid #f0f0f0;">
                <p style="margin-top: 20px; font-size: 12px; color: #666;">
                 © ${new Date().getFullYear()} Pine Tree Magick. All rights reserved.<br>
                 <br>
