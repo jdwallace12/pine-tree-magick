@@ -12,10 +12,10 @@ const renderer = {
     
     if (cleanTitle === 'button') {
       return `
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 24px 0;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" class="button-table" style="margin: 24px 0;">
           <tr>
             <td align="center" style="border-radius: 6px; background-color: #f59bbb;">
-              <a href="${href}" target="_blank" style="padding: 12px 24px; border: 1px solid #f59bbb; border-radius: 6px; font-family: sans-serif; font-size: 16px; color: #1a263a; text-decoration: none; font-weight: bold; display: inline-block;">
+              <a href="${href}" target="_blank" class="button-link" style="padding: 12px 24px; border: 1px solid #f59bbb; border-radius: 6px; font-family: sans-serif; font-size: 16px; color: #1a263a; text-decoration: none; font-weight: bold; display: inline-block;">
                 ${this.parser.parseInline(token.tokens)}
               </a>
             </td>
@@ -156,6 +156,14 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl, includeGreet
       }
       .outer-wrapper-cell {
         padding: 0 !important;
+      }
+      .button-table {
+        width: 100% !important;
+      }
+      .button-link {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
       }
     }
     /* Dark mode overrides */
