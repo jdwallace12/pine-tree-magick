@@ -44,7 +44,12 @@ async function sendNewsletter() {
   const fileContent = fs.readFileSync(filePath, 'utf-8');
   const { data: frontmatter, content: markdownBody } = matter(fileContent);
 
-  const fullHtml = getNewsletterHtml(frontmatter.title, markdownBody, frontmatter.image);
+  const fullHtml = getNewsletterHtml(
+    frontmatter.title, 
+    markdownBody, 
+    frontmatter.image, 
+    frontmatter.greeting !== false
+  );
 
   if (isTest) {
     console.log(`🧪 Sending test email to ${testEmail}...`);

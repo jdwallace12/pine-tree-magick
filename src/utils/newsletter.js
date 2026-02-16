@@ -111,8 +111,13 @@ marked.use({ renderer });
 /**
  * Generates the full HTML for a newsletter using the brand template.
  */
-export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
-  const htmlBody = marked.parse(contentMarkdown);
+export const getNewsletterHtml = (title, contentMarkdown, imageUrl, includeGreeting = true) => {
+  let htmlBody = marked.parse(contentMarkdown);
+  
+  if (includeGreeting) {
+    const greeting = `<p style="margin-bottom: 24px; font-size: 16px; line-height: 1.6; color: #4a4a4a;">Dear {{{FIRST_NAME|Friend}}},</p>`;
+    htmlBody = greeting + htmlBody;
+  }
   const padding = '40px';
   const imgHtml = imageUrl && imageUrl.trim() !== '' ? `<img src="${imageUrl}" style="width: 100%; border-radius: 4px; margin-bottom: 20px;" />` : '';
 
