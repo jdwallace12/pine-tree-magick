@@ -158,7 +158,7 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
           <tr>
             <td align="center" class="footer-cell" style="padding: 0 40px 40px 40px; border-top: 1px solid #f0f0f0;">
                <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                © 2026 Pine Tree Magick. All rights reserved.<br>
+                © ${new Date().getFullYear()} Pine Tree Magick. All rights reserved.<br>
                 <br>
                 <a href="{{{RESEND_UNSUBSCRIBE_URL}}}" style="color: #999; text-decoration: underline;">Unsubscribe</a>
               </p>
