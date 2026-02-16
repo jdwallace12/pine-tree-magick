@@ -106,4 +106,4 @@ Images are automatically centered and given a subtle border:
 
 Send markdown file to Resend API to create a new broadcast
 
-`npm run newsletter:broadcast -- welcome.md`
+`npm run newsletter:broadcast -- example.md`
