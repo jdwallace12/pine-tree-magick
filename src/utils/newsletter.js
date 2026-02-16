@@ -122,6 +122,7 @@ export const getNewsletterHtml = (title, contentMarkdown, imageUrl) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
   <title>${title} | Pine Tree Magick</title>
   <style>
     @media screen and (max-width: 600px) {
