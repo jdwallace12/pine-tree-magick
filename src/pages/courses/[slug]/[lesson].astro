@@ -179,22 +179,28 @@ const requiredRole = `course:${course?.slug}`;
       }
     });
 
-    // Run on various events to ensure it triggers
-    document.addEventListener('DOMContentLoaded', checkAccess);
+    // Run check immediately and on Astro events
+    checkAccess();
     document.addEventListener('astro:page-load', checkAccess);
 
-    if (window.netlifyIdentity) {
-      netlifyIdentity.on('init', checkAccess);
-      netlifyIdentity.on('login', checkAccess);
+    // Identity Event Listeners (ensure only added once globally)
+    if (window.netlifyIdentity && !window.__lessonListenersAdded) {
+      const runGlobalCheck = () => {
+        // This function will find the elements if they exist on the current page
+        const content = document.getElementById('lesson-content');
+        if (content) checkAccess();
+      };
+
+      netlifyIdentity.on('init', runGlobalCheck);
+      netlifyIdentity.on('login', runGlobalCheck);
       netlifyIdentity.on('logout', () => {
         // Clear spoof on logout
         const roles = sessionStorage.getItem('spoof_course:magickal-foundations');
         if (roles) sessionStorage.removeItem('spoof_course:magickal-foundations');
-        checkAccess();
+        runGlobalCheck();
       });
-    }
 
-    // Immediate check as well
-    checkAccess();
+      window.__lessonListenersAdded = true;
+    }
   </script>
 </Layout>

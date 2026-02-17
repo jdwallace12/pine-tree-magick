@@ -68,38 +68,45 @@ const { language, textDirection } = I18N;
             } catch (e) {}
           }
 
-          // 2. Initialize the widget (only once)
+          // 2. Setup Global Listeners (only once)
+          if (!window.__identityListenersAdded) {
+            const globalUpdate = () => {
+              const accBtn = document.getElementById('account-button');
+              if (accBtn) {
+                const user = window.netlifyIdentity.currentUser();
+                accBtn.textContent = user ? user.user_metadata?.full_name || 'My Account' : 'Account';
+              }
+            };
+
+            window.netlifyIdentity.on('init', globalUpdate);
+            window.netlifyIdentity.on('login', () => {
+              globalUpdate();
+              window.netlifyIdentity.close();
+            });
+            window.netlifyIdentity.on('logout', globalUpdate);
+
+            window.__identityListenersAdded = true;
+          }
+
+          // 3. Initialize the widget (only once)
           if (!window.__identityInitialized) {
             window.netlifyIdentity.init({
-              // Only specify API_URL on localhost to force the Netlify Dev proxy
               API_URL: isLocal ? '/.netlify/identity' : undefined,
             });
             window.__identityInitialized = true;
           }
 
-          // 2. Setup Account Button
+          // 4. Setup Account Button (Page specific)
           const btn = document.getElementById('account-button');
           if (btn && !btn.dataset.identityReady) {
             btn.dataset.identityReady = 'true';
-
             btn.addEventListener('click', () => {
               window.netlifyIdentity.open();
             });
 
-            const updateBtnText = () => {
-              const user = window.netlifyIdentity.currentUser();
-              btn.textContent = user ? user.user_metadata?.full_name || 'My Account' : 'Account';
-            };
-
-            window.netlifyIdentity.on('init', updateBtnText);
-            window.netlifyIdentity.on('login', () => {
-              updateBtnText();
-              window.netlifyIdentity.close();
-            });
-            window.netlifyIdentity.on('logout', updateBtnText);
-
-            // Initial run to set text correctly
-            updateBtnText();
+            // Sync text immediately on page load
+            const user = window.netlifyIdentity.currentUser();
+            btn.textContent = user ? user.user_metadata?.full_name || 'My Account' : 'Account';
           }
         }
 
