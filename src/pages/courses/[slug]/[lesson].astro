@@ -77,7 +77,13 @@ const requiredRole = `course:${course?.slug}`;
         This lesson is part of <strong>{course?.data.title}</strong>. Please sign in or enroll to access the materials.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4">
-        <button id="lesson-signin-btn" class="bg-primary text-white px-8 py-3 rounded-full font-bold"> Sign In </button>
+        <a
+          id="lesson-login-link"
+          href="javascript:void(0)"
+          class="bg-primary text-white px-8 py-3 rounded-full font-bold inline-block"
+        >
+          Login to Access
+        </a>
         <a
           href={`/courses/${course?.slug}#enroll`}
           class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-8 py-3 rounded-full font-bold"
@@ -161,7 +167,7 @@ const requiredRole = `course:${course?.slug}`;
 
     // Sign In Button Handler
     document.addEventListener('click', (e) => {
-      if (e.target.id === 'lesson-signin-btn') {
+      if (e.target.id === 'lesson-login-link') {
         if (window.netlifyIdentity) window.netlifyIdentity.open();
       }
     });

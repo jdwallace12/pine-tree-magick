@@ -38,19 +38,14 @@ const { language, textDirection } = I18N;
 
     <!-- Comment the line below to disable View Transitions -->
     <ViewTransitions fallback="swap" />
-  </head>
-
-  <body class="antialiased text-default bg-page tracking-tight">
-    <slot />
-
-    <BasicScripts />
 
     <!-- Netlify Identity widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" is:inline></script>
     <script is:inline>
       (function () {
-        // Idempotent initialization tracker
+        // Ultra-defensive initialization
         window.__identityInitialized = window.__identityInitialized || false;
+        window.__identityListenersAdded = window.__identityListenersAdded || false;
 
         function initIdentity() {
           if (!window.netlifyIdentity) return;
@@ -60,21 +55,19 @@ const { language, textDirection } = I18N;
           // 1. Force Local Proxy on Localhost
           if (isLocal) {
             try {
-              // Clear cached production URL to force proxy use
               if (localStorage.getItem('netlifySiteURL')) {
-                console.log('🧹 Clearing cached Netlify Site URL for localhost...');
                 localStorage.removeItem('netlifySiteURL');
               }
             } catch (e) {}
           }
 
-          // 2. Setup Global Listeners (only once)
+          // 2. Setup Global Listeners (once)
           if (!window.__identityListenersAdded) {
             const globalUpdate = () => {
               const accBtn = document.getElementById('account-button');
               if (accBtn) {
                 const user = window.netlifyIdentity.currentUser();
-                accBtn.textContent = user ? user.user_metadata?.full_name || 'My Account' : 'Account';
+                accBtn.innerHTML = `<span>${user ? user.user_metadata?.full_name || 'My Account' : 'Account'}</span>`;
               }
             };
 
@@ -84,11 +77,10 @@ const { language, textDirection } = I18N;
               window.netlifyIdentity.close();
             });
             window.netlifyIdentity.on('logout', globalUpdate);
-
             window.__identityListenersAdded = true;
           }
 
-          // 3. Initialize the widget (only once)
+          // 3. Initialize widget (once)
           if (!window.__identityInitialized) {
             window.netlifyIdentity.init({
               API_URL: isLocal ? '/.netlify/identity' : undefined,
@@ -96,21 +88,18 @@ const { language, textDirection } = I18N;
             window.__identityInitialized = true;
           }
 
-          // 4. Setup Account Button (Page specific)
+          // 4. Page-specific button setup
           const btn = document.getElementById('account-button');
           if (btn && !btn.dataset.identityReady) {
             btn.dataset.identityReady = 'true';
-            btn.addEventListener('click', () => {
-              window.netlifyIdentity.open();
-            });
+            btn.onclick = () => window.netlifyIdentity.open();
 
-            // Sync text immediately on page load
             const user = window.netlifyIdentity.currentUser();
-            btn.textContent = user ? user.user_metadata?.full_name || 'My Account' : 'Account';
+            btn.innerHTML = `<span>${user ? user.user_metadata?.full_name || 'My Account' : 'Account'}</span>`;
           }
         }
 
-        // Initialize on DOM ready and after every Astro View Transition
+        // Run on load and on transitions
         if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', initIdentity);
         } else {
@@ -119,5 +108,11 @@ const { language, textDirection } = I18N;
         document.addEventListener('astro:page-load', initIdentity);
       })();
     </script>
+  </head>
+
+  <body class="antialiased text-default bg-page tracking-tight">
+    <slot />
+
+    <BasicScripts />
   </body>
 </html>
