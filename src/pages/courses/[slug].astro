@@ -2,6 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Hero from '~/components/widgets/Hero.astro';
 import Features3 from '~/components/widgets/Features3.astro';
+import { Icon } from 'astro-icon/components';
 import { getCollection, getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -52,14 +53,50 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
     ]}
   />
 
-  <div id="syllabus" class="py-12">
-    <Features3
-      title="Course Syllabus"
-      subtitle="Here is what you will learn in this course."
-      items={syllabusItems}
-      columns={1}
-    />
-  </div>
+  <!-- Syllabus Section -->
+  <section id="syllabus" class="py-20 bg-white dark:bg-slate-900">
+    <div class="max-w-4xl mx-auto px-4">
+      <h2 class="text-3xl font-bold mb-12 text-center underline decoration-primary decoration-4 underline-offset-8">
+        Course Syllabus
+      </h2>
+
+      <div class="space-y-12">
+        {
+          Object.entries(modulesMap).map(([moduleName, moduleLessons]) => (
+            <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-2xl border border-slate-100 dark:border-slate-700">
+              <h3 class="text-2xl font-bold mb-6 flex items-center">
+                <span class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">
+                  <Icon name="tabler:list-check" class="w-5 h-5" />
+                </span>
+                {moduleName}
+              </h3>
+              <ul class="space-y-4">
+                {moduleLessons.map((l) => (
+                  <li class="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl hover:shadow-md transition group">
+                    <div class="flex items-center">
+                      <span class="mr-3 text-xl">{l.data.isFree ? '🔓' : '🔒'}</span>
+                      <a
+                        href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
+                        class="font-medium hover:text-primary transition"
+                      >
+                        {l.data.title}
+                      </a>
+                    </div>
+                    <a
+                      href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
+                      class="text-primary opacity-0 group-hover:opacity-100 transition flex items-center text-sm font-bold"
+                    >
+                      View Lesson <Icon name="tabler:chevron-right" class="w-4 h-4 ml-1" />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
 
   <section id="enroll" class="py-16 bg-blue-50 dark:bg-slate-800">
     <div class="max-w-3xl mx-auto text-center px-4">
