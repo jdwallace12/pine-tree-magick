@@ -77,15 +77,24 @@ const requiredRole = `course:${course?.slug}`;
         This lesson is part of <strong>{course?.data.title}</strong>. Please sign in or enroll to access the materials.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4">
-        <button data-netlify-identity-button class="bg-primary text-white px-8 py-3 rounded-full font-bold">
-          Sign In
-        </button>
+        <button id="lesson-signin-btn" class="bg-primary text-white px-8 py-3 rounded-full font-bold"> Sign In </button>
         <a
           href={`/courses/${course?.slug}#enroll`}
           class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-8 py-3 rounded-full font-bold"
         >
           Enroll Now
         </a>
+      </div>
+
+      <!-- Dev Spoof (Visible only on localhost) -->
+      <div id="dev-spoof-container" class="mt-12 hidden">
+        <p class="text-xs text-muted mb-2 uppercase tracking-widest font-bold">Developer Tools</p>
+        <button
+          id="dev-spoof-access"
+          class="bg-amber-100 text-amber-900 border border-amber-200 px-4 py-2 rounded text-sm font-medium hover:bg-amber-200 transition"
+        >
+          Dev: Spoof Course Access
+        </button>
       </div>
     </div>
   </div>
@@ -95,10 +104,17 @@ const requiredRole = `course:${course?.slug}`;
       console.log('🛡️ Checking access...');
       const content = document.getElementById('lesson-content');
       const denied = document.getElementById('access-denied');
+      const spoofContainer = document.getElementById('dev-spoof-container');
 
       if (!content || !denied) {
         console.warn('⚠️ Access elements not found');
         return;
+      }
+
+      // Show spoof button only on localhost
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      if (isLocal && spoofContainer) {
+        spoofContainer.classList.remove('hidden');
       }
 
       const requiredRole = content.dataset.requiredRole;
@@ -111,7 +127,15 @@ const requiredRole = `course:${course?.slug}`;
         return;
       }
 
-      // Initialize/Check Netlify Identity
+      // 1. Check for Spoofed Access (Local Only)
+      if (isLocal && sessionStorage.getItem(`spoof_${requiredRole}`)) {
+        console.log('🧪 Access Granted via Dev Spoof');
+        content.classList.remove('hidden');
+        denied.classList.add('hidden');
+        return;
+      }
+
+      // 2. Check Netlify Identity
       if (window.netlifyIdentity) {
         const user = netlifyIdentity.currentUser();
         console.log('👤 Current User:', user ? user.email : 'None');
@@ -135,6 +159,26 @@ const requiredRole = `course:${course?.slug}`;
       }
     }
 
+    // Sign In Button Handler
+    document.addEventListener('click', (e) => {
+      if (e.target.id === 'lesson-signin-btn') {
+        if (window.netlifyIdentity) window.netlifyIdentity.open();
+      }
+    });
+
+    // Dev Spoof Handler
+    document.addEventListener('click', (e) => {
+      if (e.target.id === 'dev-spoof-access') {
+        const content = document.getElementById('lesson-content');
+        const role = content?.dataset.requiredRole;
+        if (role) {
+          sessionStorage.setItem(`spoof_${role}`, 'true');
+          checkAccess();
+          alert('🧪 Dev: Access spoofed for this session!');
+        }
+      }
+    });
+
     // Run on various events to ensure it triggers
     document.addEventListener('DOMContentLoaded', checkAccess);
     document.addEventListener('astro:page-load', checkAccess);
@@ -142,7 +186,12 @@ const requiredRole = `course:${course?.slug}`;
     if (window.netlifyIdentity) {
       netlifyIdentity.on('init', checkAccess);
       netlifyIdentity.on('login', checkAccess);
-      netlifyIdentity.on('logout', checkAccess);
+      netlifyIdentity.on('logout', () => {
+        // Clear spoof on logout
+        const roles = sessionStorage.getItem('spoof_course:magickal-foundations');
+        if (roles) sessionStorage.removeItem('spoof_course:magickal-foundations');
+        checkAccess();
+      });
     }
 
     // Immediate check as well

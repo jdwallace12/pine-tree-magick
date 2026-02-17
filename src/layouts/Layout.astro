@@ -57,7 +57,18 @@ const { language, textDirection } = I18N;
 
           const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-          // 1. Initialize the widget (only once)
+          // 1. Force Local Proxy on Localhost
+          if (isLocal) {
+            try {
+              // Clear cached production URL to force proxy use
+              if (localStorage.getItem('netlifySiteURL')) {
+                console.log('🧹 Clearing cached Netlify Site URL for localhost...');
+                localStorage.removeItem('netlifySiteURL');
+              }
+            } catch (e) {}
+          }
+
+          // 2. Initialize the widget (only once)
           if (!window.__identityInitialized) {
             window.netlifyIdentity.init({
               // Only specify API_URL on localhost to force the Netlify Dev proxy
