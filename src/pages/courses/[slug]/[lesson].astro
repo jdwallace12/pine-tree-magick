@@ -92,9 +92,17 @@ const requiredRole = `course:${course?.slug}`;
 
   <script is:inline>
     function checkAccess() {
+      console.log('🛡️ Checking access...');
       const content = document.getElementById('lesson-content');
       const denied = document.getElementById('access-denied');
+
+      if (!content || !denied) {
+        console.warn('⚠️ Access elements not found');
+        return;
+      }
+
       const requiredRole = content.dataset.requiredRole;
+      console.log('🔑 Required Role:', requiredRole || 'None (Free)');
 
       if (!requiredRole) {
         // Free lesson
@@ -103,26 +111,41 @@ const requiredRole = `course:${course?.slug}`;
         return;
       }
 
-      // Initialize Netlify Identity if not already
+      // Initialize/Check Netlify Identity
       if (window.netlifyIdentity) {
         const user = netlifyIdentity.currentUser();
+        console.log('👤 Current User:', user ? user.email : 'None');
 
-        if (user && user.app_metadata && user.app_metadata.roles && user.app_metadata.roles.includes(requiredRole)) {
+        const roles = user?.app_metadata?.roles || [];
+        console.log('📜 User Roles:', roles);
+
+        if (user && roles.includes(requiredRole)) {
+          console.log('✅ Access Granted');
           content.classList.remove('hidden');
           denied.classList.add('hidden');
         } else {
+          console.log('❌ Access Denied');
           content.classList.add('hidden');
           denied.classList.remove('hidden');
         }
+      } else {
+        console.warn('⚠️ Netlify Identity not loaded');
+        content.classList.add('hidden');
+        denied.classList.remove('hidden');
       }
     }
 
-    // Run on load and on auth events
+    // Run on various events to ensure it triggers
     document.addEventListener('DOMContentLoaded', checkAccess);
+    document.addEventListener('astro:page-load', checkAccess);
+
     if (window.netlifyIdentity) {
       netlifyIdentity.on('init', checkAccess);
       netlifyIdentity.on('login', checkAccess);
       netlifyIdentity.on('logout', checkAccess);
     }
+
+    // Immediate check as well
+    checkAccess();
   </script>
 </Layout>
