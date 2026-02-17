@@ -23,7 +23,7 @@ const whenExternalScripts = (items: (() => AstroIntegration) | (() => AstroInteg
 
 export default defineConfig({
   output: 'static',
-  site: 'https://pinetreemagic.com',
+  site: 'https://pinetreemagick.com',
   redirects: {
     '/book-a-reading': '/readings'
   },

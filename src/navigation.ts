@@ -1,4 +1,4 @@
-import { getPermalink, getAsset } from './utils/permalinks';
+import { getPermalink } from './utils/permalinks';
 import { getCollection } from 'astro:content';
 
 async function getActiveShopLinks() {
@@ -32,7 +32,7 @@ async function getActiveShopLinks() {
   });
 
   // Build links array based on active items
-  const shopLinks = [];
+  const shopLinks: Array<{ text: string; href: string }> = [];
   if (hasActiveRituals) {
     shopLinks.push({ text: 'Guided Rituals', href: '/shop#guidedrituals' });
   }
@@ -42,7 +42,6 @@ async function getActiveShopLinks() {
   if (hasActiveFreebies) {
     shopLinks.push({ text: 'Freebies', href: '/shop#freebies' });
   }
-
 
   return shopLinks;
 }
@@ -60,6 +59,10 @@ export const headerData = {
     {
       text: 'Workshops',
       href: getPermalink('/workshops'),
+    },
+    {
+      text: 'Courses',
+      href: getPermalink('/courses'),
     },
     {
       text: 'Shop',

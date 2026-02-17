@@ -1,0 +1,117 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Hero from '~/components/widgets/Hero.astro';
+import Features3 from '~/components/widgets/Features3.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const courses = await getCollection('course');
+  return courses.map((course) => ({
+    params: { slug: course.slug },
+    props: { course },
+  }));
+}
+
+const { course } = Astro.props;
+const lessons = await getCollection('lesson', ({ data }) => data.course === course.slug);
+
+const metadata = {
+  title: `${course.data.title} | Pine Tree Magick`,
+};
+
+// Group lessons by module
+const modulesMap =
+  course.data.modules?.reduce(
+    (acc, moduleName) => {
+      acc[moduleName] = lessons.filter((l) => l.data.module === moduleName).sort((a, b) => a.data.order - b.data.order);
+      return acc;
+    },
+    {} as Record<string, any[]>
+  ) || {};
+
+const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons]) => ({
+  title: moduleName,
+  description: moduleLessons.map((l) => `${l.data.isFree ? '🔓' : '🔒'} ${l.data.title}`).join('\n'),
+  icon: 'tabler:list-check',
+}));
+---
+
+<Layout metadata={metadata}>
+  <Hero
+    title={course.data.title}
+    subtitle={course.data.description}
+    image={{ src: course.data.image, alt: course.data.title }}
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Enroll Now',
+        href: '#enroll',
+        icon: 'tabler:shopping-cart',
+      },
+      { text: 'View Syllabus', href: '#syllabus' },
+    ]}
+  />
+
+  <div id="syllabus" class="py-12">
+    <Features3
+      title="Course Syllabus"
+      subtitle="Here is what you will learn in this course."
+      items={syllabusItems}
+      columns={1}
+    />
+  </div>
+
+  <section id="enroll" class="py-16 bg-blue-50 dark:bg-slate-800">
+    <div class="max-w-3xl mx-auto text-center px-4">
+      <h2 class="text-3xl font-bold mb-4">Start Your Journey</h2>
+      <p class="text-xl mb-8">Enroll today for just ${course.data.price}</p>
+
+      <div id="paypal-button-container" data-button-id={course.data.payPalButtonId}>
+        <a
+          id="course-enroll-link"
+          href={`https://www.paypal.com/ncp/payment/${course.data.payPalButtonId}`}
+          target="_blank"
+          class="inline-block bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-opacity-90 transition"
+        >
+          Enroll Now with PayPal
+        </a>
+      </div>
+
+      <div
+        class="mt-8 p-4 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700"
+      >
+        <p class="text-sm font-medium">Already enrolled?</p>
+        <button data-netlify-identity-button class="text-link hover:underline mt-2"
+          >Sign in to access your course</button
+        >
+      </div>
+    </div>
+  </section>
+
+  <script is:inline>
+    function updateEnrollLink() {
+      const enrollLink = document.getElementById('course-enroll-link');
+      if (!enrollLink || !window.netlifyIdentity) return;
+
+      const user = netlifyIdentity.currentUser();
+      if (user) {
+        // Append Netlify User ID to PayPal URL via 'custom' parameter
+        const baseUrl = enrollLink.href.split('?')[0];
+        enrollLink.href = `${baseUrl}?custom=${user.id}`;
+      }
+    }
+
+    // Run on load and on auth events
+    document.addEventListener('DOMContentLoaded', updateEnrollLink);
+    if (window.netlifyIdentity) {
+      netlifyIdentity.on('init', updateEnrollLink);
+      netlifyIdentity.on('login', updateEnrollLink);
+      netlifyIdentity.on('logout', () => {
+        const enrollLink = document.getElementById('course-enroll-link');
+        if (enrollLink) {
+          enrollLink.href = enrollLink.href.split('?')[0];
+        }
+      });
+    }
+  </script>
+</Layout>

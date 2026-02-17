@@ -44,5 +44,62 @@ const { language, textDirection } = I18N;
     <slot />
 
     <BasicScripts />
+
+    <!-- Netlify Identity widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" is:inline></script>
+    <script is:inline>
+      (function () {
+        // Idempotent initialization tracker
+        window.__identityInitialized = window.__identityInitialized || false;
+
+        function initIdentity() {
+          if (!window.netlifyIdentity) return;
+
+          const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+          // 1. Initialize the widget (only once)
+          if (!window.__identityInitialized) {
+            window.netlifyIdentity.init({
+              // Only specify API_URL on localhost to force the Netlify Dev proxy
+              API_URL: isLocal ? '/.netlify/identity' : undefined,
+            });
+            window.__identityInitialized = true;
+          }
+
+          // 2. Setup Account Button
+          const btn = document.getElementById('account-button');
+          if (btn && !btn.dataset.identityReady) {
+            btn.dataset.identityReady = 'true';
+
+            btn.addEventListener('click', () => {
+              window.netlifyIdentity.open();
+            });
+
+            const updateBtnText = () => {
+              const user = window.netlifyIdentity.currentUser();
+              btn.textContent = user ? user.user_metadata?.full_name || 'My Account' : 'Account';
+            };
+
+            window.netlifyIdentity.on('init', updateBtnText);
+            window.netlifyIdentity.on('login', () => {
+              updateBtnText();
+              window.netlifyIdentity.close();
+            });
+            window.netlifyIdentity.on('logout', updateBtnText);
+
+            // Initial run to set text correctly
+            updateBtnText();
+          }
+        }
+
+        // Initialize on DOM ready and after every Astro View Transition
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initIdentity);
+        } else {
+          initIdentity();
+        }
+        document.addEventListener('astro:page-load', initIdentity);
+      })();
+    </script>
   </body>
 </html>

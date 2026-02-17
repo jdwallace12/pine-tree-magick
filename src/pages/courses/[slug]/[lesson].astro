@@ -1,0 +1,128 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { getCollection, getEntry } from 'astro:content';
+import { YouTube } from 'astro-embed';
+
+export async function getStaticPaths() {
+  const lessons = await getCollection('lesson');
+  return lessons.map((lesson) => ({
+    params: {
+      slug: lesson.data.course,
+      lesson: lesson.slug.split('/').pop(), // Get the filename as lesson slug
+    },
+    props: { lesson },
+  }));
+}
+
+const { lesson } = Astro.props;
+const { Content } = await lesson.render();
+const course = await getEntry('course', lesson.data.course);
+
+const metadata = {
+  title: `${lesson.data.title} | ${course?.data.title}`,
+};
+
+const requiredRole = `course:${course?.slug}`;
+---
+
+<Layout metadata={metadata}>
+  <div class="max-w-4xl mx-auto px-4 py-12">
+    <!-- Breadcrumbs -->
+    <nav class="text-sm mb-8 text-muted">
+      <a href="/courses" class="hover:text-primary">Courses</a>
+      <span class="mx-2">/</span>
+      <a href={`/courses/${course?.slug}`} class="hover:text-primary">{course?.data.title}</a>
+      <span class="mx-2">/</span>
+      <span class="font-medium text-default">{lesson.data.title}</span>
+    </nav>
+
+    <div id="lesson-content" data-required-role={lesson.data.isFree ? '' : requiredRole} class="hidden">
+      <h1 class="text-4xl font-bold mb-6">{lesson.data.title}</h1>
+      <p class="text-muted mb-8">{lesson.data.module}</p>
+
+      {
+        lesson.data.videoUrl && (
+          <div class="aspect-video mb-12 rounded-xl overflow-hidden shadow-lg">
+            <YouTube id={lesson.data.videoUrl} />
+          </div>
+        )
+      }
+
+      <div class="prose prose-lg dark:prose-invert max-w-none">
+        <Content />
+      </div>
+
+      {
+        lesson.data.pdfUrl && (
+          <div class="mt-12 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+            <h3 class="text-xl font-bold mb-4 flex items-center">
+              <span class="mr-2">📄</span> Resources
+            </h3>
+            <a href={lesson.data.pdfUrl} target="_blank" class="text-primary hover:underline flex items-center">
+              Download PDF Material
+            </a>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Access Denied / Sign In State -->
+    <div
+      id="access-denied"
+      class="text-center py-20 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700"
+    >
+      <div class="text-6xl mb-6">🔒</div>
+      <h2 class="text-2xl font-bold mb-4">Members Only Content</h2>
+      <p class="text-muted mb-8 max-w-md mx-auto">
+        This lesson is part of <strong>{course?.data.title}</strong>. Please sign in or enroll to access the materials.
+      </p>
+      <div class="flex flex-col sm:flex-row justify-center gap-4">
+        <button data-netlify-identity-button class="bg-primary text-white px-8 py-3 rounded-full font-bold">
+          Sign In
+        </button>
+        <a
+          href={`/courses/${course?.slug}#enroll`}
+          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-8 py-3 rounded-full font-bold"
+        >
+          Enroll Now
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline>
+    function checkAccess() {
+      const content = document.getElementById('lesson-content');
+      const denied = document.getElementById('access-denied');
+      const requiredRole = content.dataset.requiredRole;
+
+      if (!requiredRole) {
+        // Free lesson
+        content.classList.remove('hidden');
+        denied.classList.add('hidden');
+        return;
+      }
+
+      // Initialize Netlify Identity if not already
+      if (window.netlifyIdentity) {
+        const user = netlifyIdentity.currentUser();
+
+        if (user && user.app_metadata && user.app_metadata.roles && user.app_metadata.roles.includes(requiredRole)) {
+          content.classList.remove('hidden');
+          denied.classList.add('hidden');
+        } else {
+          content.classList.add('hidden');
+          denied.classList.remove('hidden');
+        }
+      }
+    }
+
+    // Run on load and on auth events
+    document.addEventListener('DOMContentLoaded', checkAccess);
+    if (window.netlifyIdentity) {
+      netlifyIdentity.on('init', checkAccess);
+      netlifyIdentity.on('login', checkAccess);
+      netlifyIdentity.on('logout', checkAccess);
+    }
+  </script>
+</Layout>

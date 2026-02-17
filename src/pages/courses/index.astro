@@ -1,0 +1,30 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Features2 from '~/components/widgets/Features2.astro';
+import { getCollection } from 'astro:content';
+
+const metadata = {
+  title: 'Courses | Pine Tree Magick',
+};
+
+const courses = await getCollection('course');
+
+const items = courses.map((course) => ({
+  title: course.data.title,
+  description: course.data.description,
+  icon: 'tabler:book',
+  callToAction: {
+    text: 'View Course',
+    href: `/courses/${course.slug}`,
+  },
+  image: course.data.image,
+}));
+---
+
+<Layout metadata={metadata}>
+  <Features2
+    title="Our Magickal Courses"
+    subtitle="Learn at your own pace with our structured modules and expert guidance."
+    items={items}
+  />
+</Layout>

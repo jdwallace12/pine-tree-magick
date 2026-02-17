@@ -12,6 +12,8 @@ import { fileURLToPath } from 'url';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
+const NETLIFY_ACCESS_TOKEN = process.env.NETLIFY_ACCESS_TOKEN; // Personal Access Token or similar
+const NETLIFY_SITE_ID = process.env.NETLIFY_SITE_ID;
 
 // Ensure EMAIL_FROM is always valid for Resend
 const EMAIL_FROM = process.env.EMAIL_FROM?.includes('<')
@@ -176,6 +178,60 @@ async function sendEmail({ to, buyerName, link, itemName }) {
   }
 }
 
+// Grant role to Netlify Identity user
+async function grantRole(userId, role) {
+  if (!NETLIFY_ACCESS_TOKEN || !NETLIFY_SITE_ID) {
+    console.warn("⚠️ NETLIFY_ACCESS_TOKEN or NETLIFY_SITE_ID missing. Role grant skipped.");
+    return;
+  }
+
+  console.log(`🔑 Granting role '${role}' to user '${userId}'`);
+
+  try {
+    // 1. Get current user data to get existing roles
+    const userRes = await fetch(`https://api.netlify.com/api/v1/sites/${NETLIFY_SITE_ID}/identity/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${NETLIFY_ACCESS_TOKEN}`,
+      },
+    });
+
+    if (!userRes.ok) {
+      console.error(`❌ Failed to fetch user ${userId}:`, await userRes.text());
+      return;
+    }
+
+    const userData = await userRes.json();
+    const currentRoles = userData.app_metadata?.roles || [];
+
+    if (currentRoles.includes(role)) {
+      console.log(`ℹ️ User already has role '${role}'`);
+      return;
+    }
+
+    // 2. Update user with new role
+    const updateRes = await fetch(`https://api.netlify.com/api/v1/sites/${SITE_ID}/identity/${userId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${NETLIFY_ACCESS_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        app_metadata: {
+          roles: [...currentRoles, role],
+        },
+      }),
+    });
+
+    if (updateRes.ok) {
+      console.log(`✅ Role '${role}' granted cluster-wide for user ${userId}`);
+    } else {
+      console.error(`❌ Failed to grant role:`, await updateRes.text());
+    }
+  } catch (err) {
+    console.error("❌ Error granting role:", err);
+  }
+}
+
 // Main IPN handler
 export default async function handler(req) {
   try {
@@ -235,22 +291,35 @@ export default async function handler(req) {
     const buyerName = params.get("first_name");
     const itemName =
       params.get("item_name") || params.get("item_name1") || "Unknown Item";
+    const custom = params.get("custom") || ""; // We'll pass Netlify User ID in the 'custom' field
 
     console.log("👤 Buyer:", email, buyerName);
     console.log("📦 Item:", itemName);
+    console.log("🆔 Custom (User ID):", custom);
 
+    // 1. Handle PDF downloads (Existing logic)
     const PDF_LINKS = getPdfLinks();
     const pdfLink = PDF_LINKS[itemName];
-    if (!pdfLink) {
-      console.error("❌ No PDF for item:", itemName);
-      console.log("Available items:", Object.keys(PDF_LINKS));
-      return new Response("No PDF configured", { status: 200 });
+    if (pdfLink) {
+      await sendEmail({ to: email, buyerName, link: pdfLink, itemName });
+      console.log(`✅ Download delivered: ${itemName}`);
     }
 
-    // Send the download email
-    await sendEmail({ to: email, buyerName, link: pdfLink, itemName });
+    // 2. Handle Course access (New logic)
+    // We assume courses items are named exactly as their title or similar
+    // For simplicity, let's map course names to slugs. 
+    // In a production env, you might use 'item_number' for the course slug.
+    const courseSlugs = {
+      "Magickal Foundations: A Beginner's Guide": "magickal-foundations"
+    };
 
-    console.log(`✅ Download delivered: ${itemName}`);
+    const courseSlug = courseSlugs[itemName];
+    if (courseSlug && custom) {
+      await grantRole(custom, `course:${courseSlug}`);
+      console.log(`✅ Course role granted: course:${courseSlug}`);
+    } else if (courseSlug && !custom) {
+      console.warn(`⚠️ Course purchase detected but no User ID (custom) provided. Manual grant needed for ${email}`);
+    }
 
     return new Response("OK", { status: 200 });
   } catch (err) {
