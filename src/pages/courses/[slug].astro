@@ -60,6 +60,24 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
         Course Syllabus
       </h2>
 
+      <!-- Course Progress Bar -->
+      <div
+        id="course-progress-container"
+        class="mb-12 hidden"
+        data-course-slug={course.slug}
+        data-total-lessons={lessons.length}
+      >
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-bold text-muted uppercase tracking-wider">Your Progress</span>
+          <span id="progress-percent" class="text-sm font-bold text-primary">0%</span>
+        </div>
+        <div
+          class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden border border-slate-200 dark:border-slate-700"
+        >
+          <div id="progress-bar" class="bg-primary h-full transition-all duration-500 ease-out" style="width: 0%"></div>
+        </div>
+      </div>
+
       <div class="space-y-12">
         {
           Object.entries(modulesMap).map(([moduleName, moduleLessons]) => (
@@ -82,12 +100,20 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
                         {l.data.title}
                       </a>
                     </div>
-                    <a
-                      href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
-                      class="text-primary opacity-0 group-hover:opacity-100 transition flex items-center text-sm font-bold"
-                    >
-                      View Lesson <Icon name="tabler:chevron-right" class="w-4 h-4 ml-1" />
-                    </a>
+                    <div class="flex items-center gap-4">
+                      <span
+                        class="lesson-status-check hidden text-green-500 font-bold"
+                        data-lesson-slug={l.slug.split('/').pop()}
+                      >
+                        ✅
+                      </span>
+                      <a
+                        href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
+                        class="text-primary opacity-0 group-hover:opacity-100 transition flex items-center text-sm font-bold"
+                      >
+                        View Lesson <Icon name="tabler:chevron-right" class="w-4 h-4 ml-1" />
+                      </a>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -115,39 +141,112 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
       </div>
 
       <div
+        id="signin-prompt-container"
         class="mt-8 p-4 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700"
       >
         <p class="text-sm font-medium">Already enrolled?</p>
-        <button data-netlify-identity-button class="text-link hover:underline mt-2"
-          >Sign in to access your course</button
-        >
+        <button id="course-signin-button" class="text-link hover:underline mt-2">Sign in to access your course</button>
       </div>
     </div>
   </section>
 
-  <script is:inline>
-    function updateEnrollLink() {
-      const enrollLink = document.getElementById('course-enroll-link');
-      if (!enrollLink || !window.netlifyIdentity) return;
+  <script>
+    import { getCompletedLessons, calculateProgress } from '~/utils/progress';
 
-      const user = netlifyIdentity.currentUser();
+    function updateEnrollLink() {
+      const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
+      const signinPrompt = document.getElementById('signin-prompt-container');
+
+      if (!window.netlifyIdentity) return;
+
+      const user = window.netlifyIdentity.currentUser();
       if (user) {
+        // Hide sign-in prompt if logged in
+        if (signinPrompt) signinPrompt.classList.add('hidden');
+
         // Append Netlify User ID to PayPal URL via 'custom' parameter
-        const baseUrl = enrollLink.href.split('?')[0];
-        enrollLink.href = `${baseUrl}?custom=${user.id}`;
+        if (enrollLink) {
+          const baseUrl = enrollLink.href.split('?')[0];
+          enrollLink.href = `${baseUrl}?custom=${user.id}`;
+        }
+      } else {
+        // Show sign-in prompt if logged out
+        if (signinPrompt) signinPrompt.classList.remove('hidden');
+
+        // Reset enroll link
+        if (enrollLink) enrollLink.href = enrollLink.href.split('?')[0];
       }
     }
 
+    function initCourseProgress() {
+      const container = document.getElementById('course-progress-container');
+      if (!container) return;
+
+      const { courseSlug, totalLessons } = container.dataset;
+      if (!courseSlug || !totalLessons) return;
+
+      const completed = getCompletedLessons(courseSlug);
+      const percent = calculateProgress(completed.length, parseInt(totalLessons));
+
+      // Show container if progress has started
+      if (completed.length > 0) {
+        container.classList.remove('hidden');
+      }
+
+      // Update progress bar
+      const bar = document.getElementById('progress-bar');
+      const text = document.getElementById('progress-percent');
+      if (bar) bar.style.width = `${percent}%`;
+      if (text) text.innerText = `${percent}%`;
+
+      // Update individual lesson checks
+      document.querySelectorAll('.lesson-status-check').forEach((check) => {
+        const lessonSlug = (check as HTMLElement).dataset.lessonSlug;
+        if (lessonSlug && completed.includes(lessonSlug)) {
+          check.classList.remove('hidden');
+        } else {
+          check.classList.add('hidden');
+        }
+      });
+    }
+
     // Run on load and on auth events
-    document.addEventListener('DOMContentLoaded', updateEnrollLink);
+    function initSignInButton() {
+      const btn = document.getElementById('course-signin-button');
+      if (btn) {
+        btn.onclick = () => {
+          if (window.netlifyIdentity) window.netlifyIdentity.open();
+        };
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateEnrollLink();
+      initCourseProgress();
+      initSignInButton();
+    });
+
+    document.addEventListener('astro:page-load', () => {
+      updateEnrollLink();
+      initCourseProgress();
+      initSignInButton();
+    });
+
     if (window.netlifyIdentity) {
-      netlifyIdentity.on('init', updateEnrollLink);
-      netlifyIdentity.on('login', updateEnrollLink);
-      netlifyIdentity.on('logout', () => {
-        const enrollLink = document.getElementById('course-enroll-link');
+      window.netlifyIdentity.on('init', () => {
+        updateEnrollLink();
+        initCourseProgress();
+      });
+      window.netlifyIdentity.on('login', () => {
+        updateEnrollLink();
+        initCourseProgress();
+      });
+      window.netlifyIdentity.on('logout', () => {
+        const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
         if (enrollLink) {
           enrollLink.href = enrollLink.href.split('?')[0];
         }
+        initCourseProgress();
       });
     }
   </script>

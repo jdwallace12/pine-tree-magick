@@ -52,6 +52,19 @@ const requiredRole = `course:${course?.slug}`;
         <Content />
       </div>
 
+      <!-- Lesson Completion Button -->
+      <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700 flex justify-center">
+        <button
+          id="mark-complete-btn"
+          data-course-slug={course?.slug}
+          data-lesson-slug={lesson.slug.split('/').pop()}
+          class="flex items-center gap-2 px-8 py-3 rounded-full font-bold transition-all duration-300 border-2"
+        >
+          <span class="icon-pending italic">Mark as Completed</span>
+          <span class="icon-completed hidden">Completed ✅</span>
+        </button>
+      </div>
+
       {
         lesson.data.pdfUrl && (
           <div class="mt-12 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
@@ -104,6 +117,70 @@ const requiredRole = `course:${course?.slug}`;
       </div>
     </div>
   </div>
+
+  <script>
+    import { getCompletedLessons, markLessonComplete, markLessonIncomplete } from '~/utils/progress';
+
+    function initProgress() {
+      const btn = document.getElementById('mark-complete-btn');
+      if (!btn) return;
+
+      const courseSlug = btn.dataset.courseSlug;
+      const lessonSlug = btn.dataset.lessonSlug;
+      if (!courseSlug || !lessonSlug) return;
+
+      const updateBtnUI = (isCompleted: boolean) => {
+        const pending = btn.querySelector('.icon-pending');
+        const completed = btn.querySelector('.icon-completed');
+
+        if (isCompleted) {
+          btn.classList.add('bg-green-100', 'text-green-800', 'border-green-200');
+          btn.classList.remove(
+            'bg-white',
+            'dark:bg-slate-900',
+            'border-slate-200',
+            'dark:border-slate-700',
+            'hover:border-primary'
+          );
+          if (pending) pending.classList.add('hidden');
+          if (completed) completed.classList.remove('hidden');
+        } else {
+          btn.classList.remove('bg-green-100', 'text-green-800', 'border-green-200');
+          btn.classList.add(
+            'bg-white',
+            'dark:bg-slate-900',
+            'border-slate-200',
+            'dark:border-slate-700',
+            'hover:border-primary'
+          );
+          if (pending) pending.classList.remove('hidden');
+          if (completed) completed.classList.add('hidden');
+        }
+      };
+
+      // Initial state
+      const completedLessons = getCompletedLessons(courseSlug);
+      let isCompleted = completedLessons.includes(lessonSlug);
+      updateBtnUI(isCompleted);
+
+      // Click handler
+      btn.onclick = async () => {
+        isCompleted = !isCompleted;
+        updateBtnUI(isCompleted);
+
+        if (isCompleted) {
+          await markLessonComplete(courseSlug, lessonSlug);
+        } else {
+          await markLessonIncomplete(courseSlug, lessonSlug);
+        }
+      };
+    }
+
+    // Run on load and on Astro events
+    initProgress();
+    window.initProgress = initProgress;
+    document.addEventListener('astro:page-load', initProgress);
+  </script>
 
   <script is:inline>
     function checkAccess() {
@@ -167,14 +244,16 @@ const requiredRole = `course:${course?.slug}`;
 
     // Sign In Button Handler
     document.addEventListener('click', (e) => {
-      if (e.target.id === 'lesson-login-link') {
+      const target = e.target;
+      if (target.closest('#lesson-login-link')) {
         if (window.netlifyIdentity) window.netlifyIdentity.open();
       }
     });
 
     // Dev Spoof Handler
     document.addEventListener('click', (e) => {
-      if (e.target.id === 'dev-spoof-access') {
+      const target = e.target;
+      if (target.closest('#dev-spoof-access')) {
         const content = document.getElementById('lesson-content');
         const role = content?.dataset.requiredRole;
         if (role) {
@@ -194,7 +273,11 @@ const requiredRole = `course:${course?.slug}`;
       const runGlobalCheck = () => {
         // This function will find the elements if they exist on the current page
         const content = document.getElementById('lesson-content');
-        if (content) checkAccess();
+        if (content) {
+          checkAccess();
+          // Trigger a re-init of progress to sync with potential new data from Identity
+          if (typeof initProgress === 'function') initProgress();
+        }
       };
 
       netlifyIdentity.on('init', runGlobalCheck);
