@@ -48,6 +48,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
         text: 'Enroll Now',
         href: '#enroll',
         icon: 'tabler:shopping-cart',
+        id: 'hero-enroll-button',
       },
       { text: 'View Syllabus', href: '#syllabus' },
     ]}
@@ -156,10 +157,24 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
     function updateEnrollLink() {
       const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
       const signinPrompt = document.getElementById('signin-prompt-container');
+      const heroEnrollBtn = document.getElementById('hero-enroll-button') as HTMLAnchorElement;
+      const enrollSection = document.getElementById('enroll');
+      const progressContainer = document.getElementById('course-progress-container');
+      const courseSlug = progressContainer?.dataset.courseSlug;
 
       if (!window.netlifyIdentity) return;
 
       const user = window.netlifyIdentity.currentUser();
+      const hasAccess = user?.app_metadata?.roles?.includes(`course:${courseSlug}`);
+
+      if (hasAccess) {
+        // Hide all enrollment UI if user already has access
+        if (heroEnrollBtn) heroEnrollBtn.classList.add('hidden');
+        if (enrollSection) enrollSection.classList.add('hidden');
+        if (signinPrompt) signinPrompt.classList.add('hidden');
+        return;
+      }
+
       if (user) {
         // Hide sign-in prompt if logged in
         if (signinPrompt) signinPrompt.classList.add('hidden');
@@ -167,11 +182,26 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
         // Append Netlify User ID to PayPal URL via 'custom' parameter
         if (enrollLink) {
           const baseUrl = enrollLink.href.split('?')[0];
-          enrollLink.href = `${baseUrl}?custom=${user.id}`;
+          const paypalUrl = `${baseUrl}?custom=${user.id}`;
+          enrollLink.href = paypalUrl;
+
+          // Also update Hero button to go direct to PayPal if logged in
+          if (heroEnrollBtn) {
+            heroEnrollBtn.href = paypalUrl;
+            heroEnrollBtn.target = '_blank';
+          }
         }
       } else {
         // Show sign-in prompt if logged out
         if (signinPrompt) signinPrompt.classList.remove('hidden');
+
+        // Ensure enroll UI is visible if logged out
+        if (heroEnrollBtn) {
+          heroEnrollBtn.classList.remove('hidden');
+          heroEnrollBtn.href = '#enroll';
+          heroEnrollBtn.target = '_self';
+        }
+        if (enrollSection) enrollSection.classList.remove('hidden');
 
         // Reset enroll link
         if (enrollLink) enrollLink.href = enrollLink.href.split('?')[0];
@@ -210,6 +240,34 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
       });
     }
 
+    function initEnrollButtons() {
+      const heroEnrollBtn = document.getElementById('hero-enroll-button');
+      const enrollLink = document.getElementById('course-enroll-link');
+
+      const handleEnrollClick = (e: MouseEvent) => {
+        if (!window.netlifyIdentity) return;
+
+        const user = window.netlifyIdentity.currentUser();
+        if (!user) {
+          e.preventDefault();
+          // Store intent to enroll for this specific course
+          const courseSlug = document.getElementById('course-progress-container')?.dataset.courseSlug;
+          if (courseSlug) sessionStorage.setItem('pending_enroll', courseSlug);
+
+          window.netlifyIdentity.open();
+        }
+      };
+
+      if (heroEnrollBtn) {
+        heroEnrollBtn.removeEventListener('click', handleEnrollClick);
+        heroEnrollBtn.addEventListener('click', handleEnrollClick);
+      }
+      if (enrollLink) {
+        enrollLink.removeEventListener('click', handleEnrollClick);
+        enrollLink.addEventListener('click', handleEnrollClick);
+      }
+    }
+
     // Run on load and on auth events
     function initSignInButton() {
       const btn = document.getElementById('course-signin-button');
@@ -224,12 +282,14 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
       updateEnrollLink();
       initCourseProgress();
       initSignInButton();
+      initEnrollButtons();
     });
 
     document.addEventListener('astro:page-load', () => {
       updateEnrollLink();
       initCourseProgress();
       initSignInButton();
+      initEnrollButtons();
     });
 
     if (window.netlifyIdentity) {
@@ -240,6 +300,18 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
       window.netlifyIdentity.on('login', () => {
         updateEnrollLink();
         initCourseProgress();
+
+        // Auto-redirect if they were trying to enroll before logging in
+        const pendingEnroll = sessionStorage.getItem('pending_enroll');
+        const currentCourse = document.getElementById('course-progress-container')?.dataset.courseSlug;
+
+        if (pendingEnroll === currentCourse) {
+          sessionStorage.removeItem('pending_enroll');
+          const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
+          if (enrollLink) {
+            window.location.href = enrollLink.href;
+          }
+        }
       });
       window.netlifyIdentity.on('logout', () => {
         const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
