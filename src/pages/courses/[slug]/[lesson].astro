@@ -21,6 +21,10 @@ const course = await getEntry('course', lesson.data.course);
 
 const metadata = {
   title: `${lesson.data.title} | ${course?.data.title}`,
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 const requiredRole = `course:${course?.slug}`;
