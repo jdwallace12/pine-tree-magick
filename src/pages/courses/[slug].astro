@@ -33,7 +33,7 @@ const modulesMap =
 
 const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons]) => ({
   title: moduleName,
-  description: moduleLessons.map((l) => `${l.data.isFree ? '🔓' : '🔒'} ${l.data.title}`).join('\n'),
+  description: moduleLessons.map((l) => `${l.data.isFree ? '✦ Free' : '▪ Premium'} — ${l.data.title}`).join('\n'),
   icon: 'tabler:list-check',
 }));
 ---
@@ -97,7 +97,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
             <div class="px-2 space-y-6">
               <div class="flex items-baseline justify-between">
                 <span class="text-4xl font-heading font-bold">${course.data.price}</span>
-                <span class="text-sm font-bold text-muted uppercase tracking-widest">Enrollment Fee</span>
+                <span class="text-sm font-bold text-slate-500 uppercase tracking-widest">Enrollment Fee</span>
               </div>
 
               <div id="paypal-button-container" data-button-id={course.data.payPalButtonId}>
@@ -113,7 +113,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
               </div>
 
               <div id="signin-prompt-container" class="text-center pt-2">
-                <p class="text-sm text-muted">Already enrolled?</p>
+                <p class="text-sm text-slate-500">Already enrolled?</p>
                 <button id="course-signin-button" class="text-black font-bold hover:underline mt-1"
                   >Sign in to access</button
                 >
@@ -215,8 +215,17 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
                   {moduleLessons.map((l) => (
                     <li class="flex items-center justify-between p-4 md:p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-[#f59bbb]/50 transition-all group/lesson">
                       <div class="flex items-center space-x-4 md:space-x-6">
-                        <span class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner border border-slate-100 dark:border-slate-700">
-                          {l.data.isFree ? '🔓' : '🔒'}
+                        <span class:list={[
+                          'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-inner border',
+                          l.data.isFree
+                            ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400'
+                            : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500',
+                        ]}>
+                          {l.data.isFree ? (
+                            <Icon name="tabler:lock-open" class="w-5 h-5" />
+                          ) : (
+                            <Icon name="tabler:lock" class="w-5 h-5" />
+                          )}
                         </span>
                         <a
                           href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}

@@ -1,5 +1,6 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
 import { getCollection, getEntry } from 'astro:content';
 import { YouTube } from 'astro-embed';
 
@@ -84,7 +85,9 @@ const requiredRole = `course:${course?.slug}`;
       id="access-denied"
       class="text-center py-20 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700"
     >
-      <div class="text-6xl mb-6">🔒</div>
+      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500">
+        <Icon name="tabler:lock" class="w-10 h-10" />
+      </div>
       <h2 class="text-2xl font-bold mb-4">Members Only Content</h2>
       <p class="text-muted mb-8 max-w-md mx-auto">
         This lesson is part of <strong>{course?.data.title}</strong>. Please sign in or enroll to access the materials.
