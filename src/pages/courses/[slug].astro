@@ -95,7 +95,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
             </div>
 
             <div class="px-2 space-y-6">
-              <div class="flex items-baseline justify-between">
+              <div id="price-container" class="flex items-baseline justify-between">
                 <span class="text-4xl font-heading font-bold">${course.data.price}</span>
                 <span class="text-sm font-bold text-slate-500 uppercase tracking-widest">Enrollment Fee</span>
               </div>
@@ -297,6 +297,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
         const heroEnrollBtn = document.getElementById('hero-enroll-button') as HTMLAnchorElement;
         const enrollSection = document.getElementById('enroll');
         const progressContainer = document.getElementById('course-progress-container');
+        const priceContainer = document.getElementById('price-container');
         const courseSlug = progressContainer?.dataset.courseSlug;
 
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
@@ -309,8 +310,20 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
         updateLessonLockIcons(hasAccess);
 
         if (hasAccess) {
-          // Hide all enrollment UI if user already has access
-          if (heroEnrollBtn) heroEnrollBtn.classList.add('hidden');
+          // Change UI to reflect the user has purchased the course
+          if (enrollLink) {
+            enrollLink.innerHTML = 'VIEW COURSE <svg class="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l14 0" /><path d="M13 18l6 -6" /><path d="M13 6l6 6" /></svg>';
+            enrollLink.href = '#syllabus';
+            enrollLink.target = '_self';
+            // Change color to green to indicate access
+            enrollLink.classList.remove('bg-black', 'text-white', 'hover:bg-slate-800');
+            enrollLink.classList.add('bg-emerald-600', 'text-white', 'hover:bg-emerald-700');
+          }
+          if (priceContainer) {
+            priceContainer.innerHTML = '<span class="text-xl font-bold flex items-center text-emerald-600 dark:text-emerald-400 w-full justify-center pb-2"><svg class="w-6 h-6 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"></path></svg> Purchased</span>';
+          }
+
+          if (heroEnrollBtn) heroEnrollBtn.classList.add('hidden'); // Legacy button cleanup
           if (enrollSection) enrollSection.classList.add('hidden');
           if (signinPrompt) signinPrompt.classList.add('hidden');
           return;
