@@ -1,0 +1,76 @@
+---
+import { getCollection } from 'astro:content';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+
+const {
+  title,
+  subtitle,
+  tagline,
+  id,
+  isDark = false,
+  classes = {},
+  items,
+  bg = await Astro.slots.render('bg'),
+} = Astro.props;
+
+// Use passed items or fetch from collection
+let activeCourses = items || [];
+if (!items) {
+  activeCourses = await getCollection('course');
+  // Sort by order if available
+  // @ts-ignore
+  activeCourses.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
+}
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={classes?.container} bg={bg}>
+  <Headline
+    title={title}
+    subtitle={subtitle}
+    tagline={tagline}
+    classes={{
+      container: 'sm:mx-0 lg:max-w-none text-left md:mb-8',
+      title: 'text-left',
+      subtitle: 'text-left',
+    }}
+  />
+  {
+    activeCourses.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 w-full">
+        {activeCourses.map((course, idx) => (
+          <a
+            href={`/courses/${course.slug}`}
+            class="relative flex flex-row md:flex-col w-full h-full dark:border-slate-600 dark:border overflow-hidden rounded-md shadow-md hover:shadow-lg dark:hover:border-1 dark:hover:border-primary transition-all duration-300 group"
+          >
+            <div class="w-1/3 md:w-full h-full min-h-[12rem] md:h-56 overflow-hidden">
+              <img
+                src={course.data.image}
+                alt={course.data.title}
+                class="w-full h-full object-cover md:object-cover transform transition-transform duration-300 group-hover:scale-110"
+              />
+            </div>
+            <div class="w-2/3 md:w-full p-4 flex flex-col h-full">
+              <div class="flex justify-between items-start">
+                <h3 class="text-lg font-bold mb-2 group-hover:text-primary transition-colors">{course.data.title}</h3>
+              </div>
+              <p class="text-muted dark:text-slate-400 flex-grow">{course.data.description}</p>
+              <div class="mt-auto pt-2 flex justify-between items-center">
+                <span class="text-xs font-heading text-gray-400 dark:text-gray-400 uppercase tracking-wide">
+                  Online Course
+                </span>
+                <span class="bg-blue-100 dark:bg-primary dark:text-dark px-2 py-1 rounded font-bold text-sm whitespace-nowrap ml-2">
+                  ${course.data.price}
+                </span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="w-full text-center py-12">
+        <p class="text-xl text-muted dark:text-slate-400">No current courses but more are coming, check back soon!</p>
+      </div>
+    )
+  }
+</WidgetWrapper>

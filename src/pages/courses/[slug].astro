@@ -15,6 +15,7 @@ export async function getStaticPaths() {
 
 const { course } = Astro.props;
 const lessons = await getCollection('lesson', ({ data }) => data.course === course.slug);
+const { Content } = await course.render();
 
 const metadata = {
   title: `${course.data.title} | Pine Tree Magick`,
@@ -38,288 +39,389 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
 ---
 
 <Layout metadata={metadata}>
-  <Hero
-    title={course.data.title}
-    subtitle={course.data.description}
-    image={{ src: course.data.image, alt: course.data.title }}
-    actions={[
-      {
-        variant: 'primary',
-        text: 'Enroll Now',
-        href: '#enroll',
-        icon: 'tabler:shopping-cart',
-        id: 'hero-enroll-button',
-      },
-      { text: 'View Syllabus', href: '#syllabus' },
-    ]}
-  />
+  <!-- custom-hero-redesign -->
+  <section class="bg-[#1a263a] text-white pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
+        <!-- Hero Content (Left) -->
+        <div class="md:col-span-12 lg:col-span-7 space-y-8">
+          <a
+            href="/courses"
+            class="inline-flex items-center text-sm font-bold uppercase tracking-widest text-secondary dark:text-secondary hover:text-primary dark:hover:text-primary transition-colors mb-4 group"
+          >
+            <Icon name="tabler:chevron-left" class="w-4 h-4 mr-1 group-hover:-translate-x-1 transition-transform" />
+            Back to all courses
+          </a>
 
-  <!-- Syllabus Section -->
-  <section id="syllabus" class="py-20 bg-white dark:bg-slate-900">
-    <div class="max-w-4xl mx-auto px-4">
-      <h2 class="text-3xl font-bold mb-12 text-center underline decoration-primary decoration-4 underline-offset-8">
-        Course Syllabus
-      </h2>
+          <h1 class="text-5xl md:text-6xl lg:text-7xl font-heading leading-tight md:leading-[1.1] text-white">
+            {course.data.title}
+          </h1>
 
-      <!-- Course Progress Bar -->
-      <div
-        id="course-progress-container"
-        class="mb-12 hidden"
-        data-course-slug={course.slug}
-        data-total-lessons={lessons.length}
-      >
-        <div class="flex items-center justify-between mb-2">
-          <span class="text-sm font-bold text-muted uppercase tracking-wider">Your Progress</span>
-          <span id="progress-percent" class="text-sm font-bold text-primary">0%</span>
-        </div>
-        <div
-          class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-4 overflow-hidden border border-slate-200 dark:border-slate-700"
-        >
-          <div id="progress-bar" class="bg-primary h-full transition-all duration-500 ease-out" style="width: 0%"></div>
-        </div>
-      </div>
+          <p class="text-xl md:text-2xl text-secondary dark:text-secondary leading-relaxed max-w-2xl font-light">
+            {course.data.description}
+          </p>
 
-      <div class="space-y-12">
-        {
-          Object.entries(modulesMap).map(([moduleName, moduleLessons]) => (
-            <div class="bg-slate-50 dark:bg-slate-800 p-8 rounded-2xl border border-slate-100 dark:border-slate-700">
-              <h3 class="text-2xl font-bold mb-6 flex items-center">
-                <span class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">
-                  <Icon name="tabler:list-check" class="w-5 h-5" />
-                </span>
-                {moduleName}
-              </h3>
-              <ul class="space-y-4">
-                {moduleLessons.map((l) => (
-                  <li class="flex items-center justify-between p-4 bg-white dark:bg-slate-900 rounded-xl hover:shadow-md transition group">
-                    <div class="flex items-center">
-                      <span class="mr-3 text-xl">{l.data.isFree ? '🔓' : '🔒'}</span>
-                      <a
-                        href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
-                        class="font-medium hover:text-primary transition"
-                      >
-                        {l.data.title}
-                      </a>
-                    </div>
-                    <div class="flex items-center gap-4">
-                      <span
-                        class="lesson-status-check hidden text-green-500 font-bold"
-                        data-lesson-slug={l.slug.split('/').pop()}
-                      >
-                        ✅
-                      </span>
-                      <a
-                        href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
-                        class="text-primary opacity-0 group-hover:opacity-100 transition flex items-center text-sm font-bold"
-                      >
-                        View Lesson <Icon name="tabler:chevron-right" class="w-4 h-4 ml-1" />
-                      </a>
-                    </div>
+          <div class="hidden lg:block pt-12">
+            <h2 class="text-sm font-bold uppercase tracking-[0.2em] text-primary dark:text-primary mb-6">
+              What you'll master:
+            </h2>
+            <ul class="grid grid-cols-1 gap-4 text-white/90">
+              {
+                course.data.modules?.slice(0, 4).map((module) => (
+                  <li class="flex items-start">
+                    <span class="mr-3 mt-1 group-hover:scale-110 transition-transform">
+                      <Icon name="tabler:circle-check" class="w-5 h-5" />
+                    </span>
+                    <span class="text-lg">{module.replace(/^Module \d+:\s*/, '')}</span>
                   </li>
-                ))}
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+
+        <!-- Floating Purchase Card (Right) -->
+        <div class="md:col-span-12 lg:col-span-5">
+          <div
+            class="bg-white text-black p-4 md:p-6 rounded-3xl shadow-2xl sticky top-24 border border-slate-200 transform lg:translate-y-8"
+          >
+            <div class="aspect-video rounded-2xl overflow-hidden mb-6 group relative">
+              <img
+                src={course.data.image}
+                alt={course.data.title}
+                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            </div>
+
+            <div class="px-2 space-y-6">
+              <div class="flex items-baseline justify-between">
+                <span class="text-4xl font-heading font-bold">${course.data.price}</span>
+                <span class="text-sm font-bold text-muted uppercase tracking-widest">Enrollment Fee</span>
+              </div>
+
+              <div id="paypal-button-container" data-button-id={course.data.payPalButtonId}>
+                <a
+                  id="course-enroll-link"
+                  href={`https://www.paypal.com/ncp/payment/${course.data.payPalButtonId}`}
+                  target="_blank"
+                  class="flex items-center justify-center w-full bg-black text-white px-8 py-5 rounded-full font-bold text-lg hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                >
+                  ENROLL NOW
+                  <Icon name="tabler:arrow-right" class="w-5 h-5 ml-2" />
+                </a>
+              </div>
+
+              <div id="signin-prompt-container" class="text-center pt-2">
+                <p class="text-sm text-muted">Already enrolled?</p>
+                <button id="course-signin-button" class="text-black font-bold hover:underline mt-1"
+                  >Sign in to access</button
+                >
+              </div>
+
+              <hr class="border-slate-100" />
+
+              <ul class="space-y-4 pt-2">
+                <li class="flex items-center text-sm font-medium text-slate-700">
+                  <Icon name="tabler:infinity" class="w-5 h-5 mr-3 text-[#f59bbb]" />
+                  Lifetime access to all materials
+                </li>
+                <li class="flex items-center text-sm font-medium text-slate-700">
+                  <Icon name="tabler:video" class="w-5 h-5 mr-3 text-[#f59bbb]" />
+                  {lessons.length} video lessons & guides
+                </li>
+                <li class="flex items-center text-sm font-medium text-slate-700">
+                  <Icon name="tabler:device-laptop" class="w-5 h-5 mr-3 text-[#f59bbb]" />
+                  Learn on any device, anytime
+                </li>
+                <li class="flex items-center text-sm font-medium text-slate-700">
+                  <Icon name="tabler:certificate" class="w-5 h-5 mr-3 text-[#f59bbb]" />
+                  Certificate of Completion
+                </li>
               </ul>
             </div>
-          ))
-        }
+          </div>
+        </div>
       </div>
+    </div>
+
+    <!-- Decorative Pattern -->
+    <div
+      class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent dark:from-slate-900 pointer-events-none"
+    >
     </div>
   </section>
 
-  <section id="enroll" class="py-16 bg-blue-50 dark:bg-slate-800">
-    <div class="max-w-3xl mx-auto text-center px-4">
-      <h2 class="text-3xl font-bold mb-4">Start Your Journey</h2>
-      <p class="text-xl mb-8">Enroll today for just ${course.data.price}</p>
-
-      <div id="paypal-button-container" data-button-id={course.data.payPalButtonId}>
-        <a
-          id="course-enroll-link"
-          href={`https://www.paypal.com/ncp/payment/${course.data.payPalButtonId}`}
-          target="_blank"
-          class="inline-block bg-primary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-opacity-90 transition"
+  <!-- About This Course Section (Replaces content) -->
+  <section class="py-24 bg-white dark:bg-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      <div class="mb-16">
+        <h2 class="text-sm font-bold text-[#f59bbb] uppercase tracking-[0.3em] mb-4">About the course</h2>
+        <div
+          class="prose prose-lg dark:prose-invert max-w-none font-serif leading-relaxed text-slate-800 dark:text-slate-200"
         >
-          Enroll Now with PayPal
-        </a>
+          <Content />
+        </div>
       </div>
 
-      <div
-        id="signin-prompt-container"
-        class="mt-8 p-4 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-gray-200 dark:border-slate-700"
-      >
-        <p class="text-sm font-medium">Already enrolled?</p>
-        <button id="course-signin-button" class="text-link hover:underline mt-2">Sign in to access your course</button>
+      <!-- Syllabus Anchor -->
+      <div id="syllabus" class="pt-16 border-t border-slate-100 dark:border-slate-800">
+        <!-- Centered Header -->
+        <div class="text-center max-w-2xl mx-auto mb-16 space-y-8">
+          <h2 class="text-4xl md:text-5xl font-heading">Course Curriculum</h2>
+
+          <!-- Course Progress Bar (Centered) -->
+          <div
+            id="course-progress-container"
+            class="hidden w-full max-w-sm mx-auto"
+            data-course-slug={course.slug}
+            data-total-lessons={lessons.length}
+          >
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-bold text-muted uppercase tracking-widest">Your Course Progress</span>
+              <span id="progress-percent" class="text-xs font-bold text-[#f59bbb]">0%</span>
+            </div>
+            <div
+              class="w-full bg-slate-100 dark:bg-slate-800/50 rounded-full h-2.5 overflow-hidden border border-slate-200 dark:border-slate-700/50 p-[1px]"
+            >
+              <div
+                id="progress-bar"
+                class="bg-gradient-to-r from-[#f59bbb] to-[#9acac6] h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(245,155,187,0.3)]"
+                style="width: 0%"
+              >
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modules List (Full width stacked) -->
+        <div class="space-y-10">
+          {
+            Object.entries(modulesMap).map(([moduleName, moduleLessons]) => (
+              <div class="bg-slate-50 dark:bg-slate-900/50 p-6 md:p-10 rounded-[2rem] border border-slate-100 dark:border-slate-800 transition-all hover:bg-slate-100/50 dark:hover:bg-slate-800/50 group">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                  <h3 class="text-2xl md:text-3xl font-bold flex items-center font-heading">
+                    <span class="bg-[#9acac6]/20 text-[#9acac6] dark:text-[#9acac6] w-12 h-12 rounded-2xl flex items-center justify-center mr-5 shadow-sm border border-[#9acac6]/30">
+                      <Icon name="tabler:folders" class="w-6 h-6" />
+                    </span>
+                    {moduleName}
+                  </h3>
+                  <span class="text-sm font-bold text-muted uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700">
+                    {moduleLessons.length} Lessons
+                  </span>
+                </div>
+
+                <ul class="space-y-4">
+                  {moduleLessons.map((l) => (
+                    <li class="flex items-center justify-between p-4 md:p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-[#f59bbb]/50 transition-all group/lesson">
+                      <div class="flex items-center space-x-4 md:space-x-6">
+                        <span class="flex-shrink-0 w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-xl shadow-inner border border-slate-100 dark:border-slate-700">
+                          {l.data.isFree ? '🔓' : '🔒'}
+                        </span>
+                        <a
+                          href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
+                          class="font-bold text-lg md:text-xl text-slate-900 dark:text-white hover:text-[#f59bbb] transition-colors leading-tight"
+                        >
+                          {l.data.title}
+                        </a>
+                      </div>
+                      <div class="flex items-center gap-4 md:gap-8">
+                        <span
+                          class="lesson-status-check hidden text-[#9acac6] scale-125"
+                          data-lesson-slug={l.slug.split('/').pop()}
+                        >
+                          <Icon name="tabler:circle-check-filled" class="w-7 h-7" />
+                        </span>
+                        <a
+                          href={`/courses/${course.slug}/${l.slug.split('/').pop()}`}
+                          class="hidden md:flex items-center justify-center bg-black dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-full opacity-0 group-hover/lesson:opacity-100 transition-all font-bold text-sm shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95"
+                        >
+                          Start Lesson <Icon name="tabler:chevron-right" class="w-4 h-4 ml-2" />
+                        </a>
+                        <a href={`/courses/${course.slug}/${l.slug.split('/').pop()}`} class="md:hidden text-slate-400">
+                          <Icon name="tabler:chevron-right" class="w-6 h-6" />
+                        </a>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
       </div>
     </div>
-  </section>
 
-  <script>
-    import { getCompletedLessons, calculateProgress } from '~/utils/progress';
+    <script>
+      import { getCompletedLessons, calculateProgress } from '~/utils/progress';
 
-    function updateEnrollLink() {
-      const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
-      const signinPrompt = document.getElementById('signin-prompt-container');
-      const heroEnrollBtn = document.getElementById('hero-enroll-button') as HTMLAnchorElement;
-      const enrollSection = document.getElementById('enroll');
-      const progressContainer = document.getElementById('course-progress-container');
-      const courseSlug = progressContainer?.dataset.courseSlug;
+      function updateEnrollLink() {
+        const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
+        const signinPrompt = document.getElementById('signin-prompt-container');
+        const heroEnrollBtn = document.getElementById('hero-enroll-button') as HTMLAnchorElement;
+        const enrollSection = document.getElementById('enroll');
+        const progressContainer = document.getElementById('course-progress-container');
+        const courseSlug = progressContainer?.dataset.courseSlug;
 
-      if (!window.netlifyIdentity) return;
-
-      const user = window.netlifyIdentity.currentUser();
-      const hasAccess = user?.app_metadata?.roles?.includes(`course:${courseSlug}`);
-
-      if (hasAccess) {
-        // Hide all enrollment UI if user already has access
-        if (heroEnrollBtn) heroEnrollBtn.classList.add('hidden');
-        if (enrollSection) enrollSection.classList.add('hidden');
-        if (signinPrompt) signinPrompt.classList.add('hidden');
-        return;
-      }
-
-      if (user) {
-        // Hide sign-in prompt if logged in
-        if (signinPrompt) signinPrompt.classList.add('hidden');
-
-        // Append Netlify User ID to PayPal URL via 'custom' parameter
-        if (enrollLink) {
-          const baseUrl = enrollLink.href.split('?')[0];
-          const paypalUrl = `${baseUrl}?custom=${user.id}`;
-          enrollLink.href = paypalUrl;
-
-          // Also update Hero button to go direct to PayPal if logged in
-          if (heroEnrollBtn) {
-            heroEnrollBtn.href = paypalUrl;
-            heroEnrollBtn.target = '_blank';
-          }
-        }
-      } else {
-        // Show sign-in prompt if logged out
-        if (signinPrompt) signinPrompt.classList.remove('hidden');
-
-        // Ensure enroll UI is visible if logged out
-        if (heroEnrollBtn) {
-          heroEnrollBtn.classList.remove('hidden');
-          heroEnrollBtn.href = '#enroll';
-          heroEnrollBtn.target = '_self';
-        }
-        if (enrollSection) enrollSection.classList.remove('hidden');
-
-        // Reset enroll link
-        if (enrollLink) enrollLink.href = enrollLink.href.split('?')[0];
-      }
-    }
-
-    function initCourseProgress() {
-      const container = document.getElementById('course-progress-container');
-      if (!container) return;
-
-      const { courseSlug, totalLessons } = container.dataset;
-      if (!courseSlug || !totalLessons) return;
-
-      const completed = getCompletedLessons(courseSlug);
-      const percent = calculateProgress(completed.length, parseInt(totalLessons));
-
-      // Show container if progress has started
-      if (completed.length > 0) {
-        container.classList.remove('hidden');
-      }
-
-      // Update progress bar
-      const bar = document.getElementById('progress-bar');
-      const text = document.getElementById('progress-percent');
-      if (bar) bar.style.width = `${percent}%`;
-      if (text) text.innerText = `${percent}%`;
-
-      // Update individual lesson checks
-      document.querySelectorAll('.lesson-status-check').forEach((check) => {
-        const lessonSlug = (check as HTMLElement).dataset.lessonSlug;
-        if (lessonSlug && completed.includes(lessonSlug)) {
-          check.classList.remove('hidden');
-        } else {
-          check.classList.add('hidden');
-        }
-      });
-    }
-
-    function initEnrollButtons() {
-      const heroEnrollBtn = document.getElementById('hero-enroll-button');
-      const enrollLink = document.getElementById('course-enroll-link');
-
-      const handleEnrollClick = (e: MouseEvent) => {
         if (!window.netlifyIdentity) return;
 
         const user = window.netlifyIdentity.currentUser();
-        if (!user) {
-          e.preventDefault();
-          // Store intent to enroll for this specific course
-          const courseSlug = document.getElementById('course-progress-container')?.dataset.courseSlug;
-          if (courseSlug) sessionStorage.setItem('pending_enroll', courseSlug);
+        const hasAccess = user?.app_metadata?.roles?.includes(`course:${courseSlug}`);
 
-          window.netlifyIdentity.open();
+        if (hasAccess) {
+          // Hide all enrollment UI if user already has access
+          if (heroEnrollBtn) heroEnrollBtn.classList.add('hidden');
+          if (enrollSection) enrollSection.classList.add('hidden');
+          if (signinPrompt) signinPrompt.classList.add('hidden');
+          return;
         }
-      };
 
-      if (heroEnrollBtn) {
-        heroEnrollBtn.removeEventListener('click', handleEnrollClick);
-        heroEnrollBtn.addEventListener('click', handleEnrollClick);
-      }
-      if (enrollLink) {
-        enrollLink.removeEventListener('click', handleEnrollClick);
-        enrollLink.addEventListener('click', handleEnrollClick);
-      }
-    }
+        if (user) {
+          // Hide sign-in prompt if logged in
+          if (signinPrompt) signinPrompt.classList.add('hidden');
 
-    // Run on load and on auth events
-    function initSignInButton() {
-      const btn = document.getElementById('course-signin-button');
-      if (btn) {
-        btn.onclick = () => {
-          if (window.netlifyIdentity) window.netlifyIdentity.open();
+          // Append Netlify User ID to PayPal URL via 'custom' parameter
+          if (enrollLink) {
+            const baseUrl = enrollLink.href.split('?')[0];
+            const paypalUrl = `${baseUrl}?custom=${user.id}`;
+            enrollLink.href = paypalUrl;
+
+            // Also update Hero button to go direct to PayPal if logged in
+            if (heroEnrollBtn) {
+              heroEnrollBtn.href = paypalUrl;
+              heroEnrollBtn.target = '_blank';
+            }
+          }
+        } else {
+          // Show sign-in prompt if logged out
+          if (signinPrompt) signinPrompt.classList.remove('hidden');
+
+          // Ensure enroll UI is visible if logged out
+          if (heroEnrollBtn) {
+            heroEnrollBtn.classList.remove('hidden');
+            heroEnrollBtn.href = '#enroll';
+            heroEnrollBtn.target = '_self';
+          }
+          if (enrollSection) enrollSection.classList.remove('hidden');
+
+          // Reset enroll link
+          if (enrollLink) enrollLink.href = enrollLink.href.split('?')[0];
+        }
+      }
+
+      function initCourseProgress() {
+        const container = document.getElementById('course-progress-container');
+        if (!container) return;
+
+        const { courseSlug, totalLessons } = container.dataset;
+        if (!courseSlug || !totalLessons) return;
+
+        const completed = getCompletedLessons(courseSlug);
+        const percent = calculateProgress(completed.length, parseInt(totalLessons));
+
+        // Show container if progress has started
+        if (completed.length > 0) {
+          container.classList.remove('hidden');
+        }
+
+        // Update progress bar
+        const bar = document.getElementById('progress-bar');
+        const text = document.getElementById('progress-percent');
+        if (bar) bar.style.width = `${percent}%`;
+        if (text) text.innerText = `${percent}%`;
+
+        // Update individual lesson checks
+        document.querySelectorAll('.lesson-status-check').forEach((check) => {
+          const lessonSlug = (check as HTMLElement).dataset.lessonSlug;
+          if (lessonSlug && completed.includes(lessonSlug)) {
+            check.classList.remove('hidden');
+          } else {
+            check.classList.add('hidden');
+          }
+        });
+      }
+
+      function initEnrollButtons() {
+        const heroEnrollBtn = document.getElementById('hero-enroll-button');
+        const enrollLink = document.getElementById('course-enroll-link');
+
+        const handleEnrollClick = (e: MouseEvent) => {
+          if (!window.netlifyIdentity) return;
+
+          const user = window.netlifyIdentity.currentUser();
+          if (!user) {
+            e.preventDefault();
+            // Store intent to enroll for this specific course
+            const courseSlug = document.getElementById('course-progress-container')?.dataset.courseSlug;
+            if (courseSlug) sessionStorage.setItem('pending_enroll', courseSlug);
+
+            window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'signup' } }));
+          }
         };
+
+        if (heroEnrollBtn) {
+          heroEnrollBtn.removeEventListener('click', handleEnrollClick);
+          heroEnrollBtn.addEventListener('click', handleEnrollClick);
+        }
+        if (enrollLink) {
+          enrollLink.removeEventListener('click', handleEnrollClick);
+          enrollLink.addEventListener('click', handleEnrollClick);
+        }
       }
-    }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      updateEnrollLink();
-      initCourseProgress();
-      initSignInButton();
-      initEnrollButtons();
-    });
+      // Run on load and on auth events
+      function initSignInButton() {
+        const btn = document.getElementById('course-signin-button');
+        if (btn) {
+          btn.onclick = () => {
+            window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'login' } }));
+          };
+        }
+      }
 
-    document.addEventListener('astro:page-load', () => {
-      updateEnrollLink();
-      initCourseProgress();
-      initSignInButton();
-      initEnrollButtons();
-    });
-
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.on('init', () => {
+      document.addEventListener('DOMContentLoaded', () => {
         updateEnrollLink();
         initCourseProgress();
+        initSignInButton();
+        initEnrollButtons();
       });
-      window.netlifyIdentity.on('login', () => {
+
+      document.addEventListener('astro:page-load', () => {
         updateEnrollLink();
         initCourseProgress();
+        initSignInButton();
+        initEnrollButtons();
+      });
 
-        // Auto-redirect if they were trying to enroll before logging in
-        const pendingEnroll = sessionStorage.getItem('pending_enroll');
-        const currentCourse = document.getElementById('course-progress-container')?.dataset.courseSlug;
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on('init', () => {
+          updateEnrollLink();
+          initCourseProgress();
+        });
+        window.netlifyIdentity.on('login', () => {
+          updateEnrollLink();
+          initCourseProgress();
 
-        if (pendingEnroll === currentCourse) {
-          sessionStorage.removeItem('pending_enroll');
+          // Auto-redirect if they were trying to enroll before logging in
+          const pendingEnroll = sessionStorage.getItem('pending_enroll');
+          const currentCourse = document.getElementById('course-progress-container')?.dataset.courseSlug;
+
+          if (pendingEnroll === currentCourse) {
+            sessionStorage.removeItem('pending_enroll');
+            const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
+            if (enrollLink) {
+              window.location.href = enrollLink.href;
+            }
+          }
+        });
+        window.netlifyIdentity.on('logout', () => {
           const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
           if (enrollLink) {
-            window.location.href = enrollLink.href;
+            enrollLink.href = enrollLink.href.split('?')[0];
           }
-        }
-      });
-      window.netlifyIdentity.on('logout', () => {
-        const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
-        if (enrollLink) {
-          enrollLink.href = enrollLink.href.split('?')[0];
-        }
-        initCourseProgress();
-      });
-    }
-  </script>
+          initCourseProgress();
+        });
+      }
+    </script>
+  </section>
 </Layout>

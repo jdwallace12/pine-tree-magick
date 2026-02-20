@@ -11,6 +11,7 @@ import Metadata from '~/components/common/Metadata.astro';
 import SiteVerification from '~/components/common/SiteVerification.astro';
 import Analytics from '~/components/common/Analytics.astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
+import AuthModal from '~/components/common/AuthModal.astro';
 
 // Comment the line below to disable View Transitions
 import { ViewTransitions } from 'astro:transitions';
@@ -92,7 +93,14 @@ const { language, textDirection } = I18N;
           const btn = document.getElementById('account-button');
           if (btn && !btn.dataset.identityReady) {
             btn.dataset.identityReady = 'true';
-            btn.onclick = () => window.netlifyIdentity.open();
+            btn.onclick = (e) => {
+              const user = window.netlifyIdentity.currentUser();
+              if (user) {
+                window.netlifyIdentity.open(); // Open default widget for "Logout/Account" when logged in
+              } else {
+                window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'login' } }));
+              }
+            };
 
             const user = window.netlifyIdentity.currentUser();
             btn.innerHTML = `<span>${user ? user.user_metadata?.full_name || 'My Account' : 'Account'}</span>`;
@@ -114,5 +122,6 @@ const { language, textDirection } = I18N;
     <slot />
 
     <BasicScripts />
+    <AuthModal />
   </body>
 </html>

@@ -138,11 +138,15 @@ const currentPath = `/${trimSlash(new URL(Astro.url).pathname)}`;
       <div class="items-center flex justify-between w-full md:w-auto">
         <div class="flex">
           {showToggleTheme && <ToggleTheme iconClass="w-6 h-6 md:w-5 md:h-5 md:inline-block" />}
-          <div id="netlify-identity-container" class="ml-4">
-            <button id="account-button" class="text-sm font-medium hover:text-link py-3 flex items-center">
-              Account
-            </button>
-          </div>
+          {
+            currentPath.startsWith('/courses/') && (
+              <div id="netlify-identity-container" class="ml-4">
+                <button id="account-button" class="text-sm font-medium hover:text-link py-3 flex items-center">
+                  Account
+                </button>
+              </div>
+            )
+          }
         </div>
         {
           actions?.length ? (

@@ -7,6 +7,7 @@ async function getActiveShopLinks() {
   // Get collections
   const bundles = await getCollection('bundle');
   const rituals = await getCollection('ritual');
+  const courses = await getCollection('course');
   const freebies = await getCollection('freebie');
 
   // Check for active items
@@ -24,6 +25,8 @@ async function getActiveShopLinks() {
     return currentDate <= expirationDate;
   });
 
+  const hasActiveCourses = courses.length > 0;
+
   const hasActiveFreebies = freebies.some(freebie => {
     if (!freebie.data.expirationDate) return true;
     const [month, day, year] = freebie.data.expirationDate.split('/');
@@ -38,6 +41,9 @@ async function getActiveShopLinks() {
   }
   if (hasActiveBundles) {
     shopLinks.push({ text: 'Bundles', href: '/shop#bundles' });
+  }
+  if (hasActiveCourses) {
+    shopLinks.push({ text: 'Online Courses', href: '/shop#courses' });
   }
   if (hasActiveFreebies) {
     shopLinks.push({ text: 'Freebies', href: '/shop#freebies' });
@@ -59,10 +65,6 @@ export const headerData = {
     {
       text: 'Workshops',
       href: getPermalink('/workshops'),
-    },
-    {
-      text: 'Courses',
-      href: getPermalink('/courses'),
     },
     {
       text: 'Shop',

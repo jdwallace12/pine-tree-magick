@@ -2,6 +2,7 @@
 import Layout from '~/layouts/PageLayout.astro';
 import Rituals from '~/components/widgets/Rituals.astro';
 import Bundles from '~/components/widgets/Bundles.astro';
+import Courses from '~/components/widgets/Courses.astro';
 import Freebies from '~/components/widgets/Freebies.astro';
 import CallToAction from '~/components/widgets/CallToAction.astro';
 import { getCollection } from 'astro:content';
@@ -15,28 +16,35 @@ const metadata = {
 // Get collections
 const bundles = await getCollection('bundle');
 const rituals = await getCollection('ritual');
+const courses = await getCollection('course');
 const freebies = await getCollection('freebie');
 
 // Get sorted components with content
-const shopComponents = await getShopComponents(bundles, rituals, freebies);
+const shopComponents = await getShopComponents(bundles, rituals, courses, freebies);
 ---
 
 <Layout metadata={metadata}>
-        <div class="max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
-            <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Book A Written Reading</p> -->
-            <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">Pine Tree Magick Shop</h1>
-            <p class="text-xl text-muted text-center">Shop guided rituals, meditations, and bundles</p>
-          </div>
+  <div class="max-w-6xl mx-auto px-4 md:px-6 lg:px-8">
+    <!-- <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">Book A Written Reading</p> -->
+    <h1 class="font-normal tracking-tighter font-heading text-heading text-4xl md:text-5xl text-center mb-4 mt-12">
+      Pine Tree Magick Shop
+    </h1>
+    <p class="text-xl text-muted text-center">Shop online courses, guided rituals, and bundles</p>
+  </div>
 
-  {shopComponents.map(component => {
-    if (component.type === 'bundles') {
-      return <Bundles {...component.data} />;
-    } else if (component.type === 'rituals') {
-      return <Rituals {...component.data} />;
-    } else if (component.type === 'freebies') {
-      return <Freebies {...component.data} />;
-    }
-  })}
+  {
+    shopComponents.map((component) => {
+      if (component.type === 'bundles') {
+        return <Bundles {...component.data} />;
+      } else if (component.type === 'rituals') {
+        return <Rituals {...component.data} />;
+      } else if (component.type === 'courses') {
+        return <Courses {...component.data} />;
+      } else if (component.type === 'freebies') {
+        return <Freebies {...component.data} />;
+      }
+    })
+  }
 
   <!-- CallToAction Widget *********** -->
 
@@ -52,5 +60,4 @@ const shopComponents = await getShopComponents(bundles, rituals, freebies);
       },
     ]}
   />
-
 </Layout>
