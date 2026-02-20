@@ -101,7 +101,8 @@ const requiredRole = `course:${course?.slug}`;
           Login to Access
         </a>
         <a
-          href={`/courses/${course?.slug}#enroll`}
+          id="lesson-enroll-link"
+          href="javascript:void(0)"
           class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-8 py-3 rounded-full font-bold"
         >
           Enroll Now
@@ -245,11 +246,16 @@ const requiredRole = `course:${course?.slug}`;
       }
     }
 
-    // Sign In Button Handler
+    // Sign In / Enroll Button Handlers
     document.addEventListener('click', (e) => {
       const target = e.target;
       if (target.closest('#lesson-login-link')) {
-        if (window.netlifyIdentity) window.netlifyIdentity.open();
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'login' } }));
+      }
+      if (target.closest('#lesson-enroll-link')) {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'signup' } }));
       }
     });
 

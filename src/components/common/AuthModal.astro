@@ -297,11 +297,17 @@ import { Icon } from 'astro-icon/components';
       const password = (document.getElementById('login-password') as HTMLInputElement).value;
       const submitBtn = this.loginForm.querySelector('button[type="submit"]');
 
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError('Authentication service is not available. Please make sure Identity is enabled on your Netlify site.');
+        return;
+      }
+
       try {
         submitBtn.innerHTML =
           '<span class="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Signing In...';
-        // @ts-ignore
-        await window.netlifyIdentity.gotrue.login(email, password, true);
+        await gotrue.login(email, password, true);
         window.location.reload(); // Refresh to update user state
       } catch (err: any) {
         this.showError(err.message || 'Invalid email or password');
@@ -317,11 +323,17 @@ import { Icon } from 'astro-icon/components';
       const password = (document.getElementById('signup-password') as HTMLInputElement).value;
       const submitBtn = this.signupForm.querySelector('button[type="submit"]');
 
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError('Authentication service is not available. Please make sure Identity is enabled on your Netlify site.');
+        return;
+      }
+
       try {
         submitBtn.innerHTML =
           '<span class="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Creating...';
-        // @ts-ignore
-        await window.netlifyIdentity.gotrue.signup(email, password, { full_name: name });
+        await gotrue.signup(email, password, { full_name: name });
         this.showView('login');
         this.showError('Confirmation email sent! Please check your inbox.');
         this.errorBox.classList.replace('text-red-600', 'text-green-600');
@@ -337,11 +349,17 @@ import { Icon } from 'astro-icon/components';
       const email = (document.getElementById('recovery-email') as HTMLInputElement).value;
       const submitBtn = this.recoveryForm.querySelector('button[type="submit"]');
 
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError('Authentication service is not available. Please make sure Identity is enabled on your Netlify site.');
+        return;
+      }
+
       try {
         submitBtn.innerHTML =
           '<span class="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Sending...';
-        // @ts-ignore
-        await window.netlifyIdentity.gotrue.requestPasswordRecovery(email);
+        await gotrue.requestPasswordRecovery(email);
         this.showError('Recovery email sent! Check your inbox.');
         this.errorBox.classList.replace('text-red-600', 'text-green-600');
         this.errorBox.classList.replace('bg-red-50', 'bg-green-50');

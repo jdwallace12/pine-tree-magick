@@ -215,12 +215,15 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
                   {moduleLessons.map((l) => (
                     <li class="flex items-center justify-between p-4 md:p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-[#f59bbb]/50 transition-all group/lesson">
                       <div class="flex items-center space-x-4 md:space-x-6">
-                        <span class:list={[
-                          'flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-inner border',
-                          l.data.isFree
-                            ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400'
-                            : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500',
-                        ]}>
+                        <span
+                          data-lock-icon={l.data.isFree ? 'free' : 'locked'}
+                          class:list={[
+                            'lesson-lock-icon flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-inner border transition-all duration-300',
+                            l.data.isFree
+                              ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400'
+                              : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500',
+                          ]}
+                        >
                           {l.data.isFree ? (
                             <Icon name="tabler:lock-open" class="w-5 h-5" />
                           ) : (
@@ -264,6 +267,30 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
     <script>
       import { getCompletedLessons, calculateProgress } from '~/utils/progress';
 
+      // Unlock icon SVG path (tabler:lock-open)
+      const UNLOCK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 11m0 2a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2z"/><path d="M12 16m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M8 11v-5a4 4 0 0 1 8 0"/></svg>`;
+      // Lock icon SVG path (tabler:lock)
+      const LOCK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z"/><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0"/><path d="M8 11v-4a4 4 0 1 1 8 0v4"/></svg>`;
+
+      function updateLessonLockIcons(hasAccess: boolean) {
+        document.querySelectorAll('.lesson-lock-icon').forEach((icon) => {
+          const el = icon as HTMLElement;
+          if (el.dataset.lockIcon === 'free') return; // Already free, skip
+
+          if (hasAccess) {
+            // Swap to unlocked style
+            el.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'border-slate-200', 'dark:border-slate-700', 'text-slate-400', 'dark:text-slate-500');
+            el.classList.add('bg-emerald-50', 'dark:bg-emerald-900/30', 'border-emerald-200', 'dark:border-emerald-700', 'text-emerald-600', 'dark:text-emerald-400');
+            el.innerHTML = UNLOCK_SVG;
+          } else {
+            // Revert to locked style
+            el.classList.remove('bg-emerald-50', 'dark:bg-emerald-900/30', 'border-emerald-200', 'dark:border-emerald-700', 'text-emerald-600', 'dark:text-emerald-400');
+            el.classList.add('bg-slate-100', 'dark:bg-slate-800', 'border-slate-200', 'dark:border-slate-700', 'text-slate-400', 'dark:text-slate-500');
+            el.innerHTML = LOCK_SVG;
+          }
+        });
+      }
+
       function updateEnrollLink() {
         const enrollLink = document.getElementById('course-enroll-link') as HTMLAnchorElement;
         const signinPrompt = document.getElementById('signin-prompt-container');
@@ -272,10 +299,14 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
         const progressContainer = document.getElementById('course-progress-container');
         const courseSlug = progressContainer?.dataset.courseSlug;
 
-        if (!window.netlifyIdentity) return;
+        const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const hasSpoofAccess = isLocal && sessionStorage.getItem(`spoof_course:${courseSlug}`);
 
-        const user = window.netlifyIdentity.currentUser();
-        const hasAccess = user?.app_metadata?.roles?.includes(`course:${courseSlug}`);
+        const user = window.netlifyIdentity?.currentUser();
+        const hasAccess = hasSpoofAccess || user?.app_metadata?.roles?.includes(`course:${courseSlug}`);
+
+        // Update lock icons based on access
+        updateLessonLockIcons(hasAccess);
 
         if (hasAccess) {
           // Hide all enrollment UI if user already has access
