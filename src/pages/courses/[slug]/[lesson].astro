@@ -3,19 +3,78 @@ import Layout from '~/layouts/PageLayout.astro';
 import { Icon } from 'astro-icon/components';
 import { getCollection, getEntry } from 'astro:content';
 import { YouTube } from 'astro-embed';
+import type { CollectionEntry } from 'astro:content';
+
+export interface Props {
+  lesson: CollectionEntry<'lesson'>;
+  nextLesson: {
+    slug: string;
+    title: string;
+  } | null;
+}
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lesson');
-  return lessons.map((lesson) => ({
-    params: {
-      slug: lesson.data.course,
-      lesson: lesson.slug.split('/').pop(), // Get the filename as lesson slug
+  const courses = await getCollection('course');
+
+  // Group lessons by course
+  const courseLessonsMap = lessons.reduce(
+    (acc, lesson) => {
+      const courseSlug = lesson.data.course;
+      if (!acc[courseSlug]) acc[courseSlug] = [];
+      acc[courseSlug].push(lesson);
+      return acc;
     },
-    props: { lesson },
-  }));
+    {} as Record<string, typeof lessons>
+  );
+
+  const paths: any[] = [];
+
+  for (const courseSlug in courseLessonsMap) {
+    const course = courses.find((c) => c.slug === courseSlug);
+    const courseLessons = courseLessonsMap[courseSlug];
+
+    if (!course) continue;
+
+    // Sort lessons based on module order and lesson order within module
+    const modules = course.data.modules || [];
+    const sortedLessons = [...courseLessons].sort((a, b) => {
+      const moduleAIndex = modules.indexOf(a.data.module);
+      const moduleBIndex = modules.indexOf(b.data.module);
+
+      if (moduleAIndex !== moduleBIndex) {
+        return moduleAIndex - moduleBIndex;
+      }
+      return a.data.order - b.data.order;
+    });
+
+    // Create paths for each lesson with its next lesson info
+    for (let i = 0; i < sortedLessons.length; i++) {
+      const lesson = sortedLessons[i];
+      const nextLesson = i < sortedLessons.length - 1 ? sortedLessons[i + 1] : null;
+
+      paths.push({
+        params: {
+          slug: courseSlug,
+          lesson: lesson.slug.split('/').pop(),
+        },
+        props: {
+          lesson,
+          nextLesson: nextLesson
+            ? {
+                slug: nextLesson.slug.split('/').pop(),
+                title: nextLesson.data.title,
+              }
+            : null,
+        },
+      });
+    }
+  }
+
+  return paths;
 }
 
-const { lesson } = Astro.props;
+const { lesson, nextLesson } = Astro.props;
 const { Content } = await lesson.render();
 const course = await getEntry('course', lesson.data.course);
 
@@ -42,7 +101,7 @@ const requiredRole = `course:${course?.slug}`;
     </nav>
 
     <div id="lesson-content" data-required-role={lesson.data.isFree ? '' : requiredRole} class="hidden">
-      <h1 class="text-4xl font-bold mb-6">{lesson.data.title}</h1>
+      <h1 class="text-4xl font-heading font-bold mb-6">{lesson.data.title}</h1>
       <p class="text-muted mb-8">{lesson.data.module}</p>
 
       {
@@ -57,23 +116,40 @@ const requiredRole = `course:${course?.slug}`;
         <Content />
       </div>
 
-      <!-- Lesson Completion Button -->
-      <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700 flex justify-center">
+      <!-- Lesson Navigation/Completion Container -->
+      <div
+        class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-center gap-4"
+      >
         <button
           id="mark-complete-btn"
           data-course-slug={course?.slug}
           data-lesson-slug={lesson.slug.split('/').pop()}
-          class="flex items-center gap-2 px-8 py-3 rounded-full font-bold transition-all duration-300 border-2"
+          class="flex items-center gap-2 px-8 py-3 rounded-full font-bold transition-all duration-300 border-2 w-full sm:w-auto justify-center"
         >
           <span class="icon-pending italic">Mark as Completed</span>
-          <span class="icon-completed hidden flex items-center gap-2">Completed <Icon name="tabler:circle-check" class="w-5 h-5" /></span>
+          <span class="icon-completed hidden flex items-center gap-2"
+            >Completed <Icon name="tabler:circle-check" class="w-5 h-5" /></span
+          >
         </button>
+
+        {
+          nextLesson && (
+            <a
+              id="next-lesson-btn"
+              href={`/courses/${course?.slug}/${nextLesson.slug}`}
+              class="flex items-center gap-2 px-8 py-3 bg-slate-900 dark:bg-slate-100 text-white dark:text-black rounded-full font-bold transition-all duration-300 hover:bg-slate-800 dark:hover:bg-white border-2 border-transparent w-full sm:w-auto justify-center"
+            >
+              Next Lesson
+              <Icon name="tabler:arrow-right" class="w-5 h-5" />
+            </a>
+          )
+        }
       </div>
 
       {
         lesson.data.pdfUrl && (
           <div class="mt-12 p-6 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
-            <h3 class="text-xl font-bold mb-4 flex items-center">
+            <h3 class="text-xl font-heading font-bold mb-4 flex items-center">
               <span class="mr-2">📄</span> Resources
             </h3>
             <a href={lesson.data.pdfUrl} target="_blank" class="text-primary hover:underline flex items-center">
@@ -89,10 +165,12 @@ const requiredRole = `course:${course?.slug}`;
       id="access-denied"
       class="text-center py-20 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700"
     >
-      <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500">
+      <div
+        class="w-20 h-20 mx-auto mb-6 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500"
+      >
         <Icon name="tabler:lock" class="w-10 h-10" />
       </div>
-      <h2 class="text-2xl font-bold mb-4">Members Only Content</h2>
+      <h2 class="text-2xl font-heading font-bold mb-4">Members Only Content</h2>
       <p class="text-muted mb-8 max-w-md mx-auto">
         This lesson is part of <strong>{course?.data.title}</strong>. Please sign in or enroll to access the materials.
       </p>
@@ -171,7 +249,7 @@ const requiredRole = `course:${course?.slug}`;
       let isCompleted = completedLessons.includes(lessonSlug);
       updateBtnUI(isCompleted);
 
-      // Click handler
+      // Click handler for Mark Complete
       btn.onclick = async () => {
         isCompleted = !isCompleted;
         updateBtnUI(isCompleted);
@@ -182,6 +260,21 @@ const requiredRole = `course:${course?.slug}`;
           await markLessonIncomplete(courseSlug, lessonSlug);
         }
       };
+
+      // Click handler for Next Lesson (Auto-complete)
+      const nextBtn = document.getElementById('next-lesson-btn');
+      if (nextBtn) {
+        nextBtn.onclick = async (e) => {
+          e.preventDefault();
+          // Always mark as complete when clicking Next Lesson
+          if (!isCompleted) {
+            isCompleted = true;
+            updateBtnUI(true);
+            await markLessonComplete(courseSlug, lessonSlug);
+          }
+          window.location.href = (nextBtn as HTMLAnchorElement).href;
+        };
+      }
     }
 
     // Run on load and on Astro events
