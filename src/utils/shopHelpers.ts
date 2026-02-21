@@ -62,6 +62,16 @@ export function hasItems(items: any[]): boolean {
     // Create array of components with their data
     const components = [
       {
+        type: 'courses',
+        hasContent: hasItems(activeCourses),
+        data: {
+          id: "courses",
+          title: "Online Courses",
+          tagline: "Lifetime Access Courses",
+          items: activeCourses
+        }
+      },
+      {
         type: 'rituals',
         hasContent: hasItems(activeRituals),
         data: {
@@ -79,16 +89,6 @@ export function hasItems(items: any[]): boolean {
           title: "Bundles",
           tagline: "Buy Bundles",
           items: activeBundles
-        }
-      },
-      {
-        type: 'courses',
-        hasContent: hasItems(activeCourses),
-        data: {
-          id: "courses",
-          title: "Online Courses",
-          tagline: "Lifetime Access Courses",
-          items: activeCourses
         }
       },
       {
