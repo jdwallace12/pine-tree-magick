@@ -1,109 +1,61 @@
 ---
-title: 'Welcome to Pine Tree Magick! ✨'
+title: 'Stop Forcing It -- The Universe is Doing Its Thing'
 publishDate: 2026-02-14
 excerpt: "Welcome to our very first newsletter. Here's what we have in store for you."
 #image: 'https://pinetreemagick.com/assets/images/forest.webp'
 ---
+Are you thriving or just surviving?
 
-# Welcome to Pine Tree Magick!
+The astrology of February and March is ~~chaotic~~ interesting.  Baked all together we have:
 
-I am so glad you've joined the **Pine Tree Magick** community.
+- **Eclipse Season** – A [tumultuous time](https://pinetreemagick.com/freebies/eclipse-bundle) of fated beginnings and endings.
+- **Saturn/Neptune Conjunction** - A once-every-36-year transit that dissolves long-held structures.
+- **Mercury Retrograde**- A (slightly messy) period of reflection, especially when it comes to our communication and mental load.
 
-Magick is all around us, and I'm excited to share rituals, workshops, and insights to help you connect with your highest self.
 
-## What to Expect
+Translation?
 
-Each month, I'll be sending out:
+**If there's something you've been TRYING to make happen, and it's just not happening, I hate to break it to you but...**
 
-- **Exclusive Rituals**: Magick you can perform at home.
-- **Workshop Updates**: Be the first to know about new sessions.
-- **Tarot & Astrology Insights**: Seasonal guidance for your journey.
+> You need to stop forcing it and let Universe do its thing. Because control? That's just an illusion, babe.
 
-### Join our next Workshop
+I know, it's uncomfortable for me too. As a triple Scorpio, me and control go waaaay back. 
 
-Don't forget to check out our upcoming [Candle Magick Workshop](https://pinetreemagick.com/workshops/candle-magick).
+But I've also learned the biggest leaps of growth coming from letting go.
 
-![Forest Fog](https://pinetreemagick.com/assets/images/forest-fog.webp 'forest')
+**For now, we all need accept that things might be weird, funky, sticky, slow, and uncomfortable over the next few weeks.** 
 
----
+The good news is we can use this period to slow down. We can review what's working (and what's not). We can allow things to unfold. 
 
-## Newsletter Styles
+We can trust that maybe there's something good hidden within this cosmic pause. 
 
-You can now use these elements in your newsletter content:
+**Because it won’t last forever.**
 
-#### Buttons
+Towards the end of March, things will begin to speed up:
 
-Use `[Text](url "button")` to create a prominent call-to-action button:
-[Book a Private Session](https://pinetreemagick.com/private-sessions 'button')
+- **March 19** - New Moon in Pisces aka the first lunation after eclipse season.
+- **March 20** - Mercury Stations direct, things will feel less messy.
+- **March 21** - Spring Equinox/Ostara usher in an entire new season and the astrological New Year! 
 
----
+Finally, the stagnancy lifts and anything that has been “put on pause” will begin to speed up again. 
 
-#### Horizontal Dividers
+>It’s for this exact reason that I scheduled my next [Candle Magick Workshop](https://pinetreemagick.com/workshops/candle-magick) for Thursday, March 26 at Botanically Curious in Portland, Maine! 
 
-Use `---` to create a delicate divider line (like the one above this section).
+We’ll be working with a waxing moon in Cancer — perfect for self-care and setting intentions for the astrological new year! 
 
-#### Spells and Mantras
+Here's what past attendees have to say about it:
 
-Use code blocks (backticks) to create a centered, magical callout for spells or affirmations:
+> _Thank you so much for the beautiful workshop last night! In two hours you provided a safe, open space, presented powerful information, and connected everyone seamlessly. I was blessed to be there._
 
-```
-I am open to the magick
-flowing through me
-and around me
-```
+> _The class was lovely. If you are thinking about it, you should absolutely go for it!_ 
 
-#### Ritual Ingredients
+> _This is an amazing workshop! I had a major energy shift after attending one!!_
 
-Tables are great for ingredient lists or correspondences:
-| Item | Element | Purpose |
-| :--- | :---: | :--- |
-| Rosemary | Fire | Protection |
-| Rose Quartz | Earth | Love |
-| Clear Quartz | Spirit | Amplification |
+This workshop is intended to be a community gathering for anyone who wants to learn how to harness their personal power. All are welcome.
 
-#### Ritual Steps
+[You can register here](https://pinetreemagick.com/workshops/candle-magick 'button') I’d love to see you there!
 
-Lists can also be nested for more complex rituals:
+With Love,
 
-1. Preparation
-   - Light the sage
-   - Sound the bell
-2. The Ritual
-   - Focus on your intent
-   - Recite your mantra
-3. Closing
-   - Give thanks
-   - Extinguish the candle
-
-#### Magical Highlights
-
-Use single backticks for inline `magical keywords` to give them a subtle highlight, or **bold text** to make it stand out.
-
-#### Text Formatting Guide
-
-You can combine standard markdown for varied emphasis:
-
-- _Italic text_ for soft emphasis or whispers.
-- **Bold text** for strong intent.
-- **_Bold and Italic_** for powerful declarations.
-- ~~Strikethrough~~ for releasing what no longer serves you.
-- [Standard Link](https://pinetreemagick.com) for inline references.
-
-#### Guided Imagery
-
-Blockquotes are perfect for longer quotes or guided visualizations:
-
-> "Close your eyes and visualize a deep green forest. Feel the damp earth beneath your feet and smell the scent of pine needles in the air."
-
-#### Visual Magick
-
-Images are automatically centered and given a subtle border:
-![Forest](https://pinetreemagick.com/assets/images/forest.webp 'forest')
-
----
-
-#### Create a New Broadcast
-
-Send markdown file to Resend API to create a new broadcast
-
-`npm run newsletter:broadcast -- example.md`
+Jersey
+Pine Tree Magick
