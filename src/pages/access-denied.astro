@@ -67,9 +67,13 @@ const metadata = {
       // but if the _redirect rule sent them here, they might be logged in but lacking the specific role)
       if (window.netlifyIdentity) {
         window.netlifyIdentity.on('login', () => {
-             // Let them stay here or navigate away.
-             // If they were redirected from a course page, there's no easy 'back' variable since it's a server 401 redirect, 
-             // but they could just navigate back via the browser.
+          const params = new URLSearchParams(window.location.search);
+          const returnTo = params.get('returnTo');
+          if (returnTo && returnTo.startsWith('/')) {
+            window.location.href = returnTo;
+          } else {
+            window.location.href = '/shop#courses';
+          }
         });
       }
 

@@ -35,8 +35,8 @@ courses.forEach(courseSlug => {
         premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}  /courses/${courseSlug}/${lessonSlug}  200! Role=course:${courseSlug}`);
         premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}/  /courses/${courseSlug}/${lessonSlug}/  200! Role=course:${courseSlug}`);
         
-        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}  /access-denied  302!`);
-        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}/  /access-denied  302!`);
+        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}  /access-denied?returnTo=/courses/${courseSlug}/${lessonSlug}  302!`);
+        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}/  /access-denied?returnTo=/courses/${courseSlug}/${lessonSlug}  302!`);
       }
     }
   });
