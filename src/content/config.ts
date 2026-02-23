@@ -149,6 +149,15 @@ const courseCollection = defineCollection({
     price: z.number(),
     payPalButtonId: z.string(),
     modules: z.array(z.string()).optional(), // List of module names in order
+    features: z
+      .array(
+        z.object({
+          title: z.string(),
+          description: z.string(),
+          icon: z.string().optional(),
+        })
+      )
+      .optional(),
     metadata: metadataDefinition(),
   }),
 });
