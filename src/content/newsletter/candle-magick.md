@@ -1,5 +1,5 @@
 ---
-title: 'Stop Forcing It -- The Universe is (Trying) To Do Its Thing'
+title: 'Stop Forcing It — The Universe is Doing Its Thing'
 publishDate: 2026-02-14
 excerpt: "Welcome to our very first newsletter. Here's what we have in store for you."
 #image: 'https://pinetreemagick.com/assets/images/forest.webp'
