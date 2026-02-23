@@ -1,5 +1,5 @@
 ---
-title: 'Stop Forcing It -- The Universe is Doing Its Thing'
+title: 'Stop Forcing It -- The Universe is (Trying) To Do Its Thing'
 publishDate: 2026-02-14
 excerpt: "Welcome to our very first newsletter. Here's what we have in store for you."
 #image: 'https://pinetreemagick.com/assets/images/forest.webp'
@@ -10,7 +10,7 @@ The astrology of February and March is ~~chaotic~~ interesting.  Baked all toget
 
 - **Eclipse Season** – A [tumultuous time](https://pinetreemagick.com/freebies/eclipse-bundle) of fated beginnings and endings.
 - **Saturn/Neptune Conjunction** - A once-every-36-year transit that dissolves long-held structures.
-- **Mercury Retrograde**- A (slightly messy) period of reflection, especially when it comes to our communication and mental load.
+- **Mercury Retrograde** - A (slightly messy) period of reflection, especially when it comes to our communication and mental load.
 
 
 Translation?
