@@ -100,7 +100,7 @@ const requiredRole = `course:${course?.slug}`;
       <span class="font-medium text-default">{lesson.data.title}</span>
     </nav>
 
-    <div id="lesson-content" data-required-role={lesson.data.isFree ? '' : requiredRole} class="hidden">
+    <div id="lesson-content" data-required-role={lesson.data.isFree ? '' : requiredRole}>
       <h1 class="text-4xl font-heading font-bold mb-6">{lesson.data.title}</h1>
       <p class="text-muted mb-8">{lesson.data.module}</p>
 
@@ -158,49 +158,6 @@ const requiredRole = `course:${course?.slug}`;
           </div>
         )
       }
-    </div>
-
-    <!-- Access Denied / Sign In State -->
-    <div
-      id="access-denied"
-      class="text-center py-20 bg-slate-50 dark:bg-slate-800 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700"
-    >
-      <div
-        class="w-20 h-20 mx-auto mb-6 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500"
-      >
-        <Icon name="tabler:lock" class="w-10 h-10" />
-      </div>
-      <h2 class="text-2xl font-heading font-bold mb-4">Members Only Content</h2>
-      <p class="text-muted mb-8 max-w-md mx-auto">
-        This lesson is part of <strong>{course?.data.title}</strong>. Please sign in or enroll to access the materials.
-      </p>
-      <div class="flex flex-col sm:flex-row justify-center gap-4">
-        <a
-          id="lesson-login-link"
-          href="javascript:void(0)"
-          class="bg-primary text-white px-8 py-3 rounded-full font-bold inline-block"
-        >
-          Login to Access
-        </a>
-        <a
-          id="lesson-enroll-link"
-          href="javascript:void(0)"
-          class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-8 py-3 rounded-full font-bold"
-        >
-          Enroll Now
-        </a>
-      </div>
-
-      <!-- Dev Spoof (Visible only on localhost) -->
-      <div id="dev-spoof-container" class="mt-12 hidden">
-        <p class="text-xs text-muted mb-2 uppercase tracking-widest font-bold">Developer Tools</p>
-        <button
-          id="dev-spoof-access"
-          class="bg-amber-100 text-amber-900 border border-amber-200 px-4 py-2 rounded text-sm font-medium hover:bg-amber-200 transition"
-        >
-          Dev: Spoof Course Access
-        </button>
-      </div>
     </div>
   </div>
 
@@ -283,119 +240,20 @@ const requiredRole = `course:${course?.slug}`;
     document.addEventListener('astro:page-load', initProgress);
   </script>
 
-  <script is:inline>
-    function checkAccess() {
-      console.log('🛡️ Checking access...');
-      const content = document.getElementById('lesson-content');
-      const denied = document.getElementById('access-denied');
-      const spoofContainer = document.getElementById('dev-spoof-container');
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Identity Event Listeners for progress syncing (if they log in/out while on a free page)
+      if (window.netlifyIdentity && !window.__lessonListenersAdded) {
+        const runGlobalCheck = () => {
+          if (typeof window.initProgress === 'function') window.initProgress();
+        };
 
-      if (!content || !denied) {
-        console.warn('⚠️ Access elements not found');
-        return;
-      }
+        window.netlifyIdentity.on('init', runGlobalCheck);
+        window.netlifyIdentity.on('login', runGlobalCheck);
+        window.netlifyIdentity.on('logout', runGlobalCheck);
 
-      // Show spoof button only on localhost
-      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      if (isLocal && spoofContainer) {
-        spoofContainer.classList.remove('hidden');
-      }
-
-      const requiredRole = content.dataset.requiredRole;
-      console.log('🔑 Required Role:', requiredRole || 'None (Free)');
-
-      if (!requiredRole) {
-        // Free lesson
-        content.classList.remove('hidden');
-        denied.classList.add('hidden');
-        return;
-      }
-
-      // 1. Check for Spoofed Access (Local Only)
-      if (isLocal && sessionStorage.getItem(`spoof_${requiredRole}`)) {
-        console.log('🧪 Access Granted via Dev Spoof');
-        content.classList.remove('hidden');
-        denied.classList.add('hidden');
-        return;
-      }
-
-      // 2. Check Netlify Identity
-      if (window.netlifyIdentity) {
-        const user = netlifyIdentity.currentUser();
-        console.log('👤 Current User:', user ? user.email : 'None');
-
-        const roles = user?.app_metadata?.roles || [];
-        console.log('📜 User Roles:', roles);
-
-        if (user && roles.includes(requiredRole)) {
-          console.log('✅ Access Granted');
-          content.classList.remove('hidden');
-          denied.classList.add('hidden');
-        } else {
-          console.log('❌ Access Denied');
-          content.classList.add('hidden');
-          denied.classList.remove('hidden');
-        }
-      } else {
-        console.warn('⚠️ Netlify Identity not loaded');
-        content.classList.add('hidden');
-        denied.classList.remove('hidden');
-      }
-    }
-
-    // Sign In / Enroll Button Handlers
-    document.addEventListener('click', (e) => {
-      const target = e.target;
-      if (target.closest('#lesson-login-link')) {
-        e.preventDefault();
-        window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'login' } }));
-      }
-      if (target.closest('#lesson-enroll-link')) {
-        e.preventDefault();
-        window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'signup' } }));
+        window.__lessonListenersAdded = true;
       }
     });
-
-    // Dev Spoof Handler
-    document.addEventListener('click', (e) => {
-      const target = e.target;
-      if (target.closest('#dev-spoof-access')) {
-        const content = document.getElementById('lesson-content');
-        const role = content?.dataset.requiredRole;
-        if (role) {
-          sessionStorage.setItem(`spoof_${role}`, 'true');
-          checkAccess();
-          alert('🧪 Dev: Access spoofed for this session!');
-        }
-      }
-    });
-
-    // Run check immediately and on Astro events
-    checkAccess();
-    document.addEventListener('astro:page-load', checkAccess);
-
-    // Identity Event Listeners (ensure only added once globally)
-    if (window.netlifyIdentity && !window.__lessonListenersAdded) {
-      const runGlobalCheck = () => {
-        // This function will find the elements if they exist on the current page
-        const content = document.getElementById('lesson-content');
-        if (content) {
-          checkAccess();
-          // Trigger a re-init of progress to sync with potential new data from Identity
-          if (typeof initProgress === 'function') initProgress();
-        }
-      };
-
-      netlifyIdentity.on('init', runGlobalCheck);
-      netlifyIdentity.on('login', runGlobalCheck);
-      netlifyIdentity.on('logout', () => {
-        // Clear spoof on logout
-        const roles = sessionStorage.getItem('spoof_course:magickal-foundations');
-        if (roles) sessionStorage.removeItem('spoof_course:magickal-foundations');
-        runGlobalCheck();
-      });
-
-      window.__lessonListenersAdded = true;
-    }
   </script>
 </Layout>
