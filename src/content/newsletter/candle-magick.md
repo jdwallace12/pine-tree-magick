@@ -4,7 +4,7 @@ publishDate: 2026-02-14
 excerpt: "Welcome to our very first newsletter. Here's what we have in store for you."
 #image: 'https://pinetreemagick.com/assets/images/forest.webp'
 ---
-Are you thriving or just surviving?
+Let me ask you a question: are you thriving or just surviving?
 
 The astrology of February and March is ~~chaotic~~ interesting.  Baked all together we have:
 
@@ -15,29 +15,29 @@ The astrology of February and March is ~~chaotic~~ interesting.  Baked all toget
 
 Translation?
 
-**If there's something you've been TRYING to make happen, and it's just not happening, I hate to break it to you but...**
+**If you're trying to make something happen, and it's just not happening, here's the cold hard truth...**
 
 > You need to stop forcing it and let Universe do its thing. Because control? That's just an illusion, babe.
 
-I know, it's uncomfortable for me too. As a triple Scorpio, me and control go waaaay back. 
+I know, it's uncomfortable for me too. As a triple Scorpio, control and me go waaay back.
 
-But I've also learned the biggest leaps of growth coming from letting go.
+But I've also learned the biggest leaps of growth come from just letting go.
 
 **For now, we all need accept that things might be weird, funky, sticky, slow, and uncomfortable over the next few weeks.** 
 
 The good news is we can use this period to slow down. We can review what's working (and what's not). We can allow things to unfold. 
 
-We can trust that maybe there's something good hidden within this cosmic pause. 
+We can trust that something worthwhile is hidden within this cosmic pause. 
 
 **Because it won’t last forever.**
 
-Towards the end of March, things will begin to speed up:
+By the end of March, things start to shift:
 
 - **March 19** - New Moon in Pisces aka the first lunation after eclipse season.
 - **March 20** - Mercury Stations direct, things will feel less messy.
-- **March 21** - Spring Equinox/Ostara usher in an entire new season and the astrological New Year! 
+- **March 21** - Spring Equinox ushers in an entire new season and the astrological New Year! 
 
-Finally, the stagnancy lifts and anything that has been “put on pause” will begin to speed up again. 
+Around this time, the stagnancy lifts and anything that has been “put on pause” will begin to speed up again. 
 
 >It’s for this exact reason that I scheduled my next [Candle Magick Workshop](https://pinetreemagick.com/workshops/candle-magick) for Thursday, March 26 at Botanically Curious in Portland, Maine! 
 
@@ -57,5 +57,5 @@ This workshop is intended to be a community gathering for anyone who wants to le
 
 With Love,
 
-Jersey
+Jersey I
 Pine Tree Magick
