@@ -89,8 +89,8 @@ const metadata = {
     document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
-      var buildTime = "2026-02-24_10:30";
-      var buildVer = "v24:30";
+      var buildTime = "2026-02-24_11:00";
+      var buildVer = "v25:00";
 
       // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
       function getCourseSlugFromReturnTo() {
@@ -308,22 +308,6 @@ const metadata = {
               window.location.href = bridgeUrl;
             }, 800);
           }
-        }
-
-        // Final status tag
-        var container = document.querySelector(".text-center");
-        if (container && !document.getElementById("build-tag")) {
-          var tag = document.createElement("div");
-          tag.id = "build-tag";
-          tag.style.cssText =
-            "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
-          tag.textContent =
-            buildVer +
-            " | Status: VERIFIED" +
-            " | Roles: " +
-            JSON.stringify(data?.roles || []) +
-            " | Mode: SECURE";
-          container.appendChild(tag);
         }
       }
 
