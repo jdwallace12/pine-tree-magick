@@ -91,49 +91,6 @@ const metadata = {
         return match ? match[1] : null;
       }
 
-      // Decode a JWT payload (base64url) without a library
-      function decodeJwtPayload(token) {
-        try {
-          if (!token || typeof token !== "string")
-            return { error: "Token is not a string: " + typeof token };
-          var parts = token.split(".");
-          if (parts.length < 2)
-            return { error: "Token has only " + parts.length + " parts" };
-
-          var payloadBase64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-          while (payloadBase64.length % 4) payloadBase64 += "=";
-
-          var decodedStr;
-          try {
-            // Standard atob
-            decodedStr = atob(payloadBase64);
-          } catch (atobErr) {
-            return {
-              error: "atob failed: " + atobErr.message,
-              rawLength: payloadBase64.length,
-            };
-          }
-
-          try {
-            // Handle UTF-8 correctly
-            var finalStr = decodeURIComponent(escape(decodedStr));
-            return JSON.parse(finalStr);
-          } catch (parseErr) {
-            // Fallback to simple JSON parse if decodeURIComponent fails
-            try {
-              return JSON.parse(decodedStr);
-            } catch (jsonErr) {
-              return {
-                error: "JSON parse failed: " + jsonErr.message,
-                raw: decodedStr.substring(0, 50) + "...",
-              };
-            }
-          }
-        } catch (globalErr) {
-          return { error: "Global decoding error: " + globalErr.message };
-        }
-      }
-
       // Main: refresh token, check role, redirect only if authorized
       function tryRedirect() {
         var user = window.netlifyIdentity.currentUser();
@@ -201,23 +158,6 @@ const metadata = {
             "Please enroll to unlock this content.";
         }
         if (loginLink) loginLink.style.display = "none";
-
-        // Minimal debug output
-        var debugContainer =
-          document.querySelector(".text-center") || document.body;
-        if (debugContainer && !document.getElementById("access-debug-panel")) {
-          var debugEl = document.createElement("div");
-          debugEl.id = "access-debug-panel";
-          debugEl.style.cssText =
-            "margin-top:2rem;padding:1rem;background:#0f172a;border:1px solid #f59e0b;border-radius:8px;text-align:left;font-size:12px;color:#f59e0b;max-width:600px;margin-left:auto;margin-right:auto;";
-
-          var roles = (user.app_metadata && user.app_metadata.roles) || [];
-          debugEl.innerHTML =
-            "<strong>Access Debug:</strong><br>Roles: " +
-            JSON.stringify(roles) +
-            (debugInfo ? "<br>Info: " + JSON.stringify(debugInfo) : "");
-          debugContainer.appendChild(debugEl);
-        }
       }
 
       // Check immediately — the Identity widget init has already fired
