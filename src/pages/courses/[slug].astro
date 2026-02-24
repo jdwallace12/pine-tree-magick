@@ -50,10 +50,42 @@ const syllabusItems = Object.entries(modulesMap).map(
 ---
 
 <Layout metadata={metadata}>
+  <!-- Smooth transition styles -->
+  <style is:global>
+    .section-transition {
+      transition: opacity 0.5s ease-in-out, transform 0.5s ease-out;
+    }
+    .section-hidden {
+      opacity: 0;
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      overflow: hidden;
+    }
+    .section-visible {
+      opacity: 1;
+      pointer-events: auto;
+      position: relative;
+      height: auto;
+    }
+  </style>
+
+  <!-- Content Loader Spinner -->
+  <div id="course-content-loader" class="min-h-[60vh] flex flex-col items-center justify-center bg-white dark:bg-slate-900 z-50 transition-opacity duration-500">
+    <div class="relative w-16 h-16">
+      <div class="absolute inset-0 border-4 border-slate-100 dark:border-slate-800 rounded-full"></div>
+      <div class="absolute inset-0 border-4 border-[#f59bbb] rounded-full border-t-transparent animate-spin"></div>
+    </div>
+    <p class="mt-4 text-sm font-bold text-slate-400 uppercase tracking-widest animate-pulse">Loading journey...</p>
+  </div>
+
   <!-- custom-hero-redesign -->
   <section
     id="sales-hero"
-    class="bg-[#1a263a] text-white pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden relative"
+    class="bg-[#1a263a] text-white pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden relative section-transition section-hidden"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
       <div class="grid grid-cols-1 md:grid-cols-12 gap-12 items-start">
@@ -207,7 +239,7 @@ const syllabusItems = Object.entries(modulesMap).map(
   </section>
 
   <!-- About This Course Section (Replaces content) -->
-  <section id="about-course" class="py-24 bg-white dark:bg-slate-900">
+  <section id="about-course" class="py-24 bg-white dark:bg-slate-900 section-transition section-hidden">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
       <div class="mb-16">
         <h2
@@ -302,7 +334,7 @@ const syllabusItems = Object.entries(modulesMap).map(
     </div>
   </section>
 
-  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 section-transition section-hidden" id="dashboard-curriculum-container">
     <!-- Student Dashboard (Hidden by default) -->
     <div id="student-dashboard" class="hidden mb-6 pt-16">
       <div
@@ -561,9 +593,14 @@ const syllabusItems = Object.entries(modulesMap).map(
           "dashboard-user-email",
         );
 
-        if (salesHero) salesHero.classList.add("hidden");
-        if (aboutCourse) aboutCourse.classList.add("hidden");
+        if (salesHero) salesHero.classList.add("section-hidden");
+        if (aboutCourse) aboutCourse.classList.add("section-hidden");
         if (studentDashboard) studentDashboard.classList.remove("hidden");
+        const dashContainer = document.getElementById("dashboard-curriculum-container");
+        if (dashContainer) {
+          dashContainer.classList.remove("section-hidden");
+          dashContainer.classList.add("section-visible");
+        }
         if (userEmailDisplay && user) userEmailDisplay.textContent = user.email;
 
 
@@ -600,9 +637,21 @@ const syllabusItems = Object.entries(modulesMap).map(
       const salesHero = document.getElementById("sales-hero");
       const aboutCourse = document.getElementById("about-course");
       const studentDashboard = document.getElementById("student-dashboard");
-      if (salesHero) salesHero.classList.remove("hidden");
-      if (aboutCourse) aboutCourse.classList.remove("hidden");
+      const dashContainer = document.getElementById("dashboard-curriculum-container");
+
+      if (salesHero) {
+        salesHero.classList.remove("section-hidden");
+        salesHero.classList.add("section-visible");
+      }
+      if (aboutCourse) {
+        aboutCourse.classList.remove("section-hidden");
+        aboutCourse.classList.add("section-visible");
+      }
       if (studentDashboard) studentDashboard.classList.add("hidden");
+      if (dashContainer) {
+        dashContainer.classList.remove("section-hidden");
+        dashContainer.classList.add("section-visible");
+      }
 
       if (user) {
         // Hide sign-in prompt if logged in
@@ -716,11 +765,20 @@ const syllabusItems = Object.entries(modulesMap).map(
       }
     }
 
+    function hideLoader() {
+      const loader = document.getElementById("course-content-loader");
+      if (loader) {
+        loader.classList.add("opacity-0");
+        setTimeout(() => loader.remove(), 500);
+      }
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
       updateEnrollLink();
       initCourseProgress();
       initSignInButton();
       initEnrollButtons();
+      hideLoader();
     });
 
     document.addEventListener("astro:page-load", () => {
@@ -728,6 +786,7 @@ const syllabusItems = Object.entries(modulesMap).map(
       initCourseProgress();
       initSignInButton();
       initEnrollButtons();
+      hideLoader();
     });
 
     if (window.netlifyIdentity) {
