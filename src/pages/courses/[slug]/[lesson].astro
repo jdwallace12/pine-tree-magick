@@ -11,6 +11,10 @@ export interface Props {
     slug: string;
     title: string;
   } | null;
+  previousLesson: {
+    slug: string;
+    title: string;
+  } | null;
 }
 
 export async function getStaticPaths() {
@@ -51,6 +55,7 @@ export async function getStaticPaths() {
     // Create paths for each lesson with its next lesson info
     for (let i = 0; i < sortedLessons.length; i++) {
       const lesson = sortedLessons[i];
+      const previousLesson = i > 0 ? sortedLessons[i - 1] : null;
       const nextLesson = i < sortedLessons.length - 1 ? sortedLessons[i + 1] : null;
 
       paths.push({
@@ -62,8 +67,14 @@ export async function getStaticPaths() {
           lesson,
           nextLesson: nextLesson
             ? {
-                slug: nextLesson.slug.split('/').pop(),
+                slug: nextLesson.slug.split('/').pop() as string,
                 title: nextLesson.data.title,
+              }
+            : null,
+          previousLesson: previousLesson
+            ? {
+                slug: previousLesson.slug.split('/').pop() as string,
+                title: previousLesson.data.title,
               }
             : null,
         },
@@ -74,7 +85,7 @@ export async function getStaticPaths() {
   return paths;
 }
 
-const { lesson, nextLesson } = Astro.props;
+const { lesson, nextLesson, previousLesson } = Astro.props;
 const { Content } = await lesson.render();
 const course = await getEntry('course', lesson.data.course);
 
@@ -120,6 +131,18 @@ const requiredRole = `course:${course?.slug}`;
       <div
         class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-center gap-4"
       >
+        {
+          previousLesson && (
+            <a
+              href={`/courses/${course?.slug}/${previousLesson.slug}`}
+              class="flex items-center gap-2 px-8 py-3 bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-full font-bold transition-all duration-300 hover:border-primary w-full sm:w-auto justify-center"
+            >
+              <Icon name="tabler:arrow-left" class="w-5 h-5" />
+              Previous
+            </a>
+          )
+        }
+
         <button
           id="mark-complete-btn"
           data-course-slug={course?.slug}
