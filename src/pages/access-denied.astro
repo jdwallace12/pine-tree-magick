@@ -133,13 +133,21 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_21:50";
+        var buildTime = "2026-02-23_22:00";
 
         user
           .jwt(true)
           .then(function (token) {
             if (token) {
-              document.cookie = "nf_jwt=" + token + "; path=/";
+              console.log("Token Refresh Success. Length:", token.length);
+              // Reverting to the string that worked in v20:50 (no Secure)
+              var cookieStr =
+                "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+              document.cookie = cookieStr;
+              console.log(
+                "Cookie Write Attempted. document.cookie contains nf_jwt:",
+                document.cookie.indexOf("nf_jwt=") !== -1,
+              );
             }
 
             var claims = decodeJwt(token);
@@ -176,6 +184,10 @@ const metadata = {
             }
 
             // User HAS the role — redirect
+            console.log(
+              "Access Verified. Redirecting to:",
+              getCourseSlugFromReturnTo(),
+            );
             sessionStorage.setItem(guardKey, "1");
             var params = new URLSearchParams(window.location.search);
             var returnTo = params.get("returnTo");
@@ -186,6 +198,7 @@ const metadata = {
             }
           })
           .catch(function (err) {
+            console.error("JWT Error:", err);
             showLoggedInMessage(user, "ERROR", { message: err.message });
           });
       }
@@ -195,14 +208,27 @@ const metadata = {
         var desc = document.querySelector(".text-lg.text-muted");
         var loginLink = document.getElementById("access-login-link");
 
+        var hasCookie = document.cookie.indexOf("nf_jwt=") !== -1;
+
         if (type === "LOOP") {
-          if (title) title.textContent = "Almost there...";
+          if (title)
+            title.textContent = hasCookie
+              ? "Almost there..."
+              : "Cookie Blocked";
           if (desc) {
-            desc.innerHTML =
+            var msg =
               "<p class='mb-4'>You're signed in as <strong>" +
               user.email +
-              "</strong> and we've verified your access.</p>" +
-              "<p class='text-amber-600 text-sm mb-4'>We tried to let you in, but the server sent you back. This often clears up after a refresh or two.</p>";
+              "</strong> and we've verified your access.</p>";
+            if (!hasCookie) {
+              msg +=
+                "<p class='text-red-500 text-sm mb-4 font-bold'>Error: Your browser rejected the security cookie.</p>" +
+                "<p class='text-xs mb-4'>We're trying to set a standard session cookie, but it's not sticking. Please check if you have 'Block all cookies' enabled or try Chrome/Safari.</p>";
+            } else {
+              msg +=
+                "<p class='text-amber-600 text-sm mb-4'>The security cookie is set (✅), but the server still sent you back. This can happen if the CDN is cached. <strong>Try clicking the green button below.</strong></p>";
+            }
+            desc.innerHTML = msg;
           }
         } else if (type === "MISSING") {
           if (title) title.textContent = "Access Denied";
@@ -222,10 +248,12 @@ const metadata = {
 
         if (loginLink) {
           loginLink.textContent =
-            type === "LOOP" ? "Try Entering Again" : "Hard Reset Session";
+            type === "LOOP" ? "Enter Course" : "Hard Reset Session";
           loginLink.href =
             type === "LOOP"
-              ? "javascript:location.reload()"
+              ? hasCookie
+                ? "javascript:location.reload()"
+                : "javascript:void(window.location.reload())"
               : "javascript:hardReset()";
           loginLink.style.display = "flex";
           loginLink.style.backgroundColor =
@@ -240,12 +268,12 @@ const metadata = {
           tag.style.cssText =
             "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
           tag.textContent =
-            "v21:50 | Target: " +
+            "v22:00 | Target: " +
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
             " | Cookies: " +
-            (document.cookie.indexOf("nf_jwt=") !== -1 ? "YES" : "NO");
+            (hasCookie ? "YES" : "NO");
           container.appendChild(tag);
         }
       }
