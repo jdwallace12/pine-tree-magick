@@ -150,14 +150,21 @@ const metadata = {
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
 
+        // DEBUG: version to verify build
+        console.log("Access Denied Script Version: 2026-02-23_20:50");
+
         user.jwt(true).then(function (token) {
           if (!token) {
-            showLoggedInMessage(user);
+            showLoggedInMessage(user, {
+              error: "No token returned from user.jwt(true)",
+            });
             return;
           }
 
           // Check if the JWT actually contains the required role
-          var claims = decodeJwtPayload(token);
+          var claims = decodeJwtPayload(token) || {
+            error: "decodeJwtPayload returned null",
+          };
           var roles =
             (claims && claims.app_metadata && claims.app_metadata.roles) || [];
 
@@ -219,6 +226,9 @@ const metadata = {
           debugEl.style.cssText =
             "margin-top:2rem;padding:1.5rem;background:#0f172a;border:2px solid #f59e0b;border-radius:12px;text-align:left;font-size:12px;color:#f59e0b;max-width:640px;margin-left:auto;margin-right:auto;overflow-x:auto;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);";
 
+          var buildVersion = "2026-02-23_20:50";
+          var userRoles = (user.app_metadata && user.app_metadata.roles) || [];
+
           var claimsHtml = claims
             ? "<pre style='color:#94a3b8;margin-top:0.5rem;white-space:pre-wrap;word-break:break-all;'>" +
               JSON.stringify(claims, null, 2) +
@@ -226,7 +236,17 @@ const metadata = {
             : "<p style='color:#ef4444;'>Error: No claims found (JWT decoding failed). Check console for details.</p>";
 
           debugEl.innerHTML =
-            "<strong>\u26a0\ufe0f ACCESS DENIED DEBUG:</strong>" + claimsHtml;
+            "<div style='margin-bottom:0.5rem;display:flex;justify-content:space-between;'>" +
+            "<strong>\u26a0\ufe0f ACCESS DENIED DEBUG</strong>" +
+            "<span style='color:#64748b;font-family:monospace;'>Build: " +
+            buildVersion +
+            "</span>" +
+            "</div>" +
+            "<div style='margin-bottom:1rem;color:#94a3b8;'>Client-side roles: " +
+            JSON.stringify(userRoles) +
+            "</div>" +
+            "<strong>JWT Claims (from Identity):</strong>" +
+            claimsHtml;
           debugContainer.appendChild(debugEl);
         }
       }
