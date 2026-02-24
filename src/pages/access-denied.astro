@@ -143,8 +143,8 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_23:60";
-        var buildVer = "v23:60";
+        var buildTime = "2026-02-23_23:65";
+        var buildVer = "v23:65";
 
         user
           .jwt(true)
@@ -238,9 +238,11 @@ const metadata = {
               user.email +
               "</strong></p>";
             msg +=
-              "<p class='text-purple-600 font-bold mb-4'>Step 1: Click the PURPLE button below for Nuclear Edge Guard (" +
+              "<p class='text-pink-600 font-bold mb-4'>Step 1: Click the PINK button below for Deep Sync (" +
               buildVer +
               ").</p>";
+            msg +=
+              "<p class='text-xs text-slate-500 mb-4'>If you are still looping, view the <a href='/courses/debug-access' class='underline text-pink-700 font-bold'>Edge Diagnostics</a> here.</p>";
             msg +=
               "<p class='text-xs text-slate-500'>This ensures your browser has the correct permissions. You'll be taken to a confirmation page first.</p>";
             desc.innerHTML = msg;
@@ -281,7 +283,7 @@ const metadata = {
               ? bridgeUrl
               : "javascript:hardReset()";
           loginLink.style.display = "flex";
-          loginLink.style.backgroundColor = "#9333ea";
+          loginLink.style.backgroundColor = "#db2777";
         }
 
         // Final status tag
@@ -297,7 +299,7 @@ const metadata = {
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
-            " | Mode: EDGE";
+            " | Mode: DIAGNOSTIC";
           container.appendChild(tag);
         }
       }

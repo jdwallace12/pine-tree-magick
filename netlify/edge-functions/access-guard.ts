@@ -4,46 +4,66 @@ export default async (request: Request, context: Context) => {
   const url = new URL(request.url);
   const path = url.pathname;
 
-  // Only protect specific lesson paths: /courses/[slug]/[lesson]
-  // We allow /courses and /courses/[slug] (overview) to be public
+  // v23:65 Deep Diagnostic Route
+  if (path === "/courses/debug-access") {
+    const user = context.user;
+    const cookieHeader = request.headers.get("cookie") || "";
+    const hasNfJwt = cookieHeader.includes("nf_jwt=");
+    
+    // Most compatible way to build a header object
+    const headersObj: Record<string, string> = {};
+    request.headers.forEach((v, k) => {
+      headersObj[k] = v;
+    });
+
+    return new Response(JSON.stringify({
+      status: "OK",
+      version: "v23:65",
+      path: path,
+      user: user ? {
+        email: user.email,
+        roles: user.app_metadata?.roles || [],
+      } : "ANONYMOUS",
+      cookies: {
+        present: !!cookieHeader,
+        hasNfJwt: hasNfJwt,
+        count: cookieHeader.split(";").length
+      },
+      headers: headersObj
+    }, null, 2), {
+      headers: { "Content-Type": "application/json" }
+    });
+  }
+
+  // Protect lesson paths: /courses/[slug]/[lesson]
   const lessonMatch = path.match(/^\/courses\/([^\/]+)\/([^\/]+)\/?$/);
   
-  // Skip if not a course lesson or if it is the overview page
   if (!lessonMatch) {
     return;
   }
 
   const courseSlug = lessonMatch[1];
-  const lessonSlug = lessonMatch[2];
-
-  // Logic: Check if user has the required role
-  // Netlify Edge Functions provide 'context.user' automatically
   const user = context.user;
   
-  // Check for dual role format compatibility (v23:60)
   const requiredRoleColon = `course:${courseSlug}`;
   const requiredRoleDash = `course-${courseSlug}`;
 
-  const hasAccess = user?.app_metadata?.roles?.some((role: string) => 
+  const roles = user?.app_metadata?.roles || [];
+  const hasAccess = roles.some((role: string) => 
     role === requiredRoleColon || role === requiredRoleDash
   );
 
-  console.log(`[Edge Guard v23:60] Path: ${path} | User: ${user?.email || "Anonymous"} | Access: ${hasAccess ? "GRANTED" : "DENIED"}`);
+  console.log(`[Edge Guard v23:65] Path: ${path} | User: ${user?.email || "Anonymous"} | Access: ${hasAccess ? "GRANTED" : "DENIED"}`);
 
   if (!hasAccess) {
     const returnTo = encodeURIComponent(path);
-    return Response.redirect(`${url.origin}/access-denied?returnTo=${returnTo}&edge_v=23_60`, 302);
+    return Response.redirect(`${url.origin}/access-denied?returnTo=${returnTo}&edge_guard=v23_65`, 302);
   }
 
-  // If authorized, let the request proceed to the origin (Astro)
+  // Authorized
   return;
 };
 
 export const config = {
-  path: "/courses/*",
-  excludedPath: [
-    "/courses",
-    "/courses/",
-    "/courses/[^/]+/?$" // Exclude course landing pages
-  ],
+  path: "/courses/*"
 };
