@@ -150,56 +150,45 @@ const metadata = {
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
 
-        // DEBUG: version to verify build
-        console.log("Access Denied Script Version: 2026-02-23_20:50");
+        user
+          .jwt(true)
+          .then(function (token) {
+            if (token) {
+              // Set fresh cookie for Netlify CDN
+              document.cookie =
+                "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+            }
 
-        user.jwt(true).then(function (token) {
-          if (!token) {
+            // We verified in debug that user.app_metadata.roles contains the role
+            // even when manual JWT decoding fails. Trust the Identity session state.
+            var roles = (user.app_metadata && user.app_metadata.roles) || [];
+
+            if (requiredRole && roles.indexOf(requiredRole) === -1) {
+              // User is logged in but does NOT have the role
+              showLoggedInMessage(user);
+              return;
+            }
+
+            // User HAS the role (or no specific role required for this returnTo)
+            sessionStorage.setItem(guardKey, "1");
+            var params = new URLSearchParams(window.location.search);
+            var returnTo = params.get("returnTo");
+            if (returnTo && returnTo.startsWith("/")) {
+              window.location.href = returnTo;
+            } else {
+              window.location.href = "/shop#courses";
+            }
+          })
+          .catch(function (err) {
+            console.error("JWT Refresh Error:", err);
             showLoggedInMessage(user, {
-              error: "No token returned from user.jwt(true)",
+              error: "JWT Refresh failed: " + err.message,
             });
-            return;
-          }
-
-          // Check if the JWT actually contains the required role
-          var claims = decodeJwtPayload(token) || {
-            error: "decodeJwtPayload returned null",
-          };
-          var roles =
-            (claims && claims.app_metadata && claims.app_metadata.roles) || [];
-
-          // DEBUG: log JWT claims to diagnose role format
-          console.log("=== ACCESS DENIED DEBUG ===");
-          console.log("Required role:", requiredRole);
-          console.log("Roles found in JWT:", roles);
-          console.log(
-            "Full app_metadata:",
-            JSON.stringify(claims && claims.app_metadata),
-          );
-          console.log("Full JWT claims:", JSON.stringify(claims));
-
-          if (requiredRole && roles.indexOf(requiredRole) === -1) {
-            // User is logged in but does NOT have the role — show helpful message
-            showLoggedInMessage(user, claims);
-            return;
-          }
-
-          // User HAS the role — set cookie and redirect
-          document.cookie =
-            "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
-          sessionStorage.setItem(guardKey, "1");
-          var params = new URLSearchParams(window.location.search);
-          var returnTo = params.get("returnTo");
-          if (returnTo && returnTo.startsWith("/")) {
-            window.location.href = returnTo;
-          } else {
-            window.location.href = "/shop#courses";
-          }
-        });
+          });
       }
 
       // Update the UI to show the user is signed in but lacks access
-      function showLoggedInMessage(user, claims) {
+      function showLoggedInMessage(user, debugInfo) {
         var title = document.querySelector("h1");
         var desc = document.querySelector(".text-lg.text-muted");
         var loginLink = document.getElementById("access-login-link");
@@ -213,40 +202,20 @@ const metadata = {
         }
         if (loginLink) loginLink.style.display = "none";
 
-        // DEBUG: show JWT claims on page (remove after debugging)
+        // Minimal debug output
         var debugContainer =
           document.querySelector(".text-center") || document.body;
-        if (debugContainer) {
-          // Remove any existing debug panels first
-          var existingDebug = document.getElementById("access-debug-panel");
-          if (existingDebug) existingDebug.remove();
-
+        if (debugContainer && !document.getElementById("access-debug-panel")) {
           var debugEl = document.createElement("div");
           debugEl.id = "access-debug-panel";
           debugEl.style.cssText =
-            "margin-top:2rem;padding:1.5rem;background:#0f172a;border:2px solid #f59e0b;border-radius:12px;text-align:left;font-size:12px;color:#f59e0b;max-width:640px;margin-left:auto;margin-right:auto;overflow-x:auto;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);";
+            "margin-top:2rem;padding:1rem;background:#0f172a;border:1px solid #f59e0b;border-radius:8px;text-align:left;font-size:12px;color:#f59e0b;max-width:600px;margin-left:auto;margin-right:auto;";
 
-          var buildVersion = "2026-02-23_20:50";
-          var userRoles = (user.app_metadata && user.app_metadata.roles) || [];
-
-          var claimsHtml = claims
-            ? "<pre style='color:#94a3b8;margin-top:0.5rem;white-space:pre-wrap;word-break:break-all;'>" +
-              JSON.stringify(claims, null, 2) +
-              "</pre>"
-            : "<p style='color:#ef4444;'>Error: No claims found (JWT decoding failed). Check console for details.</p>";
-
+          var roles = (user.app_metadata && user.app_metadata.roles) || [];
           debugEl.innerHTML =
-            "<div style='margin-bottom:0.5rem;display:flex;justify-content:space-between;'>" +
-            "<strong>\u26a0\ufe0f ACCESS DENIED DEBUG</strong>" +
-            "<span style='color:#64748b;font-family:monospace;'>Build: " +
-            buildVersion +
-            "</span>" +
-            "</div>" +
-            "<div style='margin-bottom:1rem;color:#94a3b8;'>Client-side roles: " +
-            JSON.stringify(userRoles) +
-            "</div>" +
-            "<strong>JWT Claims (from Identity):</strong>" +
-            claimsHtml;
+            "<strong>Access Debug:</strong><br>Roles: " +
+            JSON.stringify(roles) +
+            (debugInfo ? "<br>Info: " + JSON.stringify(debugInfo) : "");
           debugContainer.appendChild(debugEl);
         }
       }
