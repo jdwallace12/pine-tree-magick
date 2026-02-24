@@ -209,7 +209,7 @@ async function grantRole(userId, role) {
     }
 
     // 2. Update user with new role
-    const updateRes = await fetch(`https://api.netlify.com/api/v1/sites/${SITE_ID}/identity/${userId}`, {
+    const updateRes = await fetch(`https://api.netlify.com/api/v1/sites/${NETLIFY_SITE_ID}/identity/${userId}`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${NETLIFY_ACCESS_TOKEN}`,

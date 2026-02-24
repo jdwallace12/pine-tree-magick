@@ -1,9 +1,9 @@
 ---
-import Layout from '~/layouts/PageLayout.astro';
-import { Icon } from 'astro-icon/components';
+import Layout from "~/layouts/PageLayout.astro";
+import { Icon } from "astro-icon/components";
 
 const metadata = {
-  title: 'Access Denied',
+  title: "Access Denied",
   robots: {
     index: false,
     follow: false,
@@ -12,24 +12,39 @@ const metadata = {
 ---
 
 <Layout metadata={metadata}>
-  <div class="max-w-4xl mx-auto px-4 py-20 flex flex-col items-center justify-center min-h-[60vh]">
-    <div class="text-center bg-slate-50 dark:bg-slate-800 p-12 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 w-full max-w-2xl">
-      <div class="w-24 h-24 mx-auto mb-8 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500">
+  <div
+    class="max-w-4xl mx-auto px-4 py-20 flex flex-col items-center justify-center min-h-[60vh]"
+  >
+    <div
+      class="text-center bg-slate-50 dark:bg-slate-800 p-12 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 w-full max-w-2xl"
+    >
+      <div
+        class="w-24 h-24 mx-auto mb-8 rounded-full bg-slate-100 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500"
+      >
         <Icon name="tabler:lock" class="w-12 h-12" />
       </div>
-      
+
       <h1 class="text-4xl font-heading font-bold mb-6">Members Only Content</h1>
-      
+
       <p class="text-lg text-muted mb-10 max-w-md mx-auto leading-relaxed">
-        This premium content is restricted. Please sign in to verify your access or enroll in the course to unlock these materials.
+        This premium content is restricted. Please sign in to verify your access
+        or enroll in the course to unlock these materials.
       </p>
-      
+
       <div class="flex flex-col sm:flex-row justify-center gap-4">
-        <a id="access-login-link" href="javascript:void(0)" onclick="window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'login' } }))" class="bg-primary text-white px-8 py-4 rounded-full font-bold transition-transform hover:scale-105 shadow-lg flex items-center justify-center">
+        <a
+          id="access-login-link"
+          href="javascript:void(0)"
+          onclick="window.dispatchEvent(new CustomEvent('open-auth-modal', { detail: { view: 'login' } }))"
+          class="bg-primary text-white px-8 py-4 rounded-full font-bold transition-transform hover:scale-105 shadow-lg flex items-center justify-center"
+        >
           <Icon name="tabler:login" class="w-5 h-5 mr-2" />
           Sign In to Access
         </a>
-        <a href="/shop#courses" class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 px-8 py-4 rounded-full font-bold transition-all hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 flex items-center justify-center">
+        <a
+          href="/shop#courses"
+          class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 px-8 py-4 rounded-full font-bold transition-all hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 flex items-center justify-center"
+        >
           <Icon name="tabler:shopping-cart" class="w-5 h-5 mr-2" />
           Enroll
         </a>
@@ -37,10 +52,16 @@ const metadata = {
 
       <!-- Dev Spoof (Visible only on localhost) -->
       <div id="dev-spoof-container" class="mt-16 hidden">
-        <div class="inline-block bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 rounded-xl">
-          <p class="text-xs text-amber-800 dark:text-amber-500 mb-3 uppercase tracking-widest font-bold">Developer Tools</p>
+        <div
+          class="inline-block bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 rounded-xl"
+        >
+          <p
+            class="text-xs text-amber-800 dark:text-amber-500 mb-3 uppercase tracking-widest font-bold"
+          >
+            Developer Tools
+          </p>
           <div class="flex gap-2 justify-center">
-             <button
+            <button
               id="dev-spoof-magickal"
               class="bg-amber-100 dark:bg-amber-800/50 text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-amber-200 dark:hover:bg-amber-700/80 transition"
             >
@@ -62,37 +83,54 @@ const metadata = {
     // In Astro, DOMContentLoaded might be missed during client-side routing,
     // so we shifted the login button to a direct inline onclick handler.
 
-    document.addEventListener('astro:page-load', () => {
-      // Automatically redirect if user is logged in (they shouldn't normally hit this page if logged in with the right role, 
+    document.addEventListener("astro:page-load", () => {
+      // Automatically redirect if user is logged in (they shouldn't normally hit this page if logged in with the right role,
       // but if the _redirect rule sent them here, they might be logged in but lacking the specific role)
       if (window.netlifyIdentity) {
-        window.netlifyIdentity.on('login', () => {
+        window.netlifyIdentity.on("login", () => {
+          // Set the nf_jwt cookie so Netlify's edge router can read the
+          // user's roles when we redirect back to the premium lesson.
+          const user = window.netlifyIdentity.currentUser();
+          const token = user?.token?.access_token;
+          if (token) {
+            document.cookie = `nf_jwt=${token}; path=/; max-age=${60 * 60}; SameSite=Lax`;
+          }
           const params = new URLSearchParams(window.location.search);
-          const returnTo = params.get('returnTo');
-          if (returnTo && returnTo.startsWith('/')) {
+          const returnTo = params.get("returnTo");
+          if (returnTo && returnTo.startsWith("/")) {
             window.location.href = returnTo;
           } else {
-            window.location.href = '/shop#courses';
+            window.location.href = "/shop#courses";
           }
         });
       }
 
       // Dev Spoof Logic
-      const spoofContainer = document.getElementById('dev-spoof-container');
-      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-      
+      const spoofContainer = document.getElementById("dev-spoof-container");
+      const isLocal =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1";
+
       if (isLocal && spoofContainer) {
-        spoofContainer.classList.remove('hidden');
-        
-        document.getElementById('dev-spoof-magickal')?.addEventListener('click', () => {
-          sessionStorage.setItem('spoof_course:magickal-foundations', 'true');
-          alert('Spoofed access to Magickal Foundations. You can now navigate back to the lesson.');
-        });
-        
-        document.getElementById('dev-spoof-chakra')?.addEventListener('click', () => {
-          sessionStorage.setItem('spoof_course:chakra-mastery', 'true');
-          alert('Spoofed access to Chakra Mastery. You can now navigate back to the lesson.');
-        });
+        spoofContainer.classList.remove("hidden");
+
+        document
+          .getElementById("dev-spoof-magickal")
+          ?.addEventListener("click", () => {
+            sessionStorage.setItem("spoof_course:magickal-foundations", "true");
+            alert(
+              "Spoofed access to Magickal Foundations. You can now navigate back to the lesson.",
+            );
+          });
+
+        document
+          .getElementById("dev-spoof-chakra")
+          ?.addEventListener("click", () => {
+            sessionStorage.setItem("spoof_course:chakra-mastery", "true");
+            alert(
+              "Spoofed access to Chakra Mastery. You can now navigate back to the lesson.",
+            );
+          });
       }
     });
   </script>
