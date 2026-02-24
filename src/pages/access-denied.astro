@@ -88,8 +88,8 @@ const metadata = {
     document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
-      var buildTime = "2026-02-23_23:65";
-      var buildVer = "v23:65";
+      var buildTime = "2026-02-23_23:70";
+      var buildVer = "v23:70";
 
       // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
       function getCourseSlugFromReturnTo() {
@@ -239,11 +239,11 @@ const metadata = {
               user.email +
               "</strong></p>";
             msg +=
-              "<p class='text-pink-600 font-bold mb-4'>Step 1: Click the PINK button below for Deep Sync (" +
+              "<p class='text-amber-600 font-bold mb-4'>Step 1: Click the AMBER button below for Fallback Sync (" +
               buildVer +
               ").</p>";
             msg +=
-              "<p class='text-xs text-slate-500 mb-4'>If you are still looping, view the <a href='/courses/debug-access' class='underline text-pink-700 font-bold'>Edge Diagnostics</a> here.</p>";
+              "<p class='text-xs text-slate-500 mb-4'>If you are still looping, view the <a href='/courses/debug-access' class='underline text-amber-700 font-bold'>Edge Diagnostics</a> here.</p>";
             msg +=
               "<p class='text-xs text-slate-500'>This ensures your browser has the correct permissions. You'll be taken to a confirmation page first.</p>";
             desc.innerHTML = msg;
@@ -284,7 +284,7 @@ const metadata = {
               ? bridgeUrl
               : "javascript:hardReset()";
           loginLink.style.display = "flex";
-          loginLink.style.backgroundColor = "#db2777";
+          loginLink.style.backgroundColor = "#d97706";
         }
 
         // Final status tag
@@ -300,7 +300,7 @@ const metadata = {
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
-            " | Mode: DIAGNOSTIC";
+            " | Mode: FALLBACK";
           container.appendChild(tag);
         }
       }
