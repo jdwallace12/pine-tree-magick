@@ -97,8 +97,11 @@ const metadata = {
           var parts = token.split(".");
           if (parts.length < 2) return null;
           var payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+          // IMPORTANT: Base64URL omits padding, but atob() needs it.
+          while (payload.length % 4) payload += "=";
           return JSON.parse(atob(payload));
         } catch (e) {
+          console.error("JWT Decode Error:", e);
           return null;
         }
       }
@@ -176,16 +179,27 @@ const metadata = {
         if (loginLink) loginLink.style.display = "none";
 
         // DEBUG: show JWT claims on page (remove after debugging)
-        if (claims) {
+        var debugContainer =
+          document.querySelector(".text-center") || document.body;
+        if (debugContainer) {
+          // Remove any existing debug panels first
+          var existingDebug = document.getElementById("access-debug-panel");
+          if (existingDebug) existingDebug.remove();
+
           var debugEl = document.createElement("div");
+          debugEl.id = "access-debug-panel";
           debugEl.style.cssText =
-            "margin-top:2rem;padding:1rem;background:#1e293b;border:1px solid #f59e0b;border-radius:8px;text-align:left;font-size:12px;color:#f59e0b;max-width:600px;margin-left:auto;margin-right:auto;overflow-x:auto;";
+            "margin-top:2rem;padding:1.5rem;background:#0f172a;border:2px solid #f59e0b;border-radius:12px;text-align:left;font-size:12px;color:#f59e0b;max-width:640px;margin-left:auto;margin-right:auto;overflow-x:auto;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);";
+
+          var claimsHtml = claims
+            ? "<pre style='color:#94a3b8;margin-top:0.5rem;white-space:pre-wrap;word-break:break-all;'>" +
+              JSON.stringify(claims, null, 2) +
+              "</pre>"
+            : "<p style='color:#ef4444;'>Error: No claims found (JWT decoding failed). Check console for details.</p>";
+
           debugEl.innerHTML =
-            "<strong>DEBUG — JWT Claims:</strong><pre style='color:#94a3b8;margin-top:0.5rem;white-space:pre-wrap;word-break:break-all;'>" +
-            JSON.stringify(claims, null, 2) +
-            "</pre>";
-          var container = document.querySelector(".text-center");
-          if (container) container.appendChild(debugEl);
+            "<strong>\u26a0\ufe0f ACCESS DENIED DEBUG:</strong>" + claimsHtml;
+          debugContainer.appendChild(debugEl);
         }
       }
 
