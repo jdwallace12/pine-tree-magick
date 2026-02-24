@@ -39,7 +39,7 @@ const modulesMap =
   ) || {};
 
 const syllabusItems = Object.entries(modulesMap).map(
-  ([moduleName, moduleLessons]) => ({
+  ([moduleName, moduleLessons]: [string, any[]]) => ({
     title: moduleName,
     description: moduleLessons
       .map((l) => `${l.data.isFree ? "✦ Free" : "▪ Premium"} — ${l.data.title}`)
@@ -302,171 +302,170 @@ const syllabusItems = Object.entries(modulesMap).map(
     </div>
   </section>
 
-  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <!-- Student Dashboard (Hidden by default) -->
-    <div id="student-dashboard" class="hidden mb-16 pt-16">
+    <div id="student-dashboard" class="hidden mb-6 pt-16">
       <div
-        class="bg-slate-50 dark:bg-slate-800/50 rounded-[2.5rem] p-8 md:p-12 border border-slate-100 dark:border-slate-800 shadow-sm"
+        class="bg-slate-50 dark:bg-slate-800/50 rounded-[2.5rem] p-6 md:p-10 border border-slate-100 dark:border-slate-800 shadow-sm"
       >
         <div
           class="flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-left"
         >
-          <div class="space-y-2">
-            <h2
-              class="text-xs font-bold text-[#f59bbb] uppercase tracking-[0.3em]"
-            >
-              Student Dashboard
-            </h2>
+          <div class="flex flex-col md:flex-row items-center gap-8 w-full">
             <div
-              class="text-2xl font-heading flex items-center justify-center md:justify-start gap-3"
+              class="w-40 h-24 md:w-56 md:h-32 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm flex-shrink-0"
             >
-              <span
-                id="dashboard-user-email"
-                class="text-slate-900 dark:text-white truncate max-w-[250px]"
-                >student@email.com</span
-              >
-              <span
-                class="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 uppercase tracking-widest"
-                >Enrolled</span
-              >
+              <img
+                src={course.data.image}
+                alt={course.data.title}
+                class="w-full h-full object-cover"
+              />
             </div>
-          </div>
-
-          <div class="flex flex-wrap items-center justify-center gap-4">
-            <button
-              onclick="window.netlifyIdentity.logout()"
-              class="bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 px-6 py-3 rounded-full font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all flex items-center gap-2"
-            >
-              <Icon name="tabler:logout" class="w-4 h-4" /> Sign Out
-            </button>
-            <button
-              id="dashboard-hard-reset"
-              class="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-6 py-3 rounded-full font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all flex items-center gap-2"
-            >
-              <Icon name="tabler:refresh" class="w-4 h-4" /> Reset Session
-            </button>
+            <div class="space-y-4 text-center md:text-left flex-grow">
+              <h1 class="text-4xl md:text-5xl lg:text-6xl font-heading text-slate-900 dark:text-white leading-tight">
+                {course.data.title}
+              </h1>
+              <div
+                class="flex flex-col md:flex-row items-center gap-2 md:gap-4 mt-2 justify-center md:justify-start"
+              >
+                <div class="flex items-center gap-2">
+                  <span
+                    id="dashboard-user-email"
+                    class="text-sm font-medium text-slate-500 dark:text-slate-400 truncate max-w-[200px]"
+                    >student@email.com</span
+                  >
+                  <span
+                    class="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 uppercase tracking-widest"
+                    >Enrolled</span
+                  >
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Course Progress - Integrated into Dashboard -->
         <div
           id="course-progress-container"
-          class="hidden w-full mt-10 pt-8 border-t border-slate-100 dark:border-slate-700/50"
+          class="hidden w-full mt-4 pt-8 border-t border-slate-100 dark:border-slate-700/50"
           data-course-slug={course.slug}
           data-total-lessons={lessons.length}
         >
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-xs font-bold text-muted uppercase tracking-widest"
-              >Course Progress</span
-            >
-            <span id="progress-percent" class="text-sm font-bold text-[#f59bbb]"
-              >0%</span
-            >
-          </div>
-          <div
-            class="w-full bg-slate-100 dark:bg-slate-900/50 rounded-full h-3 overflow-hidden border border-slate-200 dark:border-slate-700/50 p-[1px]"
-          >
+          <div class="max-w-2xl mx-auto">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-bold text-muted uppercase tracking-widest"
+                >Course Progress</span
+              >
+              <span id="progress-percent" class="text-sm font-bold text-[#f59bbb]"
+                >0%</span
+              >
+            </div>
             <div
-              id="progress-bar"
-              class="bg-gradient-to-r from-[#f59bbb] to-[#9acac6] h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(245,155,187,0.4)]"
-              style="width: 0%"
+              class="w-full bg-slate-100 dark:bg-slate-900/50 rounded-full h-3 overflow-hidden border border-slate-200 dark:border-slate-700/50 p-[1px]"
             >
+              <div
+                id="progress-bar"
+                class="bg-gradient-to-r from-[#f59bbb] to-[#9acac6] h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(245,155,187,0.4)]"
+                style="width: 0%"
+              >
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Syllabus Anchor -->
-    <div
-      id="syllabus"
-      class="pt-16 border-t border-slate-100 dark:border-slate-800"
-    >
-      <!-- Curriculum Header -->
-      <div class="mb-16">
-        <h2 class="text-3xl md:text-4xl font-heading text-center md:text-left">
-          Course Curriculum
-        </h2>
-      </div>
+      <div class="max-w-4xl mx-auto">
+        <!-- Syllabus Anchor -->
+        <div
+          id="syllabus"
+          class="pt-10 border-t border-slate-100 dark:border-slate-800"
+        >
+          <!-- Curriculum Header -->
+          <div class="mb-16">
+            <h2 class="text-2xl md:text-3xl text-center md:text-left">
+              Course Curriculum
+            </h2>
+          </div>
 
-      <!-- Modules List (Full width stacked) -->
-      <div class="space-y-10">
-        {
-          Object.entries(modulesMap).map(([moduleName, moduleLessons]) => (
-            <div class="bg-slate-50 dark:bg-slate-900/50 p-6 md:p-10 rounded-[2rem] border border-slate-100 dark:border-slate-800 transition-all hover:bg-slate-100/50 dark:hover:bg-slate-800/50 group">
-              <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-                <h3 class="text-2xl md:text-3xl font-bold flex items-center font-heading">
-                  <span class="bg-[#9acac6]/20 text-[#9acac6] dark:text-[#9acac6] w-12 h-12 rounded-2xl flex items-center justify-center mr-5 shadow-sm border border-[#9acac6]/30">
-                    <Icon name="tabler:folders" class="w-6 h-6" />
-                  </span>
-                  {moduleName}
-                </h3>
-                <span class="text-sm font-bold text-muted uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700">
-                  {moduleLessons.length} Lessons
-                </span>
-              </div>
+          <!-- Modules List (Full width stacked) -->
+          <div class="space-y-10">
+            {
+              (Object.entries(modulesMap) as [string, any[]][]).map(([moduleName, moduleLessons]) => (
+                <div class="bg-slate-50 dark:bg-slate-900/50 p-6 md:p-10 rounded-[2rem] border border-slate-100 dark:border-slate-800 transition-all hover:bg-slate-100/50 dark:hover:bg-slate-800/50 group">
+                  <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+                    <h3 class="text-2xl md:text-3xl font-bold flex items-center font-heading">
+                      <span class="bg-[#9acac6]/20 text-[#9acac6] dark:text-[#9acac6] w-12 h-12 rounded-2xl flex items-center justify-center mr-5 shadow-sm border border-[#9acac6]/30">
+                        <Icon name="tabler:folders" class="w-6 h-6" />
+                      </span>
+                      {moduleName}
+                    </h3>
+                    <span class="text-sm font-bold text-muted uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700">
+                      {moduleLessons.length} Lessons
+                    </span>
+                  </div>
 
-              <ul class="space-y-4">
-                {moduleLessons.map((l) => (
-                  <li class="flex items-center justify-between p-4 md:p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-[#f59bbb]/50 transition-all group/lesson">
-                    <div class="flex items-center space-x-4 md:space-x-6">
-                      <span
-                        data-lock-icon={l.data.isFree ? "free" : "locked"}
-                        class:list={[
-                          "lesson-lock-icon flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-inner border transition-all duration-300",
-                          l.data.isFree
-                            ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400"
-                            : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500",
-                        ]}
-                      >
-                        {l.data.isFree ? (
-                          <Icon name="tabler:lock-open" class="w-5 h-5" />
-                        ) : (
-                          <Icon name="tabler:lock" class="w-5 h-5" />
-                        )}
-                      </span>
-                      <a
-                        href={`/courses/${course.slug}/${l.slug.split("/").pop()}`}
-                        class="font-bold text-lg md:text-xl text-slate-900 dark:text-white hover:text-[#f59bbb] transition-colors leading-tight"
-                      >
-                        {l.data.title}
-                      </a>
-                    </div>
-                    <div class="flex items-center gap-4 md:gap-8">
-                      <span
-                        class="lesson-status-check hidden text-[#9acac6] scale-125"
-                        data-lesson-slug={l.slug.split("/").pop()}
-                      >
-                        <Icon
-                          name="tabler:circle-check-filled"
-                          class="w-7 h-7"
-                        />
-                      </span>
-                      <a
-                        href={`/courses/${course.slug}/${l.slug.split("/").pop()}`}
-                        class="hidden md:flex items-center justify-center bg-black dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-full opacity-0 group-hover/lesson:opacity-100 transition-all font-bold text-sm shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95"
-                      >
-                        Start Lesson{" "}
-                        <Icon
-                          name="tabler:chevron-right"
-                          class="w-4 h-4 ml-2"
-                        />
-                      </a>
-                      <a
-                        href={`/courses/${course.slug}/${l.slug.split("/").pop()}`}
-                        class="md:hidden text-slate-400"
-                      >
-                        <Icon name="tabler:chevron-right" class="w-6 h-6" />
-                      </a>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))
-        }
+                  <ul class="space-y-4">
+                    {moduleLessons.map((l) => (
+                      <li class="flex items-center justify-between p-4 md:p-6 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 hover:shadow-xl hover:border-[#f59bbb]/50 transition-all group/lesson">
+                        <div class="flex items-center space-x-4 md:space-x-6">
+                          <span
+                            data-lock-icon={l.data.isFree ? "free" : "locked"}
+                            class:list={[
+                              "lesson-lock-icon flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-inner border transition-all duration-300",
+                              l.data.isFree
+                                ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700 text-emerald-600 dark:text-emerald-400"
+                                : "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 dark:text-slate-500",
+                            ]}
+                          >
+                            {l.data.isFree ? (
+                              <Icon name="tabler:lock-open" class="w-5 h-5" />
+                            ) : (
+                              <Icon name="tabler:lock" class="w-5 h-5" />
+                            )}
+                          </span>
+                          <a
+                            href={`/courses/${course.slug}/${l.slug.split("/").pop()}`}
+                            class="font-bold text-lg md:text-xl text-slate-900 dark:text-white hover:text-[#f59bbb] transition-colors leading-tight"
+                          >
+                            {l.data.title}
+                          </a>
+                        </div>
+                        <div class="flex items-center gap-4 md:gap-8">
+                          <span
+                            class="lesson-status-check hidden text-[#9acac6] scale-125"
+                            data-lesson-slug={l.slug.split("/").pop()}
+                          >
+                            <Icon
+                              name="tabler:circle-check-filled"
+                              class="w-7 h-7"
+                            />
+                          </span>
+                          <a
+                            href={`/courses/${course.slug}/${l.slug.split("/").pop()}`}
+                            class="hidden md:flex items-center justify-center bg-black dark:bg-white text-white dark:text-black px-6 py-2.5 rounded-full opacity-0 group-hover/lesson:opacity-100 transition-all font-bold text-sm shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-95"
+                          >
+                            Start Lesson{" "}
+                            <Icon
+                              name="tabler:chevron-right"
+                              class="w-4 h-4 ml-2"
+                            />
+                          </a>
+                          <a
+                            href={`/courses/${course.slug}/${l.slug.split("/").pop()}`}
+                            class="md:hidden text-slate-400"
+                          >
+                            <Icon name="tabler:chevron-right" class="w-6 h-6" />
+                          </a>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+          </div>
+        </div>
       </div>
-    </div>
   </div>
 
   <script>
@@ -545,7 +544,7 @@ const syllabusItems = Object.entries(modulesMap).map(
       const hasSpoofAccess =
         isLocal && sessionStorage.getItem(`spoof_course:${courseSlug}`);
 
-      const user = window.netlifyIdentity?.currentUser();
+      const user = window.netlifyIdentity?.currentUser() as any;
       const hasAccess =
         hasSpoofAccess ||
         user?.app_metadata?.roles?.includes(`course:${courseSlug}`);
@@ -567,23 +566,6 @@ const syllabusItems = Object.entries(modulesMap).map(
         if (studentDashboard) studentDashboard.classList.remove("hidden");
         if (userEmailDisplay && user) userEmailDisplay.textContent = user.email;
 
-        // Add hard reset listener to dashboard button
-        const dashboardReset = document.getElementById("dashboard-hard-reset");
-        if (dashboardReset) {
-          dashboardReset.onclick = () => {
-            if (
-              confirm(
-                "This will log you out and clear all course-related session data. Proceed?",
-              )
-            ) {
-              window.netlifyIdentity.logout();
-              document.cookie = "nf_jwt=; path=/; max-age=0";
-              sessionStorage.clear();
-              localStorage.removeItem("gotrue.user");
-              location.href = "/";
-            }
-          };
-        }
 
         // Change UI to reflect the user has purchased the course (Legacy cleanup)
         if (enrollLink) {
@@ -668,10 +650,8 @@ const syllabusItems = Object.entries(modulesMap).map(
         parseInt(totalLessons),
       );
 
-      // Show container if progress has started
-      if (completed.length > 0) {
-        container.classList.remove("hidden");
-      }
+      // Show container if we're in the student dashboard
+      container.classList.remove("hidden");
 
       // Update progress bar
       const bar = document.getElementById("progress-bar");
