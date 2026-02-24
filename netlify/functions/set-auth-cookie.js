@@ -17,9 +17,9 @@ exports.handler = async (event) => {
       return { statusCode: 400, body: "Missing token" };
     }
 
-    // This is the "Nuclear" Cookie Set.
-    // By returning a 302 with a Set-Cookie, we bypass the browser's JS-level logic entirely.
-    const cookie = `nf_jwt=${token}; Path=/; Max-Age=3600; SameSite=Lax; HttpOnly`;
+    // FIX: Using backticks for extraction of variable. 
+    // PREVIOUS: "nf_jwt=${token}" was literal text.
+    const cookie = `nf_jwt=${token}; Path=/; Max-Age=3600; SameSite=Lax`;
 
     return {
       statusCode: 302,
