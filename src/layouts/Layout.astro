@@ -73,11 +73,15 @@ const { language, textDirection } = I18N;
             // cookie for role-based redirects BEFORE any JS runs.
             function refreshJwtCookie() {
               var user = window.netlifyIdentity.currentUser();
-              var token = user && user.token && user.token.access_token;
-              if (token) {
-                document.cookie =
-                  "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
-              }
+              if (!user) return;
+              // user.jwt() force-refreshes the token — user.token.access_token
+              // may be stale/expired, and Netlify's CDN ignores expired JWTs.
+              user.jwt().then(function (token) {
+                if (token) {
+                  document.cookie =
+                    "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+                }
+              });
             }
 
             function clearJwtCookie() {

@@ -80,39 +80,50 @@ const metadata = {
   </div>
 
   <script is:inline>
-    document.addEventListener("astro:page-load", () => {
+    document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
-      // Helper: set the nf_jwt cookie and redirect to the returnTo URL
-      function setCookieAndRedirect() {
+      // Helper: force-refresh the JWT, set the nf_jwt cookie, and redirect
+      function refreshAndRedirect() {
         var user = window.netlifyIdentity.currentUser();
-        var token = user && user.token && user.token.access_token;
-        if (token) {
-          document.cookie =
-            "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
-        }
-        var params = new URLSearchParams(window.location.search);
-        var returnTo = params.get("returnTo");
-        if (returnTo && returnTo.startsWith("/")) {
-          window.location.href = returnTo;
-        } else {
-          window.location.href = "/shop#courses";
-        }
+        if (!user) return;
+        // user.jwt() refreshes the token — the stale access_token is often
+        // expired, and Netlify's CDN ignores expired JWTs in the cookie.
+        user.jwt().then(function (token) {
+          if (token) {
+            document.cookie =
+              "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+          }
+          var params = new URLSearchParams(window.location.search);
+          var returnTo = params.get("returnTo");
+          if (returnTo && returnTo.startsWith("/")) {
+            window.location.href = returnTo;
+          } else {
+            window.location.href = "/shop#courses";
+          }
+        });
       }
 
-      // If the user is ALREADY logged in when this page loads (e.g. their
-      // nf_jwt cookie expired but their session is still in localStorage),
-      // redirect them immediately once the Identity widget initializes.
+      // Check IMMEDIATELY — by the time this script runs, the Identity widget
+      // init event from Layout.astro has already fired, so on('init') below
+      // will never trigger. currentUser() returns the user if already authed.
+      var existingUser = window.netlifyIdentity.currentUser();
+      if (existingUser) {
+        refreshAndRedirect();
+        return;
+      }
+
+      // Fallback: in case init hasn't fired yet (unlikely but safe)
       window.netlifyIdentity.on("init", function () {
         var user = window.netlifyIdentity.currentUser();
         if (user) {
-          setCookieAndRedirect();
+          refreshAndRedirect();
         }
       });
 
       // If the user signs in FROM this page, redirect after login.
       window.netlifyIdentity.on("login", function () {
-        setCookieAndRedirect();
+        refreshAndRedirect();
       });
 
       // Dev Spoof Logic
