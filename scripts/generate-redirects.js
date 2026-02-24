@@ -16,52 +16,28 @@ const courses = fs.readdirSync(lessonsDir).filter(file => {
   return fs.statSync(path.join(lessonsDir, file)).isDirectory();
 });
 
-let premiumCourses = [];
+let redirects = [];
+
+// v23:60 NUCLEAR EDGE GUARD
+// We no longer handle role-based redirects in this file.
+// The Netlify Edge Function (netlify/edge-functions/access-guard.ts) 
+// now handles all course security.
+// This simplifies the CDN rules and prevents redirect loops.
 
 courses.forEach(courseSlug => {
   const coursePath = path.join(lessonsDir, courseSlug);
   const lessons = fs.readdirSync(coursePath).filter(file => file.endsWith('.md'));
   
   lessons.forEach(lessonFile => {
-    const lessonSlug = lessonFile.replace('.md', '');
-    const lessonPath = path.join(coursePath, lessonFile);
-    
-    // Read frontmatter
-    const fileContent = fs.readFileSync(lessonPath, 'utf-8');
-    const { data } = matter(fileContent);
-    
-    // NETLIFY REDIRECTS SYNTAX (v23:50)
-    // 1. Source Path
-    // 2. Dest Path
-    // 3. Status Code!
-    // 4. Role=rolename
-    // Use single spaces and dual role support (colon and dash) for maximum compatibility.
-    
-    if (!data.isFree) {
-      if (process.env.UNLOCK_ALL !== 'true') {
-        const roleColon = `course:${courseSlug}`;
-        const roleDash = `course-${courseSlug}`;
-        const source = `/courses/${courseSlug}/${lessonSlug}`;
-        const fallback = `/access-denied?returnTo=${source}`;
-        
-        // Allowed access (200!) - DUAL ROLE SUPPORT
-        // Note: Netlify supports multiple roles separated by commas (no spaces)
-        premiumCourses.push(`${source} ${source} 200! Role=${roleColon},${roleDash}`);
-        premiumCourses.push(`${source}/ ${source}/ 200! Role=${roleColon},${roleDash}`);
-        
-        // Access Denied Fallback (302!)
-        premiumCourses.push(`${source} ${fallback} 302!`);
-        premiumCourses.push(`${source}/ ${fallback} 302!`);
-      }
-    }
+    // We can add simple non-role redirects here if needed in the future
   });
 });
 
-if (premiumCourses.length > 0) {
-  redirectsContent += '# Protect premium courses\n';
-  redirectsContent += premiumCourses.join('\n') + '\n';
+if (redirects.length > 0) {
+  redirectsContent += '# Additional redirects\n';
+  redirectsContent += redirects.join('\n') + '\n';
 }
 
 fs.writeFileSync(redirectsFile, redirectsContent);
 
-console.log(`✅ Successfully generated _redirects for ${courses.length} courses with v23:50 dual-role syntax.`);
+console.log(`✅ Successfully generated _redirects. Legacy RBAC removed for v23:60 Edge Guard.`);
