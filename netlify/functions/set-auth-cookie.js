@@ -21,16 +21,18 @@ exports.handler = async (event) => {
       };
     }
 
-    // Manual Entry Bridge v23:00
+    // Manual Entry Bridge v23:05
     // We set the cookie with explicit Secure; Path=/; SameSite=Lax
-    // And we return a page that stops the user, so they can see if it worked.
     const cookieHeader = `nf_jwt=${token}; Path=/; SameSite=Lax; Secure`;
-    const debugCookie = `bridge_ready=v23_00; Path=/; Max-Age=300; SameSite=Lax; Secure`;
+    const debugCookie = `bridge_ready=v23_05; Path=/; Max-Age=300; SameSite=Lax; Secure`;
 
     return {
       statusCode: 200,
+      // Fix: Use multiValueHeaders for multiple Set-Cookie headers on Netlify/Lambda
+      multiValueHeaders: {
+        "Set-Cookie": [cookieHeader, debugCookie]
+      },
       headers: {
-        "Set-Cookie": [cookieHeader, debugCookie], // Note: Netlify supports multiple Set-Cookie headers via array
         "Content-Type": "text/html",
         "Cache-Control": "no-cache, no-store, must-revalidate",
       },
@@ -55,7 +57,7 @@ exports.handler = async (event) => {
             <h1>Ready to Enter!</h1>
             <p>Access Token has been pushed to your browser via a secure server header.</p>
             <a href="${returnTo}" class="btn">Click Here to Enter Course</a>
-            <div class="debug">v23:00 | Bridge: ACTIVE | Token: ${token.substring(0, 10)}...</div>
+            <div class="debug">v23:05 | Bridge: ACTIVE | Token: ${token.substring(0, 10)}...</div>
           </div>
         </body>
         </html>
