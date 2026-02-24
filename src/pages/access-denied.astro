@@ -96,50 +96,92 @@ const metadata = {
         return match ? match[1] : null;
       }
 
+      function decodeJwt(token) {
+        try {
+          if (!token || typeof token !== "string") return null;
+          var base64Url = token.split(".")[1];
+          if (!base64Url) return null;
+          var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+          while (base64.length % 4) base64 += "=";
+          return JSON.parse(atob(base64));
+        } catch (e) {
+          return { error: e.message };
+        }
+      }
+
+      function hardReset() {
+        if (
+          confirm(
+            "This will log you out and clear all course-related session data. Proceed?",
+          )
+        ) {
+          window.netlifyIdentity.logout();
+          document.cookie = "nf_jwt=; path=/; max-age=0; SameSite=Lax";
+          sessionStorage.clear();
+          localStorage.removeItem("gotrue.user");
+          location.href = "/";
+        }
+      }
+
       // Main: refresh token, check role, redirect only if authorized
       function tryRedirect() {
         var user = window.netlifyIdentity.currentUser();
         if (!user) return;
 
-        // Guard against redirect loops — only attempt once per page load
         var guardKey = "access_denied_redirect_guard";
-        if (sessionStorage.getItem(guardKey)) {
-          sessionStorage.removeItem(guardKey);
-          showLoggedInMessage(
-            user,
-            "Redirect loop detected. The CDN is still blocking access despite having the role.",
-          );
-          return;
-        }
+        var isLooping = !!sessionStorage.getItem(guardKey);
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_21:00";
-
-        console.log("=== Access Denied v" + buildTime + " ===");
-        console.log("Required Role:", requiredRole);
+        var buildTime = "2026-02-23_21:10";
 
         user
           .jwt(true)
           .then(function (token) {
             if (token) {
-              // Set fresh cookie for Netlify CDN
               document.cookie =
-                "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+                "nf_jwt=" +
+                token +
+                "; path=/; max-age=3600; SameSite=Lax; Secure";
             }
 
-            // Trust the Identity session state.
+            var claims = decodeJwt(token);
             var roles = (user.app_metadata && user.app_metadata.roles) || [];
-            console.log("Found Roles:", roles);
+            var jwtRoles =
+              (claims && claims.app_metadata && claims.app_metadata.roles) ||
+              [];
 
-            if (requiredRole && roles.indexOf(requiredRole) === -1) {
-              // User is logged in but does NOT have the role
-              showLoggedInMessage(user, "Missing role: " + requiredRole);
+            console.log("=== Access Denied v" + buildTime + " ===");
+            console.log("Logged in as:", user.email);
+            console.log("Required Role:", requiredRole);
+            console.log("App Metadata Roles:", roles);
+            console.log("JWT Claims Roles:", jwtRoles);
+
+            if (isLooping) {
+              sessionStorage.removeItem(guardKey);
+              showLoggedInMessage(user, "CDN_BLOCK", {
+                required: requiredRole,
+                appRoles: roles,
+                jwtRoles: jwtRoles,
+                tokenPresent: !!token,
+                cookiePresent: document.cookie.indexOf("nf_jwt=") !== -1,
+              });
+              return;
+            }
+
+            if (
+              requiredRole &&
+              roles.indexOf(requiredRole) === -1 &&
+              jwtRoles.indexOf(requiredRole) === -1
+            ) {
+              showLoggedInMessage(user, "MISSING_ROLE", {
+                required: requiredRole,
+                roles: roles,
+              });
               return;
             }
 
             // User HAS the role — redirect
-            console.log("Access verified. Redirecting...");
             sessionStorage.setItem(guardKey, "1");
             var params = new URLSearchParams(window.location.search);
             var returnTo = params.get("returnTo");
@@ -150,48 +192,76 @@ const metadata = {
             }
           })
           .catch(function (err) {
-            console.error("JWT Refresh Error:", err);
-            showLoggedInMessage(user, "JWT Refresh failed: " + err.message);
+            showLoggedInMessage(user, "JWT_ERROR", { message: err.message });
           });
       }
 
-      // Update the UI to show the user is signed in but lacks access
-      function showLoggedInMessage(user, errorDetail) {
+      function showLoggedInMessage(user, type, data) {
         var title = document.querySelector("h1");
         var desc = document.querySelector(".text-lg.text-muted");
         var loginLink = document.getElementById("access-login-link");
-        if (title) title.textContent = "Access Authorized (Fixing...)";
+
+        if (title)
+          title.textContent =
+            type === "CDN_BLOCK"
+              ? "Access authorized, but CDN is blocking"
+              : "You Don't Have Access Yet";
+
         if (desc) {
-          desc.innerHTML =
-            "<p class='mb-4'>You're signed in as <strong>" +
-            (user.email || "a member") +
-            "</strong> and we've verified your access.</p>" +
-            (errorDetail
-              ? "<p class='text-amber-600 text-sm mb-4'>Status: " +
-                errorDetail +
-                "</p>"
-              : "") +
-            "<p>If you aren't redirected automatically, click the button below:</p>";
-        }
-        if (loginLink) {
-          loginLink.textContent = "Refresh & Enter Course";
-          loginLink.href = "javascript:location.reload()";
-          loginLink.style.display = "flex";
-          loginLink.classList.remove("bg-primary");
-          loginLink.style.backgroundColor = "#10b981"; // Green for success/action
+          var msg =
+            "<p class='mb-4'>Signed in as <strong>" +
+            user.email +
+            "</strong></p>";
+          if (type === "CDN_BLOCK") {
+            msg +=
+              "<p class='text-sm text-amber-600 mb-4'>We've verified your roles, but Netlify's security layer is still redirecting you here. This usually means the security cookie hasn't reached all servers yet.</p>";
+          } else {
+            msg +=
+              "<p class='mb-4'>Your account doesn't have the required role for this course.</p>";
+          }
+          msg +=
+            "<div class='text-left bg-slate-100 dark:bg-slate-900 p-4 rounded-lg text-xs font-monospace overflow-x-auto mb-6'>" +
+            "<strong>DEBUG INFO:</strong><br>" +
+            "Required: " +
+            (data.required || "None") +
+            "<br>" +
+            "App Roles: " +
+            JSON.stringify(data.appRoles || data.roles || []) +
+            "<br>" +
+            "JWT Roles: " +
+            JSON.stringify(data.jwtRoles || []) +
+            "<br>" +
+            "Cookie: " +
+            (data.cookiePresent ? "✅ SET" : "❌ MISSING") +
+            "</div>";
+          desc.innerHTML = msg;
         }
 
-        // Mini debug
-        var container = document.querySelector(".text-center");
-        if (container && !document.getElementById("build-tag")) {
-          var tag = document.createElement("div");
-          tag.id = "build-tag";
-          tag.style.cssText =
-            "margin-top:2rem;font-family:monospace;font-size:10px;color:#94a3b8;";
-          tag.textContent =
-            "Build: 2026-02-23_21:00 | Roles: " +
-            JSON.stringify(user.app_metadata?.roles || []);
-          container.appendChild(tag);
+        if (loginLink) {
+          loginLink.textContent = "Sign Out & Try Again";
+          loginLink.href = "javascript:hardReset()";
+          loginLink.style.display = "flex";
+          loginLink.classList.remove("bg-primary");
+          loginLink.style.backgroundColor = "#ef4444"; // Red for reset
+        }
+
+        // Add a "Force Enter" button in CDN_BLOCK case
+        if (type === "CDN_BLOCK") {
+          var enterBtn = document.createElement("a");
+          enterBtn.textContent = "Force Enter Course";
+          enterBtn.href = "javascript:location.reload()";
+          enterBtn.style.cssText =
+            "margin-top:1rem;background:#10b981;color:white;padding:1rem 2rem;border-radius:9999px;font-weight:bold;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;";
+          enterBtn.onclick = function () {
+            this.style.transform = "scale(0.95)";
+          };
+          var container =
+            document.querySelector(".flex-col.sm\\:flex-row") ||
+            document.querySelector(".flex.flex-col");
+          if (container && !document.getElementById("force-enter")) {
+            enterBtn.id = "force-enter";
+            container.appendChild(enterBtn);
+          }
         }
       }
 
