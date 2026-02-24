@@ -123,6 +123,16 @@ const metadata = {
         }
       }
 
+      // Helper: Call the server bridge to set the cookie via HTTP Headers
+      // This bypasses browser-side JS blocking of the "nf_jwt" name.
+      function setCookieViaBridge(token) {
+        return fetch("/.netlify/functions/set-auth-cookie", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: token }),
+        });
+      }
+
       // Main: refresh token, check role, redirect only if authorized
       function tryRedirect() {
         var user = window.netlifyIdentity.currentUser();
@@ -133,63 +143,92 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_22:10";
+        var buildTime = "2026-02-23_22:20";
 
         user
           .jwt(true)
           .then(function (token) {
             if (token) {
-              // THE FIX: Only path=/, no other attributes
+              // TRY 1: JS Attempt (Fallback)
               document.cookie = "nf_jwt=" + token + "; path=/";
-            }
 
-            var claims = decodeJwt(token);
-            var roles = (user.app_metadata && user.app_metadata.roles) || [];
-            var jwtRoles =
-              (claims && claims.app_metadata && claims.app_metadata.roles) ||
-              [];
-
-            console.log("=== Access Denied v" + buildTime + " ===");
-            console.log(
-              "Cookie Check:",
-              document.cookie.indexOf("nf_jwt=") !== -1,
-            );
-
-            if (isLooping) {
-              sessionStorage.removeItem(guardKey);
-              showLoggedInMessage(user, "LOOP", {
-                required: requiredRole,
-                roles: roles,
-              });
-              return;
-            }
-
-            if (
-              requiredRole &&
-              roles.indexOf(requiredRole) === -1 &&
-              jwtRoles.indexOf(requiredRole) === -1
-            ) {
-              showLoggedInMessage(user, "MISSING", {
-                required: requiredRole,
-                roles: roles,
-              });
-              return;
-            }
-
-            // User HAS the role — redirect
-            sessionStorage.setItem(guardKey, "1");
-            var params = new URLSearchParams(window.location.search);
-            var returnTo = params.get("returnTo");
-            if (returnTo && returnTo.startsWith("/")) {
-              window.location.href = returnTo;
-            } else {
-              window.location.href = "/shop#courses";
+              // TRY 2: Bridge (Primary)
+              setCookieViaBridge(token)
+                .then(function (res) {
+                  console.log("Cookie Bridge Result:", res.status);
+                  processAuth(
+                    token,
+                    user,
+                    isLooping,
+                    requiredRole,
+                    buildTime,
+                    guardKey,
+                  );
+                })
+                .catch(function (err) {
+                  console.error("Bridge Error:", err);
+                  processAuth(
+                    token,
+                    user,
+                    isLooping,
+                    requiredRole,
+                    buildTime,
+                    guardKey,
+                  );
+                });
             }
           })
           .catch(function (err) {
-            console.error("JWT Error:", err);
             showLoggedInMessage(user, "ERROR", { message: err.message });
           });
+      }
+
+      function processAuth(
+        token,
+        user,
+        isLooping,
+        requiredRole,
+        buildTime,
+        guardKey,
+      ) {
+        var claims = decodeJwt(token);
+        var roles = (user.app_metadata && user.app_metadata.roles) || [];
+        var jwtRoles =
+          (claims && claims.app_metadata && claims.app_metadata.roles) || [];
+
+        console.log("=== Access Denied v" + buildTime + " ===");
+        var hasCookie = document.cookie.indexOf("nf_jwt=") !== -1;
+
+        if (isLooping) {
+          sessionStorage.removeItem(guardKey);
+          showLoggedInMessage(user, "LOOP", {
+            required: requiredRole,
+            roles: roles,
+          });
+          return;
+        }
+
+        if (
+          requiredRole &&
+          roles.indexOf(requiredRole) === -1 &&
+          jwtRoles.indexOf(requiredRole) === -1
+        ) {
+          showLoggedInMessage(user, "MISSING", {
+            required: requiredRole,
+            roles: roles,
+          });
+          return;
+        }
+
+        // User HAS the role — redirect
+        sessionStorage.setItem(guardKey, "1");
+        var params = new URLSearchParams(window.location.search);
+        var returnTo = params.get("returnTo");
+        if (returnTo && returnTo.startsWith("/")) {
+          window.location.href = returnTo;
+        } else {
+          window.location.href = "/shop#courses";
+        }
       }
 
       function showLoggedInMessage(user, type, data) {
@@ -200,19 +239,17 @@ const metadata = {
         var hasCookie = document.cookie.indexOf("nf_jwt=") !== -1;
 
         if (type === "LOOP") {
-          if (title) title.textContent = "Almost there...";
+          if (title) title.textContent = "Finalizing Access...";
           if (desc) {
             var msg =
-              "<p class='mb-4'>You're signed in as <strong>" +
+              "<p class='mb-4'>Signed in as <strong>" +
               user.email +
-              "</strong> and we've verified your access.</p>";
+              "</strong></p>";
+            msg +=
+              "<p class='text-amber-600 text-sm mb-4'>Verifying your course access through our secure bridge...</p>";
             if (!hasCookie) {
               msg +=
-                "<p class='text-red-500 text-sm mb-4 font-bold'>Error: Your browser rejected the security cookie.</p>" +
-                "<p class='text-xs mb-4'>We're trying to set a standard session cookie, but it's not sticking. This can happen if cookies are blocked in settings.</p>";
-            } else {
-              msg +=
-                "<p class='text-amber-600 text-sm mb-4'>The security cookie is ready (✅), but the server still needs a nudge. <strong>Please click the green button below.</strong></p>";
+                "<p class='text-xs text-slate-500'>Note: Browser is hiding the cookie from JS, but our bridge is pushing it through. <strong>Click the green button to enter.</strong></p>";
             }
             desc.innerHTML = msg;
           }
@@ -252,12 +289,11 @@ const metadata = {
           tag.style.cssText =
             "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
           tag.textContent =
-            "v22:10 | Target: " +
+            "v22:20 | Target: " +
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
-            " | Cookie: " +
-            (hasCookie ? "✅" : "❌");
+            " | Bridge: READY";
           container.appendChild(tag);
         }
       }
