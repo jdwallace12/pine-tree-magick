@@ -47,6 +47,7 @@ const metadata = {
           Sign In to Access
         </a>
         <a
+          id="access-enroll-link"
           href="/shop#courses"
           class="bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 px-8 py-4 rounded-full font-bold transition-all hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 flex items-center justify-center"
         >
@@ -88,8 +89,8 @@ const metadata = {
     document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
-      var buildTime = "2026-02-24_10:10";
-      var buildVer = "v24:10";
+      var buildTime = "2026-02-24_10:20";
+      var buildVer = "v24:20";
 
       // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
       function getCourseSlugFromReturnTo() {
@@ -97,6 +98,25 @@ const metadata = {
         var returnTo = params.get("returnTo") || "";
         var match = returnTo.match(/^\/courses\/([^\/]+)\//);
         return match ? match[1] : null;
+      }
+
+      // Update the Enroll button to point directly to PayPal for the specific course
+      function updateEnrollLink() {
+        var courseSlug = getCourseSlugFromReturnTo();
+        var enrollLink = document.getElementById("access-enroll-link");
+        if (!enrollLink || !courseSlug) return;
+
+        var mapping = {
+          "magickal-foundations": "COURSETST123",
+          "chakra-mastery": "CHAKRA_PRO_97",
+        };
+
+        var buttonId = mapping[courseSlug];
+        if (buttonId) {
+          enrollLink.href = "https://www.paypal.com/ncp/payment/" + buttonId;
+          enrollLink.title =
+            "Enroll directly in " + courseSlug.replace(/-/g, " ");
+        }
       }
 
       function decodeJwt(token) {
@@ -310,9 +330,13 @@ const metadata = {
       // Check immediately — the Identity widget init has already fired
       var existingUser = window.netlifyIdentity.currentUser();
       if (existingUser) {
+        updateEnrollLink();
         tryRedirect();
         return;
       }
+
+      // Check for anonymous users too
+      updateEnrollLink();
 
       // Fallback: in case init hasn't fired yet
       window.netlifyIdentity.on("init", function (user) {
