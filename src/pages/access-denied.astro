@@ -80,30 +80,40 @@ const metadata = {
   </div>
 
   <script is:inline>
-    // In Astro, DOMContentLoaded might be missed during client-side routing,
-    // so we shifted the login button to a direct inline onclick handler.
-
     document.addEventListener("astro:page-load", () => {
-      // Automatically redirect if user is logged in (they shouldn't normally hit this page if logged in with the right role,
-      // but if the _redirect rule sent them here, they might be logged in but lacking the specific role)
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.on("login", () => {
-          // Set the nf_jwt cookie so Netlify's edge router can read the
-          // user's roles when we redirect back to the premium lesson.
-          const user = window.netlifyIdentity.currentUser();
-          const token = user?.token?.access_token;
-          if (token) {
-            document.cookie = `nf_jwt=${token}; path=/; max-age=${60 * 60}; SameSite=Lax`;
-          }
-          const params = new URLSearchParams(window.location.search);
-          const returnTo = params.get("returnTo");
-          if (returnTo && returnTo.startsWith("/")) {
-            window.location.href = returnTo;
-          } else {
-            window.location.href = "/shop#courses";
-          }
-        });
+      if (!window.netlifyIdentity) return;
+
+      // Helper: set the nf_jwt cookie and redirect to the returnTo URL
+      function setCookieAndRedirect() {
+        var user = window.netlifyIdentity.currentUser();
+        var token = user && user.token && user.token.access_token;
+        if (token) {
+          document.cookie =
+            "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+        }
+        var params = new URLSearchParams(window.location.search);
+        var returnTo = params.get("returnTo");
+        if (returnTo && returnTo.startsWith("/")) {
+          window.location.href = returnTo;
+        } else {
+          window.location.href = "/shop#courses";
+        }
       }
+
+      // If the user is ALREADY logged in when this page loads (e.g. their
+      // nf_jwt cookie expired but their session is still in localStorage),
+      // redirect them immediately once the Identity widget initializes.
+      window.netlifyIdentity.on("init", function () {
+        var user = window.netlifyIdentity.currentUser();
+        if (user) {
+          setCookieAndRedirect();
+        }
+      });
+
+      // If the user signs in FROM this page, redirect after login.
+      window.netlifyIdentity.on("login", function () {
+        setCookieAndRedirect();
+      });
 
       // Dev Spoof Logic
       const spoofContainer = document.getElementById("dev-spoof-container");
