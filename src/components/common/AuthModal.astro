@@ -369,9 +369,9 @@ import { Icon } from "astro-icon/components";
           '<span class="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Signing In...';
         const user = await gotrue.login(email, password, true);
         // Set the nf_jwt cookie so Netlify's edge router can read the user's
-        // roles for role-based redirects. gotrue.login() only stores the token
-        // in localStorage — it does NOT set the cookie that the CDN checks.
-        const token = user?.token?.access_token;
+        // roles for role-based redirects. Use jwt() for a fresh token since
+        // user.token.access_token may be stale/expired.
+        const token = await user?.jwt();
         if (token) {
           document.cookie = `nf_jwt=${token}; path=/; max-age=${60 * 60}; SameSite=Lax`;
         }
