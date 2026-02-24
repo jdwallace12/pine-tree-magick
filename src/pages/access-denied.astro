@@ -88,6 +88,9 @@ const metadata = {
     document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
+      var buildTime = "2026-02-23_23:65";
+      var buildVer = "v23:65";
+
       // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
       function getCourseSlugFromReturnTo() {
         var params = new URLSearchParams(window.location.search);
@@ -143,8 +146,6 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_23:65";
-        var buildVer = "v23:65";
 
         user
           .jwt(true)
