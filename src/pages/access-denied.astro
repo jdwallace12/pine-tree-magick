@@ -133,14 +133,18 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_21:10";
+        var buildTime = "2026-02-23_21:30";
 
         user
           .jwt(true)
           .then(function (token) {
             if (token) {
+              // TRY 1: Standard Netlify Cookie
               document.cookie =
                 "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+
+              // TRY 2: Test if ANY cookie works
+              document.cookie = "diag_test=1; path=/; max-age=60";
             }
 
             var claims = decodeJwt(token);
@@ -149,11 +153,16 @@ const metadata = {
               (claims && claims.app_metadata && claims.app_metadata.roles) ||
               [];
 
+            // Diagnose Cookie State
+            var currentCookies = document.cookie;
+            var hasNfJwt = currentCookies.indexOf("nf_jwt=") !== -1;
+            var hasDiagTest = currentCookies.indexOf("diag_test=") !== -1;
+
             console.log("=== Access Denied v" + buildTime + " ===");
-            console.log("Logged in as:", user.email);
-            console.log("Required Role:", requiredRole);
-            console.log("App Metadata Roles:", roles);
-            console.log("JWT Claims Roles:", jwtRoles);
+            console.log("Cookie Check:", {
+              hasNfJwt: hasNfJwt,
+              hasDiagTest: hasDiagTest,
+            });
 
             if (isLooping) {
               sessionStorage.removeItem(guardKey);
@@ -162,7 +171,9 @@ const metadata = {
                 appRoles: roles,
                 jwtRoles: jwtRoles,
                 tokenPresent: !!token,
-                cookiePresent: document.cookie.indexOf("nf_jwt=") !== -1,
+                cookiePresent: hasNfJwt,
+                diagTest: hasDiagTest,
+                rawCookies: currentCookies.substring(0, 100) + "...",
               });
               return;
             }
@@ -212,47 +223,53 @@ const metadata = {
             "</strong></p>";
           if (type === "CDN_BLOCK") {
             msg +=
-              "<p class='text-sm text-amber-600 mb-4'>We've verified your roles, but Netlify's security layer is still redirecting you here. This usually means the security cookie hasn't reached all servers yet.</p>";
-          } else {
-            msg +=
-              "<p class='mb-4'>Your account doesn't have the required role for this course.</p>";
+              "<p class='text-sm text-amber-600 mb-4'>Verification: " +
+              (data.cookiePresent
+                ? "✅ Cookie Written"
+                : "❌ Browser rejected cookie") +
+              " | Test Cookie: " +
+              (data.diagTest ? "✅ Works" : "❌ Failed") +
+              "</p>";
+            if (!data.cookiePresent) {
+              msg +=
+                "<p class='text-xs text-slate-500 mb-4 italic'>Note: If your browser blocks cookies, the 'Force Enter' button won't work either. Try Chrome or Safari with default settings.</p>";
+            }
           }
+
           msg +=
             "<div class='text-left bg-slate-100 dark:bg-slate-900 p-4 rounded-lg text-xs font-monospace overflow-x-auto mb-6'>" +
-            "<strong>DEBUG INFO:</strong><br>" +
-            "Required: " +
+            "<strong>DIAGNOSTICS:</strong><br>" +
+            "Target: " +
             (data.required || "None") +
             "<br>" +
-            "App Roles: " +
+            "Session Roles: " +
             JSON.stringify(data.appRoles || data.roles || []) +
             "<br>" +
             "JWT Roles: " +
             JSON.stringify(data.jwtRoles || []) +
             "<br>" +
-            "Cookie: " +
-            (data.cookiePresent ? "✅ SET" : "❌ MISSING") +
+            "Cookie Auth: " +
+            (data.cookiePresent ? "✅ READY" : "❌ BLOCKED") +
             "</div>";
           desc.innerHTML = msg;
         }
 
         if (loginLink) {
-          loginLink.textContent = "Sign Out & Try Again";
+          loginLink.textContent = "Hard Reset Session";
           loginLink.href = "javascript:hardReset()";
           loginLink.style.display = "flex";
           loginLink.classList.remove("bg-primary");
-          loginLink.style.backgroundColor = "#ef4444"; // Red for reset
+          loginLink.style.backgroundColor = "#ef4444";
         }
 
-        // Add a "Force Enter" button in CDN_BLOCK case
         if (type === "CDN_BLOCK") {
           var enterBtn = document.createElement("a");
-          enterBtn.textContent = "Force Enter Course";
+          enterBtn.textContent = data.cookiePresent
+            ? "Try Entering Course Again"
+            : "Retry Cookie & Enter";
           enterBtn.href = "javascript:location.reload()";
           enterBtn.style.cssText =
             "margin-top:1rem;background:#10b981;color:white;padding:1rem 2rem;border-radius:9999px;font-weight:bold;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;";
-          enterBtn.onclick = function () {
-            this.style.transform = "scale(0.95)";
-          };
           var container =
             document.querySelector(".flex-col.sm\\:flex-row") ||
             document.querySelector(".flex.flex-col");
