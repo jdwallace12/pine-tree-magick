@@ -83,17 +83,63 @@ const metadata = {
     document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
-      // Helper: force-refresh the JWT, set the nf_jwt cookie, and redirect
-      function refreshAndRedirect() {
+      // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
+      function getCourseSlugFromReturnTo() {
+        var params = new URLSearchParams(window.location.search);
+        var returnTo = params.get("returnTo") || "";
+        var match = returnTo.match(/^\/courses\/([^\/]+)\//);
+        return match ? match[1] : null;
+      }
+
+      // Decode a JWT payload (base64url) without a library
+      function decodeJwtPayload(token) {
+        try {
+          var parts = token.split(".");
+          if (parts.length < 2) return null;
+          var payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+          return JSON.parse(atob(payload));
+        } catch (e) {
+          return null;
+        }
+      }
+
+      // Main: refresh token, check role, redirect only if authorized
+      function tryRedirect() {
         var user = window.netlifyIdentity.currentUser();
         if (!user) return;
-        // user.jwt() refreshes the token — the stale access_token is often
-        // expired, and Netlify's CDN ignores expired JWTs in the cookie.
+
+        // Guard against redirect loops — only attempt once per page load
+        var guardKey = "access_denied_redirect_guard";
+        if (sessionStorage.getItem(guardKey)) {
+          sessionStorage.removeItem(guardKey);
+          showLoggedInMessage(user);
+          return;
+        }
+
+        var courseSlug = getCourseSlugFromReturnTo();
+        var requiredRole = courseSlug ? "course:" + courseSlug : null;
+
         user.jwt().then(function (token) {
-          if (token) {
-            document.cookie =
-              "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+          if (!token) {
+            showLoggedInMessage(user);
+            return;
           }
+
+          // Check if the JWT actually contains the required role
+          var claims = decodeJwtPayload(token);
+          var roles =
+            (claims && claims.app_metadata && claims.app_metadata.roles) || [];
+
+          if (requiredRole && roles.indexOf(requiredRole) === -1) {
+            // User is logged in but does NOT have the role — show helpful message
+            showLoggedInMessage(user);
+            return;
+          }
+
+          // User HAS the role — set cookie and redirect
+          document.cookie =
+            "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
+          sessionStorage.setItem(guardKey, "1");
           var params = new URLSearchParams(window.location.search);
           var returnTo = params.get("returnTo");
           if (returnTo && returnTo.startsWith("/")) {
@@ -104,26 +150,39 @@ const metadata = {
         });
       }
 
-      // Check IMMEDIATELY — by the time this script runs, the Identity widget
-      // init event from Layout.astro has already fired, so on('init') below
-      // will never trigger. currentUser() returns the user if already authed.
+      // Update the UI to show the user is signed in but lacks access
+      function showLoggedInMessage(user) {
+        var title = document.querySelector("h1");
+        var desc = document.querySelector(".text-lg.text-muted");
+        var loginLink = document.getElementById("access-login-link");
+        if (title) title.textContent = "You Don\u2019t Have Access Yet";
+        if (desc) {
+          desc.textContent =
+            "You\u2019re signed in as " +
+            (user.email || "a registered user") +
+            ", but your account doesn\u2019t have access to this course. " +
+            "Please enroll to unlock this content.";
+        }
+        if (loginLink) loginLink.style.display = "none";
+      }
+
+      // Check immediately — the Identity widget init has already fired
       var existingUser = window.netlifyIdentity.currentUser();
       if (existingUser) {
-        refreshAndRedirect();
+        tryRedirect();
         return;
       }
 
-      // Fallback: in case init hasn't fired yet (unlikely but safe)
+      // Fallback: in case init hasn't fired yet
       window.netlifyIdentity.on("init", function () {
-        var user = window.netlifyIdentity.currentUser();
-        if (user) {
-          refreshAndRedirect();
+        if (window.netlifyIdentity.currentUser()) {
+          tryRedirect();
         }
       });
 
-      // If the user signs in FROM this page, redirect after login.
+      // If the user signs in FROM this page
       window.netlifyIdentity.on("login", function () {
-        refreshAndRedirect();
+        tryRedirect();
       });
 
       // Dev Spoof Logic
