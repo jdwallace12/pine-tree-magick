@@ -119,7 +119,7 @@ const metadata = {
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
 
-        user.jwt().then(function (token) {
+        user.jwt(true).then(function (token) {
           if (!token) {
             showLoggedInMessage(user);
             return;
