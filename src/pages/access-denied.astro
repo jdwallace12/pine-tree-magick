@@ -143,7 +143,7 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_22:40";
+        var buildTime = "2026-02-23_22:45";
 
         user
           .jwt(true)
@@ -222,7 +222,9 @@ const metadata = {
           "/.netlify/functions/set-auth-cookie?token=" +
           encodeURIComponent(token) +
           "&returnTo=" +
-          encodeURIComponent(returnTo);
+          encodeURIComponent(returnTo) +
+          "&t=" +
+          Date.now();
 
         sessionStorage.setItem(guardKey, "1");
         window.location.href = bridgeUrl;
@@ -269,7 +271,9 @@ const metadata = {
             "/.netlify/functions/set-auth-cookie?token=" +
             encodeURIComponent(data?.token || "") +
             "&returnTo=" +
-            encodeURIComponent(returnTo);
+            encodeURIComponent(returnTo) +
+            "&t=" +
+            Date.now();
 
           loginLink.textContent =
             type === "LOOP" ? "Atomic Entry Bridge" : "Hard Reset Session";
@@ -288,7 +292,7 @@ const metadata = {
           tag.style.cssText =
             "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
           tag.textContent =
-            "v22:30 | Target: " +
+            "v22:45 | Target: " +
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
