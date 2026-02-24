@@ -133,17 +133,24 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_21:30";
+        var buildTime = "2026-02-23_21:40";
 
         user
           .jwt(true)
           .then(function (token) {
+            var tokenLen = token ? token.length : 0;
             if (token) {
-              // TRY 1: Standard Netlify Cookie
+              // TEST A: Simple name-value (no attributes)
+              document.cookie = "nf_jwt_a=" + token;
+
+              // TEST B: With path
+              document.cookie = "nf_jwt_b=" + token + "; path=/";
+
+              // TARGET: Traditional
               document.cookie =
                 "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
 
-              // TRY 2: Test if ANY cookie works
+              // DIAGNOSTIC
               document.cookie = "diag_test=1; path=/; max-age=60";
             }
 
@@ -154,15 +161,17 @@ const metadata = {
               [];
 
             // Diagnose Cookie State
-            var currentCookies = document.cookie;
-            var hasNfJwt = currentCookies.indexOf("nf_jwt=") !== -1;
-            var hasDiagTest = currentCookies.indexOf("diag_test=") !== -1;
+            var c = document.cookie;
+            var results = {
+              nf_jwt: c.indexOf("nf_jwt=") !== -1,
+              nf_jwt_a: c.indexOf("nf_jwt_a=") !== -1,
+              nf_jwt_b: c.indexOf("nf_jwt_b=") !== -1,
+              diag: c.indexOf("diag_test=") !== -1,
+              len: tokenLen,
+            };
 
             console.log("=== Access Denied v" + buildTime + " ===");
-            console.log("Cookie Check:", {
-              hasNfJwt: hasNfJwt,
-              hasDiagTest: hasDiagTest,
-            });
+            console.log("Cookie Results:", results);
 
             if (isLooping) {
               sessionStorage.removeItem(guardKey);
@@ -171,9 +180,7 @@ const metadata = {
                 appRoles: roles,
                 jwtRoles: jwtRoles,
                 tokenPresent: !!token,
-                cookiePresent: hasNfJwt,
-                diagTest: hasDiagTest,
-                rawCookies: currentCookies.substring(0, 100) + "...",
+                results: results,
               });
               return;
             }
@@ -222,35 +229,26 @@ const metadata = {
             user.email +
             "</strong></p>";
           if (type === "CDN_BLOCK") {
+            var res = data.results || {};
             msg +=
-              "<p class='text-sm text-amber-600 mb-4'>Verification: " +
-              (data.cookiePresent
-                ? "✅ Cookie Written"
-                : "❌ Browser rejected cookie") +
-              " | Test Cookie: " +
-              (data.diagTest ? "✅ Works" : "❌ Failed") +
-              "</p>";
-            if (!data.cookiePresent) {
-              msg +=
-                "<p class='text-xs text-slate-500 mb-4 italic'>Note: If your browser blocks cookies, the 'Force Enter' button won't work either. Try Chrome or Safari with default settings.</p>";
-            }
+              "<div class='text-sm text-slate-600 mb-4 font-sans bg-amber-50 p-4 rounded-lg border border-amber-200'>" +
+              "<strong>Cookie Persistence Tests:</strong><ul class='list-disc ml-5 mt-2'>" +
+              "<li>Netlify Standard (nf_jwt): " +
+              (res.nf_jwt ? "✅" : "❌") +
+              "</li>" +
+              "<li>Raw Token (No Attributes): " +
+              (res.nf_jwt_a ? "✅" : "❌") +
+              "</li>" +
+              "<li>Token with Path: " +
+              (res.nf_jwt_b ? "✅" : "❌") +
+              "</li>" +
+              "<li>Test Cookie (Small): " +
+              (res.diag ? "✅" : "❌") +
+              "</li>" +
+              "</ul><p class='mt-2 font-bold'>Token Length: " +
+              res.len +
+              " characters</p></div>";
           }
-
-          msg +=
-            "<div class='text-left bg-slate-100 dark:bg-slate-900 p-4 rounded-lg text-xs font-monospace overflow-x-auto mb-6'>" +
-            "<strong>DIAGNOSTICS:</strong><br>" +
-            "Target: " +
-            (data.required || "None") +
-            "<br>" +
-            "Session Roles: " +
-            JSON.stringify(data.appRoles || data.roles || []) +
-            "<br>" +
-            "JWT Roles: " +
-            JSON.stringify(data.jwtRoles || []) +
-            "<br>" +
-            "Cookie Auth: " +
-            (data.cookiePresent ? "✅ READY" : "❌ BLOCKED") +
-            "</div>";
           desc.innerHTML = msg;
         }
 
@@ -264,9 +262,7 @@ const metadata = {
 
         if (type === "CDN_BLOCK") {
           var enterBtn = document.createElement("a");
-          enterBtn.textContent = data.cookiePresent
-            ? "Try Entering Course Again"
-            : "Retry Cookie & Enter";
+          enterBtn.textContent = "Retry Access";
           enterBtn.href = "javascript:location.reload()";
           enterBtn.style.cssText =
             "margin-top:1rem;background:#10b981;color:white;padding:1rem 2rem;border-radius:9999px;font-weight:bold;display:flex;align-items:center;justify-content:center;transition:transform 0.2s;";
