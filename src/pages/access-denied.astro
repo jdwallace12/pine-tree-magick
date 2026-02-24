@@ -130,9 +130,19 @@ const metadata = {
           var roles =
             (claims && claims.app_metadata && claims.app_metadata.roles) || [];
 
+          // DEBUG: log JWT claims to diagnose role format
+          console.log("=== ACCESS DENIED DEBUG ===");
+          console.log("Required role:", requiredRole);
+          console.log("Roles found in JWT:", roles);
+          console.log(
+            "Full app_metadata:",
+            JSON.stringify(claims && claims.app_metadata),
+          );
+          console.log("Full JWT claims:", JSON.stringify(claims));
+
           if (requiredRole && roles.indexOf(requiredRole) === -1) {
             // User is logged in but does NOT have the role — show helpful message
-            showLoggedInMessage(user);
+            showLoggedInMessage(user, claims);
             return;
           }
 
@@ -151,7 +161,7 @@ const metadata = {
       }
 
       // Update the UI to show the user is signed in but lacks access
-      function showLoggedInMessage(user) {
+      function showLoggedInMessage(user, claims) {
         var title = document.querySelector("h1");
         var desc = document.querySelector(".text-lg.text-muted");
         var loginLink = document.getElementById("access-login-link");
@@ -164,6 +174,19 @@ const metadata = {
             "Please enroll to unlock this content.";
         }
         if (loginLink) loginLink.style.display = "none";
+
+        // DEBUG: show JWT claims on page (remove after debugging)
+        if (claims) {
+          var debugEl = document.createElement("div");
+          debugEl.style.cssText =
+            "margin-top:2rem;padding:1rem;background:#1e293b;border:1px solid #f59e0b;border-radius:8px;text-align:left;font-size:12px;color:#f59e0b;max-width:600px;margin-left:auto;margin-right:auto;overflow-x:auto;";
+          debugEl.innerHTML =
+            "<strong>DEBUG — JWT Claims:</strong><pre style='color:#94a3b8;margin-top:0.5rem;white-space:pre-wrap;word-break:break-all;'>" +
+            JSON.stringify(claims, null, 2) +
+            "</pre>";
+          var container = document.querySelector(".text-center");
+          if (container) container.appendChild(debugEl);
+        }
       }
 
       // Check immediately — the Identity widget init has already fired
