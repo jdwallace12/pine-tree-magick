@@ -30,13 +30,27 @@ courses.forEach(courseSlug => {
     const fileContent = fs.readFileSync(lessonPath, 'utf-8');
     const { data } = matter(fileContent);
     
+    // NETLIFY REDIRECTS SYNTAX (v23:40)
+    // 1. Source Path
+    // 2. Dest Path
+    // 3. Status Code!
+    // 4. Role=rolename
+    // Use single spaces for maximum compatibility.
+    // Use a dash instead of a colon for roles to avoid any parser confusion.
+    
     if (!data.isFree) {
       if (process.env.UNLOCK_ALL !== 'true') {
-        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}  /courses/${courseSlug}/${lessonSlug}  200! Role=course:${courseSlug}`);
-        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}/  /courses/${courseSlug}/${lessonSlug}/  200! Role=course:${courseSlug}`);
+        const role = `course-${courseSlug}`;
+        const source = `/courses/${courseSlug}/${lessonSlug}`;
+        const fallback = `/access-denied?returnTo=${source}`;
         
-        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}  /access-denied?returnTo=/courses/${courseSlug}/${lessonSlug}  302!`);
-        premiumCourses.push(`/courses/${courseSlug}/${lessonSlug}/  /access-denied?returnTo=/courses/${courseSlug}/${lessonSlug}  302!`);
+        // Allowed access (200!)
+        premiumCourses.push(`${source} ${source} 200! Role=${role}`);
+        premiumCourses.push(`${source}/ ${source}/ 200! Role=${role}`);
+        
+        // Access Denied Fallback (302!)
+        premiumCourses.push(`${source} ${fallback} 302!`);
+        premiumCourses.push(`${source}/ ${fallback} 302!`);
       }
     }
   });
@@ -49,4 +63,4 @@ if (premiumCourses.length > 0) {
 
 fs.writeFileSync(redirectsFile, redirectsContent);
 
-console.log(`✅ Successfully generated _redirects for ${courses.length} courses.`);
+console.log(`✅ Successfully generated _redirects for ${courses.length} courses with v23:40 clean syntax.`);
