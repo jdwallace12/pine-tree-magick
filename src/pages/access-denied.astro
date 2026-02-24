@@ -143,7 +143,7 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_22:45";
+        var buildTime = "2026-02-23_23:00";
 
         user
           .jwt(true)
@@ -215,19 +215,13 @@ const metadata = {
           return;
         }
 
-        // User HAS the role — force entry via Redirect Bridge
-        var params = new URLSearchParams(window.location.search);
-        var returnTo = params.get("returnTo") || "/shop#courses";
-        var bridgeUrl =
-          "/.netlify/functions/set-auth-cookie?token=" +
-          encodeURIComponent(token) +
-          "&returnTo=" +
-          encodeURIComponent(returnTo) +
-          "&t=" +
-          Date.now();
-
-        sessionStorage.setItem(guardKey, "1");
-        window.location.href = bridgeUrl;
+        // User HAS the role — do NOT auto-redirect anymore.
+        // Instead, show the bridge message and let them click the button.
+        showLoggedInMessage(user, "READY", {
+          required: requiredRole,
+          roles: roles,
+          token: token,
+        });
       }
 
       function showLoggedInMessage(user, type, data) {
@@ -235,17 +229,17 @@ const metadata = {
         var desc = document.querySelector(".text-lg.text-muted");
         var loginLink = document.getElementById("access-login-link");
 
-        if (type === "LOOP") {
-          if (title) title.textContent = "Entering Course...";
+        if (type === "READY" || type === "LOOP") {
+          if (title) title.textContent = "Access Verified!";
           if (desc) {
             var msg =
               "<p class='mb-4'>Signed in as <strong>" +
               user.email +
               "</strong></p>";
             msg +=
-              "<p class='text-amber-600 text-sm mb-4 font-bold'>The server sent you back. We're now using a Direct Redirect Bridge to bypass browser blocking.</p>";
+              "<p class='text-green-600 font-bold mb-4'>Step 1: Click the green button below to sync your security token.</p>";
             msg +=
-              "<p class='text-xs text-slate-500'>This sets your access token directly via server headers. <strong>If you aren't redirected in 2 seconds, click the button below.</strong></p>";
+              "<p class='text-xs text-slate-500'>This ensures your browser has the correct permissions. You'll be taken to a confirmation page first.</p>";
             desc.innerHTML = msg;
           }
         } else if (type === "MISSING") {
@@ -276,12 +270,16 @@ const metadata = {
             Date.now();
 
           loginLink.textContent =
-            type === "LOOP" ? "Atomic Entry Bridge" : "Hard Reset Session";
+            type === "READY" || type === "LOOP"
+              ? "Step 1: Sync Access Cookie"
+              : "Hard Reset Session";
           loginLink.href =
-            type === "LOOP" ? bridgeUrl : "javascript:hardReset()";
+            type === "READY" || type === "LOOP"
+              ? bridgeUrl
+              : "javascript:hardReset()";
           loginLink.style.display = "flex";
           loginLink.style.backgroundColor =
-            type === "LOOP" ? "#10b981" : "#ef4444";
+            type === "READY" || type === "LOOP" ? "#10b981" : "#ef4444";
         }
 
         // Final status tag
@@ -292,11 +290,11 @@ const metadata = {
           tag.style.cssText =
             "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
           tag.textContent =
-            "v22:45 | Target: " +
+            "v23:00 | Target: " +
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
-            " | Mode: ATOMIC";
+            " | Mode: MANUAL";
           container.appendChild(tag);
         }
       }
