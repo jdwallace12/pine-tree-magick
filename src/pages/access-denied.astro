@@ -8,6 +8,11 @@ const metadata = {
     index: false,
     follow: false,
   },
+  // Prevent caching of this page to ensure redirect logic stays fresh
+  meta: [
+    { name: "pragma", content: "no-cache" },
+    { name: "cache-control", content: "no-cache, no-store, must-revalidate" },
+  ],
 };
 ---
 
@@ -100,12 +105,19 @@ const metadata = {
         var guardKey = "access_denied_redirect_guard";
         if (sessionStorage.getItem(guardKey)) {
           sessionStorage.removeItem(guardKey);
-          showLoggedInMessage(user);
+          showLoggedInMessage(
+            user,
+            "Redirect loop detected. The CDN is still blocking access despite having the role.",
+          );
           return;
         }
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
+        var buildTime = "2026-02-23_21:00";
+
+        console.log("=== Access Denied v" + buildTime + " ===");
+        console.log("Required Role:", requiredRole);
 
         user
           .jwt(true)
@@ -116,17 +128,18 @@ const metadata = {
                 "nf_jwt=" + token + "; path=/; max-age=3600; SameSite=Lax";
             }
 
-            // We verified in debug that user.app_metadata.roles contains the role
-            // even when manual JWT decoding fails. Trust the Identity session state.
+            // Trust the Identity session state.
             var roles = (user.app_metadata && user.app_metadata.roles) || [];
+            console.log("Found Roles:", roles);
 
             if (requiredRole && roles.indexOf(requiredRole) === -1) {
               // User is logged in but does NOT have the role
-              showLoggedInMessage(user);
+              showLoggedInMessage(user, "Missing role: " + requiredRole);
               return;
             }
 
-            // User HAS the role (or no specific role required for this returnTo)
+            // User HAS the role — redirect
+            console.log("Access verified. Redirecting...");
             sessionStorage.setItem(guardKey, "1");
             var params = new URLSearchParams(window.location.search);
             var returnTo = params.get("returnTo");
@@ -138,26 +151,48 @@ const metadata = {
           })
           .catch(function (err) {
             console.error("JWT Refresh Error:", err);
-            showLoggedInMessage(user, {
-              error: "JWT Refresh failed: " + err.message,
-            });
+            showLoggedInMessage(user, "JWT Refresh failed: " + err.message);
           });
       }
 
       // Update the UI to show the user is signed in but lacks access
-      function showLoggedInMessage(user, debugInfo) {
+      function showLoggedInMessage(user, errorDetail) {
         var title = document.querySelector("h1");
         var desc = document.querySelector(".text-lg.text-muted");
         var loginLink = document.getElementById("access-login-link");
-        if (title) title.textContent = "You Don\u2019t Have Access Yet";
+        if (title) title.textContent = "Access Authorized (Fixing...)";
         if (desc) {
-          desc.textContent =
-            "You\u2019re signed in as " +
-            (user.email || "a registered user") +
-            ", but your account doesn\u2019t have access to this course. " +
-            "Please enroll to unlock this content.";
+          desc.innerHTML =
+            "<p class='mb-4'>You're signed in as <strong>" +
+            (user.email || "a member") +
+            "</strong> and we've verified your access.</p>" +
+            (errorDetail
+              ? "<p class='text-amber-600 text-sm mb-4'>Status: " +
+                errorDetail +
+                "</p>"
+              : "") +
+            "<p>If you aren't redirected automatically, click the button below:</p>";
         }
-        if (loginLink) loginLink.style.display = "none";
+        if (loginLink) {
+          loginLink.textContent = "Refresh & Enter Course";
+          loginLink.href = "javascript:location.reload()";
+          loginLink.style.display = "flex";
+          loginLink.classList.remove("bg-primary");
+          loginLink.style.backgroundColor = "#10b981"; // Green for success/action
+        }
+
+        // Mini debug
+        var container = document.querySelector(".text-center");
+        if (container && !document.getElementById("build-tag")) {
+          var tag = document.createElement("div");
+          tag.id = "build-tag";
+          tag.style.cssText =
+            "margin-top:2rem;font-family:monospace;font-size:10px;color:#94a3b8;";
+          tag.textContent =
+            "Build: 2026-02-23_21:00 | Roles: " +
+            JSON.stringify(user.app_metadata?.roles || []);
+          container.appendChild(tag);
+        }
       }
 
       // Check immediately — the Identity widget init has already fired
