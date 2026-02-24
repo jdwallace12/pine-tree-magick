@@ -88,8 +88,8 @@ const metadata = {
     document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
-      var buildTime = "2026-02-23_23:70";
-      var buildVer = "v23:70";
+      var buildTime = "2026-02-24_10:00";
+      var buildVer = "v24:00";
 
       // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
       function getCourseSlugFromReturnTo() {
@@ -235,17 +235,13 @@ const metadata = {
           if (title) title.textContent = "Access Verified!";
           if (desc) {
             var msg =
-              "<p class='mb-4'>Signed in as <strong>" +
+              "<p class='mb-6'>Signed in as <strong>" +
               user.email +
               "</strong></p>";
             msg +=
-              "<p class='text-amber-600 font-bold mb-4'>Step 1: Click the AMBER button below for Fallback Sync (" +
-              buildVer +
-              ").</p>";
+              "<p class='text-emerald-700 font-bold mb-4'>Access synchronization required.</p>";
             msg +=
-              "<p class='text-xs text-slate-500 mb-4'>If you are still looping, view the <a href='/courses/debug-access' class='underline text-amber-700 font-bold'>Edge Diagnostics</a> here.</p>";
-            msg +=
-              "<p class='text-xs text-slate-500'>This ensures your browser has the correct permissions. You'll be taken to a confirmation page first.</p>";
+              "<p class='text-sm text-slate-500'>Click the button below to verify your permissions and enter the course.</p>";
             desc.innerHTML = msg;
           }
         } else if (type === "MISSING") {
@@ -284,7 +280,7 @@ const metadata = {
               ? bridgeUrl
               : "javascript:hardReset()";
           loginLink.style.display = "flex";
-          loginLink.style.backgroundColor = "#d97706";
+          loginLink.style.backgroundColor = "#10b981";
         }
 
         // Final status tag
@@ -296,11 +292,10 @@ const metadata = {
             "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
           tag.textContent =
             buildVer +
-            " | Target: " +
-            (data?.required || "None") +
+            " | Status: VERIFIED" +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
-            " | Mode: FALLBACK";
+            " | Mode: SECURE";
           container.appendChild(tag);
         }
       }
