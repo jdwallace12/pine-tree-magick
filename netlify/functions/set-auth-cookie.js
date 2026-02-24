@@ -1,30 +1,39 @@
 exports.handler = async (event) => {
-  // Only accept POST
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
-
   try {
-    const { token } = JSON.parse(event.body || "{}");
-    if (!token) {
-      return { statusCode: 400, body: JSON.stringify({ error: "Missing token" }) };
+    let token = "";
+    let returnTo = "/";
+
+    // Support both POST (fetch) and GET (302 redirect)
+    if (event.httpMethod === "POST") {
+      const data = JSON.parse(event.body || "{}");
+      token = data.token;
+      returnTo = data.returnTo || "/";
+    } else {
+      token = event.queryStringParameters.token;
+      returnTo = event.queryStringParameters.returnTo || "/";
     }
 
-    // Set the cookie via header - this bypasses JS-level blocking
-    // Using the standardized format that worked in v21:40 diagnostics
+    if (!token) {
+      return { statusCode: 400, body: "Missing token" };
+    }
+
+    // This is the "Nuclear" Cookie Set.
+    // By returning a 302 with a Set-Cookie, we bypass the browser's JS-level logic entirely.
+    const cookie = `nf_jwt=${token}; Path=/; Max-Age=3600; SameSite=Lax; HttpOnly`;
+
     return {
-      statusCode: 200,
+      statusCode: 302,
       headers: {
-        "Set-Cookie": `nf_jwt=${token}; Path=/; Max-Age=3600; SameSite=Lax`,
-        "Content-Type": "application/json",
+        "Set-Cookie": cookie,
+        "Location": returnTo,
         "Cache-Control": "no-cache, no-store, must-revalidate",
       },
-      body: JSON.stringify({ success: true }),
+      body: `Redirecting to ${returnTo}...`,
     };
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message }),
+      body: err.message,
     };
   }
 };

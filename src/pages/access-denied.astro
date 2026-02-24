@@ -143,19 +143,15 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_22:20";
+        var buildTime = "2026-02-23_22:30";
 
         user
           .jwt(true)
           .then(function (token) {
             if (token) {
-              // TRY 1: JS Attempt (Fallback)
-              document.cookie = "nf_jwt=" + token + "; path=/";
-
-              // TRY 2: Bridge (Primary)
+              // TRY 1: Background Bridge (Prep)
               setCookieViaBridge(token)
-                .then(function (res) {
-                  console.log("Cookie Bridge Result:", res.status);
+                .then(function () {
                   processAuth(
                     token,
                     user,
@@ -165,8 +161,7 @@ const metadata = {
                     guardKey,
                   );
                 })
-                .catch(function (err) {
-                  console.error("Bridge Error:", err);
+                .catch(function () {
                   processAuth(
                     token,
                     user,
@@ -197,13 +192,13 @@ const metadata = {
           (claims && claims.app_metadata && claims.app_metadata.roles) || [];
 
         console.log("=== Access Denied v" + buildTime + " ===");
-        var hasCookie = document.cookie.indexOf("nf_jwt=") !== -1;
 
         if (isLooping) {
           sessionStorage.removeItem(guardKey);
           showLoggedInMessage(user, "LOOP", {
             required: requiredRole,
             roles: roles,
+            token: token,
           });
           return;
         }
@@ -220,15 +215,17 @@ const metadata = {
           return;
         }
 
-        // User HAS the role — redirect
-        sessionStorage.setItem(guardKey, "1");
+        // User HAS the role — force entry via Redirect Bridge
         var params = new URLSearchParams(window.location.search);
-        var returnTo = params.get("returnTo");
-        if (returnTo && returnTo.startsWith("/")) {
-          window.location.href = returnTo;
-        } else {
-          window.location.href = "/shop#courses";
-        }
+        var returnTo = params.get("returnTo") || "/shop#courses";
+        var bridgeUrl =
+          "/.netlify/functions/set-auth-cookie?token=" +
+          encodeURIComponent(token) +
+          "&returnTo=" +
+          encodeURIComponent(returnTo);
+
+        sessionStorage.setItem(guardKey, "1");
+        window.location.href = bridgeUrl;
       }
 
       function showLoggedInMessage(user, type, data) {
@@ -236,21 +233,17 @@ const metadata = {
         var desc = document.querySelector(".text-lg.text-muted");
         var loginLink = document.getElementById("access-login-link");
 
-        var hasCookie = document.cookie.indexOf("nf_jwt=") !== -1;
-
         if (type === "LOOP") {
-          if (title) title.textContent = "Finalizing Access...";
+          if (title) title.textContent = "Entering Course...";
           if (desc) {
             var msg =
               "<p class='mb-4'>Signed in as <strong>" +
               user.email +
               "</strong></p>";
             msg +=
-              "<p class='text-amber-600 text-sm mb-4'>Verifying your course access through our secure bridge...</p>";
-            if (!hasCookie) {
-              msg +=
-                "<p class='text-xs text-slate-500'>Note: Browser is hiding the cookie from JS, but our bridge is pushing it through. <strong>Click the green button to enter.</strong></p>";
-            }
+              "<p class='text-amber-600 text-sm mb-4 font-bold'>The server sent you back. We're now using a Direct Redirect Bridge to bypass browser blocking.</p>";
+            msg +=
+              "<p class='text-xs text-slate-500'>This sets your access token directly via server headers. <strong>If you aren't redirected in 2 seconds, click the button below.</strong></p>";
             desc.innerHTML = msg;
           }
         } else if (type === "MISSING") {
@@ -270,12 +263,18 @@ const metadata = {
         }
 
         if (loginLink) {
+          var params = new URLSearchParams(window.location.search);
+          var returnTo = params.get("returnTo") || "/shop#courses";
+          var bridgeUrl =
+            "/.netlify/functions/set-auth-cookie?token=" +
+            encodeURIComponent(data?.token || "") +
+            "&returnTo=" +
+            encodeURIComponent(returnTo);
+
           loginLink.textContent =
-            type === "LOOP" ? "Enter Course" : "Hard Reset Session";
+            type === "LOOP" ? "Atomic Entry Bridge" : "Hard Reset Session";
           loginLink.href =
-            type === "LOOP"
-              ? "javascript:location.reload()"
-              : "javascript:hardReset()";
+            type === "LOOP" ? bridgeUrl : "javascript:hardReset()";
           loginLink.style.display = "flex";
           loginLink.style.backgroundColor =
             type === "LOOP" ? "#10b981" : "#ef4444";
@@ -289,11 +288,11 @@ const metadata = {
           tag.style.cssText =
             "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
           tag.textContent =
-            "v22:20 | Target: " +
+            "v22:30 | Target: " +
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
-            " | Bridge: READY";
+            " | Mode: ATOMIC";
           container.appendChild(tag);
         }
       }
