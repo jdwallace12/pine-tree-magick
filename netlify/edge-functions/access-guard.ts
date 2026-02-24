@@ -5,7 +5,6 @@ export default async (request: Request, context: Context) => {
   const path = url.pathname;
 
   // Helper: Manually decode JWT from cookie as fallback
-  // Essential because Netlify context can be inconsistent at the network edge
   const getRolesFromCookie = () => {
     try {
       const cookieHeader = request.headers.get("cookie") || "";
@@ -28,9 +27,23 @@ export default async (request: Request, context: Context) => {
   if (!lessonMatch) return;
 
   const courseSlug = lessonMatch[1];
+  const lessonSlug = lessonMatch[2];
+
+  // FREE LESSON BYPASS (v24:30)
+  // These lessons are accessible to anyone regardless of role or login
+  const FREE_LESSONS = [
+    '/courses/magickal-foundations/intro-to-ritual',
+    '/courses/chakra-mastery/m1-l1'
+  ];
+
+  if (FREE_LESSONS.includes(path.replace(/\/$/, ""))) {
+    console.log(`[Edge Guard v24:30] FREE ACCESS GRANTED: ${path}`);
+    return;
+  }
+
   const user = context.user;
   
-  // Deterministic Role Check: Try context, fallback to raw cookie parse
+  // Deterministic Role Check
   let roles = user?.app_metadata?.roles || [];
   if (roles.length === 0) {
     roles = getRolesFromCookie();
@@ -45,8 +58,7 @@ export default async (request: Request, context: Context) => {
 
   if (!hasAccess) {
     const returnTo = encodeURIComponent(path);
-    // Stable v24:00 Access Control
-    return Response.redirect(`${url.origin}/access-denied?returnTo=${returnTo}&auth=v24`, 302);
+    return Response.redirect(`${url.origin}/access-denied?returnTo=${returnTo}&auth=v24_30`, 302);
   }
 
   return;
