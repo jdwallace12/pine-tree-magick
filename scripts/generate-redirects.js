@@ -30,23 +30,24 @@ courses.forEach(courseSlug => {
     const fileContent = fs.readFileSync(lessonPath, 'utf-8');
     const { data } = matter(fileContent);
     
-    // NETLIFY REDIRECTS SYNTAX (v23:40)
+    // NETLIFY REDIRECTS SYNTAX (v23:50)
     // 1. Source Path
     // 2. Dest Path
     // 3. Status Code!
     // 4. Role=rolename
-    // Use single spaces for maximum compatibility.
-    // Use a dash instead of a colon for roles to avoid any parser confusion.
+    // Use single spaces and dual role support (colon and dash) for maximum compatibility.
     
     if (!data.isFree) {
       if (process.env.UNLOCK_ALL !== 'true') {
-        const role = `course-${courseSlug}`;
+        const roleColon = `course:${courseSlug}`;
+        const roleDash = `course-${courseSlug}`;
         const source = `/courses/${courseSlug}/${lessonSlug}`;
         const fallback = `/access-denied?returnTo=${source}`;
         
-        // Allowed access (200!)
-        premiumCourses.push(`${source} ${source} 200! Role=${role}`);
-        premiumCourses.push(`${source}/ ${source}/ 200! Role=${role}`);
+        // Allowed access (200!) - DUAL ROLE SUPPORT
+        // Note: Netlify supports multiple roles separated by commas (no spaces)
+        premiumCourses.push(`${source} ${source} 200! Role=${roleColon},${roleDash}`);
+        premiumCourses.push(`${source}/ ${source}/ 200! Role=${roleColon},${roleDash}`);
         
         // Access Denied Fallback (302!)
         premiumCourses.push(`${source} ${fallback} 302!`);
@@ -63,4 +64,4 @@ if (premiumCourses.length > 0) {
 
 fs.writeFileSync(redirectsFile, redirectsContent);
 
-console.log(`✅ Successfully generated _redirects for ${courses.length} courses with v23:40 clean syntax.`);
+console.log(`✅ Successfully generated _redirects for ${courses.length} courses with v23:50 dual-role syntax.`);
