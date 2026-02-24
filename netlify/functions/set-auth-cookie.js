@@ -32,15 +32,20 @@ exports.handler = async (event) => {
     const claims = decode(token);
     const roles = (claims.app_metadata && claims.app_metadata.roles) || [];
 
-    // Extreme Diagnostic Bridge v23:10
-    // Standardizing on Secure; Path=/ for maximum CDN compatibility
-    const cookieHeader = `nf_jwt=${token}; path=/; SameSite=Lax; Secure`;
-    const debugCookie = `bridge_domain=${event.headers.host || 'unknown'}; path=/; Max-Age=300; SameSite=Lax; Secure`;
+    // v23:20 Extreme Multi-Layer Sync
+    // We set the cookie multiple times with different attributes to avoid browser-specific quirks.
+    const c1 = `nf_jwt=${token}; path=/; SameSite=Lax; Secure`;
+    const c2 = `nf_jwt=${token}; path=/`;
+    const c3 = `nf_jwt=${token}; Max-Age=3600; Path=/`;
+
+    // Cache-buster for the return URL
+    const sep = returnTo.includes('?') ? '&' : '?';
+    const busterReturnTo = `${returnTo}${sep}cb=${Date.now()}`;
 
     return {
       statusCode: 200,
       multiValueHeaders: {
-        "Set-Cookie": [cookieHeader, debugCookie]
+        "Set-Cookie": [c1, c2, c3, `bridge_v=23_20; path=/; Max-Age=300`]
       },
       headers: {
         "Content-Type": "text/html",
@@ -50,50 +55,58 @@ exports.handler = async (event) => {
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Access Bridge v23:10</title>
+          <title>Access Bridge v23:20</title>
           <meta name="viewport" content="width=device-width, initial-scale=1">
           <style>
-            body { font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f1f5f9; color: #1e293b; padding: 1rem; }
-            .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: left; }
-            h1 { font-size: 1.25rem; margin: 0 0 1rem; color: #10b981; text-align: center; }
-            .section { margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 0.5rem; border: 1px solid #e2e8f0; }
-            .label { font-size: 11px; font-weight: bold; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.5rem; }
-            .value { font-family: monospace; font-size: 12px; word-break: break-all; white-space: pre-wrap; }
-            .btn { display: block; background: #10b981; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; text-align: center; margin-top: 1rem; }
-            .btn:hover { opacity: 0.9; }
-            .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; background: #dcfce7; color: #166534; font-size: 10px; margin-right: 4px; }
+            body { font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #fef2f2; color: #1e293b; padding: 1rem; }
+            .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: left; }
+            h1 { font-size: 1.25rem; margin: 0 0 1rem; color: #ef4444; text-align: center; }
+            .section { margin-bottom: 1.5rem; padding: 1rem; background: #fff1f2; border-radius: 0.5rem; border: 1px solid #fecdd3; }
+            .label { font-size: 11px; font-weight: bold; color: #e11d48; text-transform: uppercase; margin-bottom: 0.5rem; }
+            .value { font-family: monospace; font-size: 12px; word-break: break-all; white-space: pre-wrap; color: #881337; }
+            .btn { display: block; background: #e11d48; color: white; padding: 0.875rem 1.5rem; border-radius: 0.5rem; text-decoration: none; font-weight: bold; text-align: center; margin-top: 1rem; font-size: 1.1rem; }
+            .btn:hover { background: #be123c; }
+            .badge { display: inline-block; padding: 2px 6px; border-radius: 4px; background: #ffe4e6; color: #e11d48; font-size: 10px; margin-right: 4px; border: 1px solid #fda4af; }
           </style>
         </head>
         <body>
           <div class="card">
-            <h1>Diagnostic Bridge v23:10</h1>
+            <h1>Diagnostic Bridge v23:20</h1>
             
             <div class="section">
-              <div class="label">Step 1: Cookie Delivery</div>
-              <div class="value">Security Cookie (nf_jwt) sent via HTTP Header.<br>Status: <span style="color:#10b981">SENT ✅</span></div>
+              <div class="label">Cookie Status (v23:20)</div>
+              <div class="value" id="status-text">Synchronizing...</div>
             </div>
 
             <div class="section">
-              <div class="label">Step 2: Token Verification</div>
-              <div class="label">Roles found in Token:</div>
-              <div class="value">${roles.map(r => `<span class="badge">${r}</span>`).join('') || '<span style="color:#ef4444">NONE</span>'}</div>
-              <div style="margin-top:1rem" class="label">JWT Payload:</div>
-              <div class="value">${JSON.stringify(claims, null, 2)}</div>
+              <div class="label">Roles in Token</div>
+              <div class="value">${roles.map(r => `<span class="badge">${r}</span>`).join('') || 'NONE'}</div>
             </div>
 
             <div class="section">
-              <div class="label">Your Browser Cookies:</div>
-              <div id="cookies-list" class="value">Scanning...</div>
+              <div class="label">Browser Verification</div>
+              <div id="cookies-list" class="value">Scanning for nf_jwt...</div>
             </div>
 
-            <a href="${returnTo}" class="btn">Step 2: Enter Course</a>
+            <a href="${busterReturnTo}" class="btn">FINAL STEP: Enter Course</a>
+            <p style="font-size: 10px; color: #94a3b8; text-align: center; margin-top: 1rem;">This link includes a cache-buster (?cb=...) to bypass any old redirects.</p>
 
             <script>
               setTimeout(() => {
                 const list = document.getElementById('cookies-list');
                 const hasNf = document.cookie.indexOf('nf_jwt=') !== -1;
-                list.innerHTML = 'Found: ' + (hasNf ? '<span style="color:#10b981">nf_jwt (YES)</span>' : '<span style="color:#ef4444">nf_jwt (MISSING)</span>') + '<br><br>' + document.cookie;
-              }, 500);
+                const status = document.getElementById('status-text');
+                
+                if (hasNf) {
+                   status.innerHTML = "Cookie stored in browser. Ready for CDN check.";
+                   status.style.color = "#10b981";
+                   list.innerHTML = "✅ FOUND nf_jwt";
+                } else {
+                   status.innerHTML = "Cookie MISSING. Your browser is blocking the sync.";
+                   status.style.color = "#ef4444";
+                   list.innerHTML = "❌ MISSING nf_jwt";
+                }
+              }, 600);
             </script>
           </div>
         </body>

@@ -143,7 +143,7 @@ const metadata = {
 
         var courseSlug = getCourseSlugFromReturnTo();
         var requiredRole = courseSlug ? "course:" + courseSlug : null;
-        var buildTime = "2026-02-23_23:10";
+        var buildTime = "2026-02-23_23:20";
 
         user
           .jwt(true)
@@ -237,7 +237,7 @@ const metadata = {
               user.email +
               "</strong></p>";
             msg +=
-              "<p class='text-green-600 font-bold mb-4'>Step 1: Click the green button below to sync your security token.</p>";
+              "<p class='text-red-600 font-bold mb-4'>Step 1: Click the RED button below for Extreme Sync (v23:20).</p>";
             msg +=
               "<p class='text-xs text-slate-500'>This ensures your browser has the correct permissions. You'll be taken to a confirmation page first.</p>";
             desc.innerHTML = msg;
@@ -290,7 +290,7 @@ const metadata = {
           tag.style.cssText =
             "margin-top:2.5rem;font-family:monospace;font-size:9px;color:#cbd5e1;opacity:0.6;";
           tag.textContent =
-            "v23:10 | Target: " +
+            "v23:20 | Target: " +
             (data?.required || "None") +
             " | Roles: " +
             JSON.stringify(data?.roles || []) +
