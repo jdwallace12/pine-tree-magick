@@ -373,7 +373,7 @@ import { Icon } from "astro-icon/components";
         // user.token.access_token may be stale/expired.
         const token = await user?.jwt(true);
         if (token) {
-          document.cookie = `nf_jwt=${token}; path=/; max-age=${60 * 60}; SameSite=Lax`;
+          document.cookie = `nf_jwt=${token}; path=/; max-age=3600; SameSite=Lax`;
         }
         window.location.reload(); // Refresh to update user state
       } catch (err: any) {
