@@ -88,8 +88,8 @@ const metadata = {
     document.addEventListener("astro:page-load", function () {
       if (!window.netlifyIdentity) return;
 
-      var buildTime = "2026-02-24_10:00";
-      var buildVer = "v24:00";
+      var buildTime = "2026-02-24_10:10";
+      var buildVer = "v24:10";
 
       // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
       function getCourseSlugFromReturnTo() {
@@ -281,6 +281,13 @@ const metadata = {
               : "javascript:hardReset()";
           loginLink.style.display = "flex";
           loginLink.style.backgroundColor = "#10b981";
+
+          // Seamless Sync v24:10: If role is READY, auto-redirect to bridge after 800ms
+          if (type === "READY") {
+            setTimeout(function () {
+              window.location.href = bridgeUrl;
+            }, 800);
+          }
         }
 
         // Final status tag
