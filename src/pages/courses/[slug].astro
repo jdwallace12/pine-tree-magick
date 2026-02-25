@@ -339,6 +339,12 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
                     >Enrolled</span
                   >
                 </div>
+                <button
+                  id="dashboard-signout-btn"
+                  class="text-xs font-bold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 underline uppercase tracking-wider transition-colors"
+                >
+                  Sign Out
+                </button>
               </div>
             </div>
           </div>
@@ -685,6 +691,20 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
       }
     }
 
+    function initSignOutButton() {
+      const btn = document.getElementById('dashboard-signout-btn');
+      if (btn) {
+        btn.onclick = () => {
+          if (window.netlifyIdentity) {
+            (window.netlifyIdentity as any).logout();
+          } else {
+            localStorage.removeItem('gotrue.user');
+            window.location.reload();
+          }
+        };
+      }
+    }
+
     function hideLoader() {
       const loader = document.getElementById('course-content-loader');
       if (loader) {
@@ -697,6 +717,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
       updateEnrollLink();
       initCourseProgress();
       initSignInButton();
+      initSignOutButton();
       initEnrollButtons();
       hideLoader();
     });
@@ -705,6 +726,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
       updateEnrollLink();
       initCourseProgress();
       initSignInButton();
+      initSignOutButton();
       initEnrollButtons();
       hideLoader();
     });
