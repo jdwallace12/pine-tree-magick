@@ -758,6 +758,7 @@ const syllabusItems = Object.entries(modulesMap).map(([moduleName, moduleLessons
           enrollLink.href = enrollLink.href.split('?')[0];
         }
         initCourseProgress();
+        window.location.reload();
       });
     }
   </script>
