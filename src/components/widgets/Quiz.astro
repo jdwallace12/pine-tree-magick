@@ -1,0 +1,360 @@
+---
+export type Option = string | { text: string; image?: string };
+
+export interface Question {
+  id: string | number;
+  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row';
+  question: string;
+  image?: string;
+  options?: Option[]; // for multiple choice, image-grid, or image-row
+  answer: string;
+}
+
+export interface Props {
+  questions: Question[];
+  title?: string;
+}
+const { questions, title = 'Quiz' } = Astro.props;
+const stringifiedQuestions = JSON.stringify(questions);
+---
+
+<!-- SAFELIST TAG FOR DYNAMIC TAILWIND CLASSES -->
+<div class="hidden grid grid-cols-2 md:grid-cols-4 aspect-square group-hover:opacity-90"></div>
+
+<div
+  class="quiz-container max-w-3xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800"
+  data-questions={stringifiedQuestions}
+>
+  <div class="quiz-header text-center mb-6">
+    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>
+    <p class="quiz-progress text-slate-500 dark:text-slate-400 font-medium">Question 1 of {questions.length}</p>
+  </div>
+
+  <div class="quiz-body min-h-[250px] relative transition-opacity duration-300">
+    <!-- Question Content Injected Here by JS -->
+    <div class="question-container" id="question-container"></div>
+  </div>
+
+  <div class="quiz-footer mt-8 flex justify-between items-center hidden" id="quiz-actions">
+    <button
+      class="btn btn-secondary px-6 py-2 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
+      id="btn-prev"
+      disabled
+    >
+      Previous
+    </button>
+    <button
+      class="btn btn-primary px-6 py-2 rounded-lg font-medium bg-primary-600 hover:bg-primary-700 text-white transition-colors"
+      id="btn-next"
+    >
+      Next
+    </button>
+  </div>
+
+  <div class="quiz-results hidden text-center py-8" id="quiz-results">
+    <div class="text-5xl mb-4">🎉</div>
+    <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Quiz Complete!</h3>
+    <p class="text-xl text-slate-600 dark:text-slate-300 mb-6 font-medium">
+      Your score: <span id="score-display" class="text-primary-600 font-bold"></span> / <span id="total-display"></span>
+    </p>
+    <button
+      class="btn btn-primary px-8 py-3 rounded-lg font-bold bg-primary-600 hover:bg-primary-700 text-white transition-all shadow-md hover:shadow-lg w-full max-w-xs mx-auto"
+      id="btn-restart"
+    >
+      Restart Quiz
+    </button>
+  </div>
+</div>
+
+<script>
+  // Astro component scripts run once per component class on the page, so we need to initialize all instances
+  const setupQuizzes = () => {
+    const quizContainers = document.querySelectorAll('.quiz-container');
+
+    quizContainers.forEach((container) => {
+      if (container.hasAttribute('data-quiz-init')) return;
+      container.setAttribute('data-quiz-init', 'true');
+
+      const questionsStr = container.getAttribute('data-questions');
+      if (!questionsStr) return;
+
+      const questions = JSON.parse(questionsStr);
+      let currentIndex = 0;
+      let userAnswers = new Array(questions.length).fill(null);
+
+      // Elements
+      const progressEl = container.querySelector('.quiz-progress');
+      const questionContainer = container.querySelector('#question-container');
+      const actionsEl = container.querySelector('#quiz-actions');
+      const btnPrev = container.querySelector('#btn-prev');
+      const btnNext = container.querySelector('#btn-next');
+      const resultsEl = container.querySelector('#quiz-results');
+      const scoreDisplay = container.querySelector('#score-display');
+      const totalDisplay = container.querySelector('#total-display');
+      const btnRestart = container.querySelector('#btn-restart');
+      const quizHeader = container.querySelector('.quiz-header');
+
+      const renderQuestion = () => {
+        if (currentIndex >= questions.length || currentIndex < 0) return;
+
+        const q = questions[currentIndex];
+        actionsEl.classList.remove('hidden');
+        resultsEl.classList.add('hidden');
+        quizHeader.classList.remove('hidden');
+
+        progressEl.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+
+        btnPrev.disabled = currentIndex === 0;
+        btnNext.textContent = currentIndex === questions.length - 1 ? 'Finish' : 'Next';
+
+        let html = ``;
+        if (q.image) {
+          html += `<img src="${escapeHtml(q.image)}" alt="Question Image" class="w-full max-h-64 object-cover object-center rounded-xl mb-6 shadow-sm" />`;
+        }
+        html += `<h3 class="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${q.question}</h3>`;
+
+        if ((q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row') && q.options) {
+          const isGrid = q.type === 'image-grid';
+          const isRow = q.type === 'image-row';
+
+          let containerClass = 'flex flex-col gap-3';
+          if (isGrid) {
+            containerClass = 'custom-image-grid';
+          } else if (isRow) {
+            containerClass = 'custom-image-row';
+          }
+
+          html += `<div class="options-container ${containerClass}">`;
+          q.options.forEach((optItem, idx) => {
+            let optValue = '';
+            let optImage = null;
+
+            if (typeof optItem === 'string') {
+              optValue = optItem;
+            } else if (typeof optItem === 'object' && optItem !== null) {
+              optValue = optItem.text || '';
+              optImage = optItem.image || null;
+            }
+
+            const isSelected = userAnswers[currentIndex] === optValue;
+
+            if (isGrid || isRow) {
+              html += `
+                <label class="custom-grid-option flex flex-col h-full border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group
+                  ${isSelected ? 'selected' : 'unselected'}">
+                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="custom-radio-input" ${isSelected ? 'checked' : ''}>
+                  ${optImage ? `<div class="custom-image-wrapper"><img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" /></div>` : '<div class="custom-image-wrapper bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>'}
+                  <div class="p-4 text-center border-t border-slate-100 dark:border-slate-700/50">
+                    <span class="font-semibold text-sm md:text-base text-slate-800 dark:text-slate-200">${escapeHtml(optValue)}</span>
+                  </div>
+                </label>
+              `;
+            } else {
+              html += `
+                <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 
+                  ${isSelected ? 'selected' : 'unselected-row'}">
+                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="w-5 h-5 text-primary-600 focus:ring-primary-500 border-slate-300 dark:bg-slate-800 flex-shrink-0" ${isSelected ? 'checked' : ''}>
+                  <div class="ml-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                    ${optImage ? `<img src="${optImage}" class="h-20 w-auto object-cover rounded-lg border border-slate-200 dark:border-slate-700" alt="${escapeHtml(optValue)}" />` : ''}
+                    <span class="text-lg text-slate-700 dark:text-slate-200">${escapeHtml(optValue)}</span>
+                  </div>
+                </label>
+              `;
+            }
+          });
+          html += `</div>`;
+        } else if (q.type === 'text') {
+          const val = userAnswers[currentIndex] || '';
+          html += `
+            <input type="text" class="w-full p-4 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow" placeholder="Type your answer here..." value="${escapeHtml(val)}" data-q-input="true" />
+          `;
+        }
+
+        questionContainer.innerHTML = html;
+
+        // Attach listeners
+        if (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row') {
+          const radios = questionContainer.querySelectorAll('input[type="radio"]');
+          radios.forEach((r) => {
+            r.addEventListener('change', (e) => {
+              userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
+              // Rerender to show active state
+              renderQuestion();
+            });
+          });
+        } else if (q.type === 'text') {
+          const input = questionContainer.querySelector('input[data-q-input="true"]');
+          input.addEventListener('input', (e) => {
+            userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
+          });
+        }
+      };
+
+      const calculateScore = () => {
+        let score = 0;
+        questions.forEach((q, idx) => {
+          if (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row' || q.type === 'text') {
+            // Case insensitive comparison for text
+            const userAnswer = (userAnswers[idx] || '').toString().trim().toLowerCase();
+            const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
+            if (userAnswer === correctAnswer) {
+              score++;
+            }
+          }
+        });
+        return score;
+      };
+
+      const renderResults = () => {
+        questionContainer.innerHTML = '';
+        actionsEl.classList.add('hidden');
+        quizHeader.classList.add('hidden');
+        resultsEl.classList.remove('hidden');
+
+        const score = calculateScore();
+        scoreDisplay.textContent = score;
+        totalDisplay.textContent = questions.length;
+      };
+
+      btnNext.addEventListener('click', () => {
+        if (currentIndex < questions.length - 1) {
+          currentIndex++;
+          renderQuestion();
+        } else {
+          renderResults();
+        }
+      });
+
+      btnPrev.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderQuestion();
+        }
+      });
+
+      btnRestart.addEventListener('click', () => {
+        currentIndex = 0;
+        userAnswers = new Array(questions.length).fill(null);
+        renderQuestion();
+      });
+
+      // Simple HTML escape to prevent basic XSS if questions are user-generated
+      const escapeHtml = (unsafe) => {
+        if (!unsafe) return '';
+        return unsafe
+          .toString()
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      };
+
+      // Initial render
+      renderQuestion();
+    });
+  };
+
+  // Run on page load and on Astro view transitions
+  document.addEventListener('DOMContentLoaded', setupQuizzes);
+  document.addEventListener('astro:page-load', setupQuizzes);
+</script>
+
+<style is:global>
+  /* Optional: Any specific component styles not covered by Tailwind */
+  .quiz-body {
+    animation: fadeIn 0.4s ease-out;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Hardcoded CSS grid in case Tailwind compiler purges the dynamic template classes on dev */
+  .custom-image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .custom-image-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .custom-image-row {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+
+  .custom-image-wrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .custom-grid-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+  }
+
+  .custom-grid-option:hover .custom-grid-image {
+    transform: scale(1.05);
+  }
+
+  .custom-radio-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .selected {
+    border-color: #f59bbb;
+    box-shadow: 0 0 0 2px #f59bbb;
+    background-color: rgb(245 155 187 / 10%);
+  }
+
+  .unselected {
+    border-color: #e2e8f0;
+    background-color: transparent;
+  }
+
+  .unselected:hover {
+    border-color: #f59bbb;
+    background-color: rgb(245 155 187 / 5%);
+  }
+
+  .unselected-row {
+    border-color: #e2e8f0;
+  }
+
+  .unselected-row:hover {
+    border-color: #f59bbb;
+    background-color: rgb(245 155 187 / 5%);
+  }
+
+  .dark .unselected {
+    border-color: #334155;
+  }
+
+  .dark .unselected-row {
+    border-color: #334155;
+  }
+</style>
