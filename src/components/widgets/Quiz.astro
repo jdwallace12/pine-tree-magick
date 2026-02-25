@@ -3,18 +3,21 @@ export type Option = string | { text: string; image?: string };
 
 export interface Question {
   id: string | number;
-  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row';
+  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row' | 'reveal';
   question: string;
   image?: string;
   options?: Option[]; // for multiple choice, image-grid, or image-row
   answer: string;
+  flip?: boolean;
+  hideText?: boolean;
 }
 
 export interface Props {
   questions: Question[];
   title?: string;
+  showScore?: boolean;
 }
-const { questions, title = 'Quiz' } = Astro.props;
+const { questions, title = 'Quiz', showScore = true } = Astro.props;
 const stringifiedQuestions = JSON.stringify(questions);
 ---
 
@@ -24,6 +27,7 @@ const stringifiedQuestions = JSON.stringify(questions);
 <div
   class="quiz-container max-w-3xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800"
   data-questions={stringifiedQuestions}
+  data-show-score={showScore.toString()}
 >
   <div class="quiz-header text-center mb-6">
     <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>
@@ -79,6 +83,7 @@ const stringifiedQuestions = JSON.stringify(questions);
       if (!questionsStr) return;
 
       const questions = JSON.parse(questionsStr);
+      const showScore = container.getAttribute('data-show-score') === 'true';
       let currentIndex = 0;
       let userAnswers = new Array(questions.length).fill(null);
 
@@ -113,9 +118,15 @@ const stringifiedQuestions = JSON.stringify(questions);
         }
         html += `<h3 class="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${q.question}</h3>`;
 
-        if ((q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row') && q.options) {
-          const isGrid = q.type === 'image-grid';
+        if (
+          (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row' || q.type === 'reveal') &&
+          q.options
+        ) {
+          const isGrid = q.type === 'image-grid' || q.type === 'reveal';
           const isRow = q.type === 'image-row';
+          const isRevealType = q.type === 'reveal';
+          const isFlippable = q.flip || isRevealType;
+          const shouldHideText = q.hideText || isRevealType;
 
           let containerClass = 'flex flex-col gap-3';
           if (isGrid) {
@@ -139,12 +150,30 @@ const stringifiedQuestions = JSON.stringify(questions);
             const isSelected = userAnswers[currentIndex] === optValue;
 
             if (isGrid || isRow) {
+              const flipClass = isFlippable ? 'flip-card' : '';
               html += `
                 <label class="custom-grid-option flex flex-col h-full border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group
-                  ${isSelected ? 'selected' : 'unselected'}">
+                  ${isSelected ? 'selected flipped' : 'unselected'} ${flipClass}">
                   <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="custom-radio-input" ${isSelected ? 'checked' : ''}>
-                  ${optImage ? `<div class="custom-image-wrapper"><img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" /></div>` : '<div class="custom-image-wrapper bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>'}
-                  <div class="p-4 text-center border-t border-slate-100 dark:border-slate-700/50">
+                  ${
+                    optImage
+                      ? `<div class="custom-image-wrapper">
+                          ${
+                            isFlippable
+                              ? `<div class="flip-card-inner">
+                                  <div class="flip-card-front bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl">
+                                    ✨
+                                  </div>
+                                  <div class="flip-card-back">
+                                    <img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" />
+                                  </div>
+                                </div>`
+                              : `<img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" />`
+                          }
+                        </div>`
+                      : '<div class="custom-image-wrapper bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>'
+                  }
+                  <div class="p-4 text-center border-t border-slate-100 dark:border-slate-700/50 ${shouldHideText ? 'reveal-text' : ''}">
                     <span class="font-semibold text-sm md:text-base text-slate-800 dark:text-slate-200">${escapeHtml(optValue)}</span>
                   </div>
                 </label>
@@ -173,7 +202,7 @@ const stringifiedQuestions = JSON.stringify(questions);
         questionContainer.innerHTML = html;
 
         // Attach listeners
-        if (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row') {
+        if (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row' || q.type === 'reveal') {
           const radios = questionContainer.querySelectorAll('input[type="radio"]');
           radios.forEach((r) => {
             r.addEventListener('change', (e) => {
@@ -193,7 +222,13 @@ const stringifiedQuestions = JSON.stringify(questions);
       const calculateScore = () => {
         let score = 0;
         questions.forEach((q, idx) => {
-          if (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row' || q.type === 'text') {
+          if (
+            q.type === 'multiple-choice' ||
+            q.type === 'image-grid' ||
+            q.type === 'image-row' ||
+            q.type === 'text' ||
+            q.type === 'reveal'
+          ) {
             // Case insensitive comparison for text
             const userAnswer = (userAnswers[idx] || '').toString().trim().toLowerCase();
             const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
@@ -211,9 +246,14 @@ const stringifiedQuestions = JSON.stringify(questions);
         quizHeader.classList.add('hidden');
         resultsEl.classList.remove('hidden');
 
-        const score = calculateScore();
-        scoreDisplay.textContent = score;
-        totalDisplay.textContent = questions.length;
+        if (showScore) {
+          const score = calculateScore();
+          scoreDisplay.textContent = score.toString();
+          totalDisplay.textContent = questions.length.toString();
+          (resultsEl.querySelector('p') as HTMLElement).classList.remove('hidden');
+        } else {
+          (resultsEl.querySelector('p') as HTMLElement).classList.add('hidden');
+        }
       };
 
       btnNext.addEventListener('click', () => {
@@ -296,6 +336,7 @@ const stringifiedQuestions = JSON.stringify(questions);
   }
 
   .custom-image-wrapper {
+    position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
@@ -356,5 +397,61 @@ const stringifiedQuestions = JSON.stringify(questions);
 
   .dark .unselected-row {
     border-color: #334155;
+  }
+
+  /* Flip Card Styles */
+  .flip-card {
+    perspective: 1000px;
+  }
+
+  .flip-card .custom-image-wrapper {
+    perspective: 1000px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+  }
+
+  .flip-card-front {
+    z-index: 2;
+  }
+
+  .flip-card-back {
+    z-index: 1;
+    transform: rotateY(180deg);
+  }
+
+  .flip-card .reveal-text {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transition-delay: 0.3s;
+  }
+
+  .flip-card.flipped .reveal-text {
+    opacity: 1;
   }
 </style>

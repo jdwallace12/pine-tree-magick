@@ -39,9 +39,27 @@ const quizQuestions: Question[] = [
   },
   {
     id: 'q2',
-    type: 'text',
-    question: 'What is the largest organ in the human body?',
-    answer: 'Skin',
+    type: 'reveal',
+    question: 'Use your intuition: which card is the Mountain?',
+    options: [
+      {
+        text: 'Forest',
+        image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=800&auto=format&fit=crop',
+      },
+      {
+        text: 'Ocean',
+        image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop',
+      },
+      {
+        text: 'Mountain',
+        image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800&auto=format&fit=crop',
+      },
+      {
+        text: 'Desert',
+        image: 'https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?q=80&w=800&auto=format&fit=crop',
+      },
+    ],
+    answer: 'Mountain',
   },
   {
     id: 'q3',
