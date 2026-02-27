@@ -410,8 +410,8 @@ const date = new Date().toISOString().split('T')[0];
           <label class="custom-checkbox text-left md:text-center">
             <input type="checkbox" id="disclaimer" name="disclaimer" required />
             <span class="checkbox-label">
-              I agree to the
-              <a target="_blank" href="/privacy" class="text-primary hover:underline"> privacy policy </a>
+              I agree to the terms in the
+              <a target="_blank" href="/disclaimer" class="text-primary hover:underline"> disclaimer </a>
             </span>
           </label>
         </div>
@@ -436,6 +436,12 @@ const date = new Date().toISOString().split('T')[0];
             </div>
             <span id="submit-text">Request Booking</span>
           </button>
+          <p class="text-xs text-gray-400 text-center w-3/4 mx-auto mt-4">
+            By submitting this form you accept the terms of our <a
+              href="/privacy"
+              class="underline hover:text-primary transition-colors">privacy policy</a
+            >.
+          </p>
         </div>
       </form>
     </div>
