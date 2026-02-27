@@ -13,13 +13,13 @@ export async function getStaticPaths() {
 const { slug } = Astro.params as { slug: string };
 const freebies = await getCollection('freebie');
 
-const freebie = freebies.find((freebie) => (freebie.id.replace(/\.md$/, '')) === slug);
+const freebie = freebies.find((freebie) => freebie.id.replace(/\.md$/, '') === slug);
 
 if (!freebie) {
   throw new Error('freebie not found');
 }
 
-const { title, description, image, expirationDate, pdfUrl } = freebie.data;
+const { title, description, image, expirationDate, pdfUrl, redirectUrl } = freebie.data;
 const { Content } = await freebie.render();
 
 // Convert Google Drive URL to preview URL
@@ -36,7 +36,9 @@ const getPreviewUrl = (url: string) => {
   return url;
 };
 
-const previewUrl = getPreviewUrl(pdfUrl);
+const previewUrl = redirectUrl || getPreviewUrl(pdfUrl || '');
+const finalActionUrl = redirectUrl || pdfUrl || '#';
+const isRedirect = !!redirectUrl;
 
 const metadata = {
   title,
@@ -44,13 +46,15 @@ const metadata = {
   openGraph: {
     url: image,
     siteName: title,
-    images: [{
-      url: image,
-      width: 1200,
-      height: 630
-    }],
-    type: "website"
-  }
+    images: [
+      {
+        url: image,
+        width: 1200,
+        height: 630,
+      },
+    ],
+    type: 'website',
+  },
 };
 
 const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false;
@@ -62,9 +66,11 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
       <a href="/shop" class="flex underline w-max">
         <Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop
       </a>
-      <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href="#download">Download</a>
+      <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href="#download"
+        >{isRedirect ? 'Get Access' : 'Download'}</a
+      >
     </div>
-    
+
     <div class="flex flex-col gap-8">
       <div>
         <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase text-center mt-12">
@@ -73,84 +79,97 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
         <h1 class="text-4xl md:text-5xl font-heading text-center">{title}</h1>
         <p class="text-xl text-muted text-center mt-2">{description}</p>
       </div>
-   
+
       <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
-    
-      <div class="mb-2 prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none">
+
+      <div
+        class="mb-2 prose prose-lg prose-headings:text-primary prose-headings:font-heading prose-p:text-muted prose-li:text-muted prose-strong:text-heading prose-strong:font-semibold dark:prose-invert max-w-none"
+      >
         <Content />
-        {isExpired ? (
-          <div class="bg-red-900/50 text-red-200 p-4 rounded-lg text-center mb-6">
-            This freebie has expired and is no longer available.
-          </div>
-        ) : (
-          <div class="text-center mt-2" id="download">
-            <div class="bg-primary/10 p-8 rounded-lg mt-6">
-              <form 
-                name="freebie-download"
-                method="POST"
-                data-netlify="true"
-                netlify-honeypot="bot-field"
-                data-netlify-recaptcha="false"
-                class="needs-validation form-component"
-                accept-charset="UTF-8"
-                action="/"
-              >
-                <input type="hidden" name="form-name" value="freebie-download" />
-                <input type="hidden" name="freebie" value={title} />
-                <p class="hidden">
-                  <label>
-                    Don't fill this out if you're human: <input name="bot-field" />
-                  </label>
-                </p>
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                  <div>
-                    <label for="name" class="block text-sm font-medium mb-2 text-left md:text-center">
-                      Full Name <span class="text-primary">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      minlength="2"
-                      class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label for="email" class="block text-sm font-medium mb-2 text-left md:text-center">
-                      Email Address <span class="text-primary">*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
-                      placeholder="you@email.com"
-                    />
-                  </div>
-                </div>
-                <div class="mt-6 grid">
-                  <button
-                    type="submit"
-                    id="submit-btn"
-                    class="inline-flex items-center justify-center px-8 py-4 bg-primary dark:text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <div id="spinner" class="hidden w-5 h-5 mr-2">
-                      <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                    </div>
-                    <span id="submit-text">Get Free Download</span>
-                  </button>
-                </div>
-              </form>
+        {
+          isExpired ? (
+            <div class="bg-red-900/50 text-red-200 p-4 rounded-lg text-center mb-6">
+              This freebie has expired and is no longer available.
             </div>
-            <p class="text-sm text-gray-300 text-center w-3/4 mx-auto mt-8">You'll be redirected to your PDF after submitting.</p>
-          </div>
-        )}
+          ) : (
+            <div class="text-center mt-2" id="download">
+              <div class="bg-primary/10 p-8 rounded-lg mt-6">
+                <form
+                  name="freebie-download"
+                  method="POST"
+                  data-netlify="true"
+                  netlify-honeypot="bot-field"
+                  data-netlify-recaptcha="false"
+                  class="needs-validation form-component"
+                  accept-charset="UTF-8"
+                  action="/"
+                >
+                  <input type="hidden" name="form-name" value="freebie-download" />
+                  <input type="hidden" name="freebie" value={title} />
+                  <p class="hidden">
+                    <label>
+                      Don't fill this out if you're human: <input name="bot-field" />
+                    </label>
+                  </p>
+                  <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <label for="name" class="block text-sm font-medium mb-2 text-left md:text-center">
+                        Full Name <span class="text-primary">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
+                        minlength="2"
+                        class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+                        placeholder="Your name"
+                      />
+                    </div>
+                    <div>
+                      <label for="email" class="block text-sm font-medium mb-2 text-left md:text-center">
+                        Email Address <span class="text-primary">*</span>
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
+                        class="py-3 px-4 block w-full text-md rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-dark"
+                        placeholder="you@email.com"
+                      />
+                    </div>
+                  </div>
+                  <div class="mt-6 grid">
+                    <button
+                      type="submit"
+                      id="submit-btn"
+                      class="inline-flex items-center justify-center px-8 py-4 bg-primary dark:text-dark font-semibold rounded-lg hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <div id="spinner" class="hidden w-5 h-5 mr-2">
+                        <svg class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                          <path
+                            class="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          />
+                        </svg>
+                      </div>
+                      <span id="submit-text">{isRedirect ? 'Claim Your Freebie' : 'Get Free Download'}</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+              <p class="text-sm text-gray-300 text-center w-3/4 mx-auto mt-8">
+                You'll be redirected {isRedirect ? 'to your freebie' : 'to your PDF'} after submitting.
+              </p>
+              <p class="text-xs text-gray-400 text-center w-3/4 mx-auto mt-2">
+                By submitting this form you accept the terms of our <a href="/privacy" class="underline hover:text-primary transition-colors">privacy policy</a>.
+              </p>
+            </div>
+          )
+        }
       </div>
     </div>
   </article>
@@ -165,7 +184,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
       </svg>
     </div>
     <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Form Submitted Successfully!</h3>
-    <p class="text-gray-600 dark:text-gray-400 mb-6">Opening your PDF...</p>
+    <p class="text-gray-600 dark:text-gray-400 mb-6">{isRedirect ? 'Redirecting you now...' : 'Opening your PDF...'}</p>
     <div class="flex items-center justify-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
       <div class="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
       <div class="w-2 h-2 bg-primary rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
@@ -212,7 +231,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
         // Ensure explicit fields
         const getVal = (id) => {
           const el = document.getElementById(id);
-          const raw = (el && 'value' in el ? el.value : formData.get(id));
+          const raw = el && 'value' in el ? el.value : formData.get(id);
           return raw == null ? '' : String(raw);
         };
         formData.set('name', String(getVal('name')));
@@ -230,7 +249,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
         const response = await fetch('/', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' },
-          body: params.toString()
+          body: params.toString(),
         });
 
         if (!response.ok) {
