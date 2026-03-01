@@ -25,7 +25,7 @@ const stringifiedQuestions = JSON.stringify(questions);
 <div class="hidden grid grid-cols-2 md:grid-cols-4 aspect-square group-hover:opacity-90"></div>
 
 <div
-  class="quiz-container max-w-3xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800"
+  class="quiz-container max-w-3xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 relative overflow-hidden"
   data-questions={stringifiedQuestions}
   data-show-score={showScore.toString()}
 >
@@ -37,22 +37,6 @@ const stringifiedQuestions = JSON.stringify(questions);
   <div class="quiz-body min-h-[250px] relative transition-opacity duration-300">
     <!-- Question Content Injected Here by JS -->
     <div class="question-container" id="question-container"></div>
-  </div>
-
-  <div class="quiz-footer mt-8 flex justify-between items-center hidden" id="quiz-actions">
-    <button
-      class="btn btn-secondary px-6 py-2 rounded-lg font-medium bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 transition-colors"
-      id="btn-prev"
-      disabled
-    >
-      Previous
-    </button>
-    <button
-      class="btn btn-primary px-6 py-2 rounded-lg font-medium bg-primary-600 hover:bg-primary-700 text-white transition-colors"
-      id="btn-next"
-    >
-      Next
-    </button>
   </div>
 
   <div class="quiz-results hidden text-center py-8" id="quiz-results">
@@ -71,7 +55,56 @@ const stringifiedQuestions = JSON.stringify(questions);
 </div>
 
 <script>
-  // Astro component scripts run once per component class on the page, so we need to initialize all instances
+  // ─── Pink Particle Explosion (CSS-based, fires over a target element) ───
+  function createParticleExplosion(targetEl: HTMLElement, containerEl: HTMLElement) {
+    const targetRect = targetEl.getBoundingClientRect();
+    const containerRect = containerEl.getBoundingClientRect();
+
+    // Center of the target element relative to the quiz container
+    const cx = targetRect.left - containerRect.left + targetRect.width / 2;
+    const cy = targetRect.top - containerRect.top + targetRect.height / 2;
+
+    const particleCount = 24;
+    const colors = ['#f59bbb', '#f7b7cc', '#fcd5e0', '#ffffff', '#e88aae', '#9acac6'];
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'quiz-particle';
+
+      // Random direction and distance
+      const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+      const distance = 40 + Math.random() * 80;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      const size = 4 + Math.random() * 8;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const duration = 600 + Math.random() * 400;
+      const delay = Math.random() * 100;
+
+      particle.style.cssText = `
+        position: absolute;
+        left: ${cx}px;
+        top: ${cy}px;
+        width: ${size}px;
+        height: ${size}px;
+        border-radius: 50%;
+        background: ${color};
+        box-shadow: 0 0 ${size}px ${color};
+        pointer-events: none;
+        z-index: 50;
+        animation: quizParticleFly ${duration}ms ${delay}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        --tx: ${tx}px;
+        --ty: ${ty}px;
+      `;
+
+      containerEl.appendChild(particle);
+
+      // Clean up after animation
+      setTimeout(() => particle.remove(), duration + delay + 50);
+    }
+  }
+
+  // ─── Quiz Logic ───
   const setupQuizzes = () => {
     const quizContainers = document.querySelectorAll('.quiz-container');
 
@@ -86,13 +119,11 @@ const stringifiedQuestions = JSON.stringify(questions);
       const showScore = container.getAttribute('data-show-score') === 'true';
       let currentIndex = 0;
       let userAnswers = new Array(questions.length).fill(null);
+      let answerRevealed = false;
 
       // Elements
       const progressEl = container.querySelector('.quiz-progress');
       const questionContainer = container.querySelector('#question-container');
-      const actionsEl = container.querySelector('#quiz-actions');
-      const btnPrev = container.querySelector('#btn-prev');
-      const btnNext = container.querySelector('#btn-next');
       const resultsEl = container.querySelector('#quiz-results');
       const scoreDisplay = container.querySelector('#score-display');
       const totalDisplay = container.querySelector('#total-display');
@@ -103,14 +134,15 @@ const stringifiedQuestions = JSON.stringify(questions);
         if (currentIndex >= questions.length || currentIndex < 0) return;
 
         const q = questions[currentIndex];
-        actionsEl.classList.remove('hidden');
-        resultsEl.classList.add('hidden');
-        quizHeader.classList.remove('hidden');
+        resultsEl!.classList.add('hidden');
+        quizHeader!.classList.remove('hidden');
+        answerRevealed = false;
 
-        progressEl.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+        progressEl!.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
 
-        btnPrev.disabled = currentIndex === 0;
-        btnNext.textContent = currentIndex === questions.length - 1 ? 'Finish' : 'Next';
+        // Slide-in animation
+        (questionContainer as HTMLElement).classList.remove('quiz-slide-out');
+        (questionContainer as HTMLElement).classList.add('quiz-slide-in');
 
         let html = ``;
         if (q.image) {
@@ -136,7 +168,7 @@ const stringifiedQuestions = JSON.stringify(questions);
           }
 
           html += `<div class="options-container ${containerClass}">`;
-          q.options.forEach((optItem, idx) => {
+          q.options.forEach((optItem: any, idx: number) => {
             let optValue = '';
             let optImage = null;
 
@@ -195,33 +227,146 @@ const stringifiedQuestions = JSON.stringify(questions);
         } else if (q.type === 'text') {
           const val = userAnswers[currentIndex] || '';
           html += `
-            <input type="text" class="w-full p-4 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow" placeholder="Type your answer here..." value="${escapeHtml(val)}" data-q-input="true" />
+            <div class="flex gap-3">
+              <input type="text" class="flex-1 p-4 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow" placeholder="Type your answer here..." value="${escapeHtml(val)}" data-q-input="true" />
+              <button type="button" class="quiz-submit-btn px-6 py-4 rounded-xl font-bold bg-primary-600 hover:bg-primary-700 text-white transition-colors shadow-md hover:shadow-lg" data-submit-btn="true">Submit</button>
+            </div>
           `;
         }
 
-        questionContainer.innerHTML = html;
+        questionContainer!.innerHTML = html;
 
         // Attach listeners
         if (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row' || q.type === 'reveal') {
-          const radios = questionContainer.querySelectorAll('input[type="radio"]');
+          const radios = questionContainer!.querySelectorAll('input[type="radio"]');
           radios.forEach((r) => {
             r.addEventListener('change', (e) => {
+              if (answerRevealed) return;
               userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
-              // Rerender to show active state
-              renderQuestion();
+              revealAnswer(q);
             });
           });
         } else if (q.type === 'text') {
-          const input = questionContainer.querySelector('input[data-q-input="true"]');
-          input.addEventListener('input', (e) => {
+          const input = questionContainer!.querySelector('input[data-q-input="true"]');
+          const submitBtn = questionContainer!.querySelector('[data-submit-btn]');
+          input!.addEventListener('input', (e) => {
             userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
           });
+          input!.addEventListener('keydown', (e) => {
+            if ((e as KeyboardEvent).key === 'Enter' && !answerRevealed) {
+              userAnswers[currentIndex] = (input as HTMLInputElement).value;
+              revealAnswer(q);
+            }
+          });
+          if (submitBtn) {
+            submitBtn.addEventListener('click', () => {
+              if (answerRevealed) return;
+              userAnswers[currentIndex] = (input as HTMLInputElement).value;
+              revealAnswer(q);
+            });
+          }
         }
+      };
+
+      const revealAnswer = (q: any) => {
+        answerRevealed = true;
+        const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
+        const userAnswer = (userAnswers[currentIndex] || '').toString().trim().toLowerCase();
+        const isCorrect = userAnswer === correctAnswer;
+
+        if (q.type === 'text') {
+          const input = questionContainer!.querySelector('input[data-q-input="true"]') as HTMLInputElement;
+          if (input) input.disabled = true;
+
+          const feedbackEl = document.createElement('div');
+          feedbackEl.className = 'mt-4 p-4 rounded-xl font-semibold text-lg flex items-center gap-3 animate-fade-in';
+          if (isCorrect) {
+            feedbackEl.classList.add(
+              'bg-emerald-50',
+              'dark:bg-emerald-900/30',
+              'text-emerald-700',
+              'dark:text-emerald-300',
+              'border',
+              'border-emerald-200',
+              'dark:border-emerald-700'
+            );
+            feedbackEl.innerHTML = `<span class="text-2xl">✓</span> Correct!`;
+            // Fire particle explosion over the input
+            createParticleExplosion(input, container as HTMLElement);
+          } else {
+            feedbackEl.classList.add(
+              'bg-red-50',
+              'dark:bg-red-900/30',
+              'text-red-700',
+              'dark:text-red-300',
+              'border',
+              'border-red-200',
+              'dark:border-red-700'
+            );
+            feedbackEl.innerHTML = `<span class="text-2xl">✗</span> The correct answer is: <strong>${escapeHtml(q.answer)}</strong>`;
+          }
+          questionContainer!.appendChild(feedbackEl);
+        } else {
+          // Multiple choice / grid / row / reveal — highlight options
+          const labels = questionContainer!.querySelectorAll('label');
+          const radios = questionContainer!.querySelectorAll('input[type="radio"]');
+
+          // Disable all radios
+          radios.forEach((r) => ((r as HTMLInputElement).disabled = true));
+
+          // Flip all cards to reveal images and show hidden text
+          labels.forEach((label) => {
+            label.classList.add('flipped');
+            const revealText = label.querySelector('.reveal-text');
+            if (revealText) (revealText as HTMLElement).style.opacity = '1';
+          });
+
+          let correctLabel: HTMLElement | null = null;
+
+          labels.forEach((label) => {
+            const radio = label.querySelector('input[type="radio"]') as HTMLInputElement;
+            if (!radio) return;
+            const val = radio.value.trim().toLowerCase();
+
+            label.classList.remove('selected', 'unselected', 'unselected-row');
+            label.classList.add('pointer-events-none');
+
+            if (val === correctAnswer) {
+              label.classList.add('quiz-answer-correct');
+              correctLabel = label as HTMLElement;
+            } else if (radio.checked && val !== correctAnswer) {
+              label.classList.add('quiz-answer-wrong');
+            } else {
+              label.classList.add('quiz-answer-dim');
+            }
+          });
+
+          // Fire pink particle explosion over the correct answer
+          if (isCorrect && correctLabel) {
+            createParticleExplosion(correctLabel, container as HTMLElement);
+          }
+        }
+
+        // Auto-advance: slide out, then render next after 2 seconds
+        setTimeout(() => {
+          (questionContainer as HTMLElement).classList.remove('quiz-slide-in');
+          (questionContainer as HTMLElement).classList.add('quiz-slide-out');
+
+          // Wait for slide-out animation to finish (400ms) then advance
+          setTimeout(() => {
+            if (currentIndex < questions.length - 1) {
+              currentIndex++;
+              renderQuestion();
+            } else {
+              renderResults();
+            }
+          }, 400);
+        }, 2000);
       };
 
       const calculateScore = () => {
         let score = 0;
-        questions.forEach((q, idx) => {
+        questions.forEach((q: any, idx: number) => {
           if (
             q.type === 'multiple-choice' ||
             q.type === 'image-grid' ||
@@ -229,7 +374,6 @@ const stringifiedQuestions = JSON.stringify(questions);
             q.type === 'text' ||
             q.type === 'reveal'
           ) {
-            // Case insensitive comparison for text
             const userAnswer = (userAnswers[idx] || '').toString().trim().toLowerCase();
             const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
             if (userAnswer === correctAnswer) {
@@ -241,45 +385,34 @@ const stringifiedQuestions = JSON.stringify(questions);
       };
 
       const renderResults = () => {
-        questionContainer.innerHTML = '';
-        actionsEl.classList.add('hidden');
-        quizHeader.classList.add('hidden');
-        resultsEl.classList.remove('hidden');
+        questionContainer!.innerHTML = '';
+        quizHeader!.classList.add('hidden');
+        resultsEl!.classList.remove('hidden');
 
         if (showScore) {
           const score = calculateScore();
-          scoreDisplay.textContent = score.toString();
-          totalDisplay.textContent = questions.length.toString();
-          (resultsEl.querySelector('p') as HTMLElement).classList.remove('hidden');
+          scoreDisplay!.textContent = score.toString();
+          totalDisplay!.textContent = questions.length.toString();
+          (resultsEl!.querySelector('p') as HTMLElement).classList.remove('hidden');
         } else {
-          (resultsEl.querySelector('p') as HTMLElement).classList.add('hidden');
+          (resultsEl!.querySelector('p') as HTMLElement).classList.add('hidden');
+        }
+
+        // Fire a celebration explosion over the results emoji
+        const emojiEl = resultsEl!.querySelector('div') as HTMLElement;
+        if (emojiEl) {
+          createParticleExplosion(emojiEl, container as HTMLElement);
+          setTimeout(() => createParticleExplosion(emojiEl, container as HTMLElement), 300);
         }
       };
 
-      btnNext.addEventListener('click', () => {
-        if (currentIndex < questions.length - 1) {
-          currentIndex++;
-          renderQuestion();
-        } else {
-          renderResults();
-        }
-      });
-
-      btnPrev.addEventListener('click', () => {
-        if (currentIndex > 0) {
-          currentIndex--;
-          renderQuestion();
-        }
-      });
-
-      btnRestart.addEventListener('click', () => {
+      btnRestart!.addEventListener('click', () => {
         currentIndex = 0;
         userAnswers = new Array(questions.length).fill(null);
         renderQuestion();
       });
 
-      // Simple HTML escape to prevent basic XSS if questions are user-generated
-      const escapeHtml = (unsafe) => {
+      const escapeHtml = (unsafe: any) => {
         if (!unsafe) return '';
         return unsafe
           .toString()
@@ -295,13 +428,24 @@ const stringifiedQuestions = JSON.stringify(questions);
     });
   };
 
-  // Run on page load and on Astro view transitions
   document.addEventListener('DOMContentLoaded', setupQuizzes);
   document.addEventListener('astro:page-load', setupQuizzes);
 </script>
 
 <style is:global>
-  /* Optional: Any specific component styles not covered by Tailwind */
+  /* ─── Particle Explosion Keyframes ─── */
+  @keyframes quizParticleFly {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--tx), var(--ty)) scale(0);
+      opacity: 0;
+    }
+  }
+
+  /* ─── Quiz Body Animations ─── */
   .quiz-body {
     animation: fadeIn 0.4s ease-out;
   }
@@ -316,7 +460,84 @@ const stringifiedQuestions = JSON.stringify(questions);
     }
   }
 
-  /* Hardcoded CSS grid in case Tailwind compiler purges the dynamic template classes on dev */
+  /* ─── Question Slide Transitions ─── */
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutLeft {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+  }
+
+  .quiz-slide-in {
+    animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .quiz-slide-out {
+    animation: slideOutLeft 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* ─── Answer Reveal Styles ─── */
+  .quiz-answer-correct {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 2px #10b981 !important;
+    background-color: rgb(16 185 129 / 10%) !important;
+    position: relative;
+  }
+
+  .quiz-answer-correct::after {
+    content: '✓';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #10b981;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .quiz-answer-wrong {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px #ef4444 !important;
+    background-color: rgb(239 68 68 / 10%) !important;
+    position: relative;
+  }
+
+  .quiz-answer-wrong::after {
+    content: '✗';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ef4444;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .quiz-answer-dim {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+  }
+
+  /* ─── Image Grid ─── */
   .custom-image-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -399,7 +620,7 @@ const stringifiedQuestions = JSON.stringify(questions);
     border-color: #334155;
   }
 
-  /* Flip Card Styles */
+  /* ─── Flip Card Styles ─── */
   .flip-card {
     perspective: 1000px;
   }
