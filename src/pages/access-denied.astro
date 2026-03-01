@@ -1,25 +1,23 @@
 ---
-import Layout from "~/layouts/PageLayout.astro";
-import { Icon } from "astro-icon/components";
+import Layout from '~/layouts/PageLayout.astro';
+import { Icon } from 'astro-icon/components';
 
 const metadata = {
-  title: "Access Denied",
+  title: 'Access Denied',
   robots: {
     index: false,
     follow: false,
   },
   // Prevent caching of this page to ensure redirect logic stays fresh
   meta: [
-    { name: "pragma", content: "no-cache" },
-    { name: "cache-control", content: "no-cache, no-store, must-revalidate" },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'cache-control', content: 'no-cache, no-store, must-revalidate' },
   ],
 };
 ---
 
 <Layout metadata={metadata}>
-  <div
-    class="max-w-4xl mx-auto px-4 py-20 flex flex-col items-center justify-center min-h-[60vh]"
-  >
+  <div class="max-w-4xl mx-auto px-4 py-20 flex flex-col items-center justify-center min-h-[60vh]">
     <div
       class="text-center bg-slate-50 dark:bg-slate-800 p-12 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 w-full max-w-2xl"
     >
@@ -32,8 +30,8 @@ const metadata = {
       <h1 class="text-4xl font-heading font-bold mb-6">Members Only Content</h1>
 
       <p class="text-lg text-muted mb-10 max-w-md mx-auto leading-relaxed">
-        This premium content is restricted. Please sign in to verify your access
-        or enroll in the course to unlock these materials.
+        This premium content is restricted. Please sign in to verify your access or enroll in the course to unlock these
+        materials.
       </p>
 
       <div class="flex flex-col sm:flex-row justify-center gap-4">
@@ -61,9 +59,7 @@ const metadata = {
         <div
           class="inline-block bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4 rounded-xl"
         >
-          <p
-            class="text-xs text-amber-800 dark:text-amber-500 mb-3 uppercase tracking-widest font-bold"
-          >
+          <p class="text-xs text-amber-800 dark:text-amber-500 mb-3 uppercase tracking-widest font-bold">
             Developer Tools
           </p>
           <div class="flex gap-2 justify-center">
@@ -86,16 +82,16 @@ const metadata = {
   </div>
 
   <script is:inline>
-    document.addEventListener("astro:page-load", function () {
+    document.addEventListener('astro:page-load', function () {
       if (!window.netlifyIdentity) return;
 
-      var buildTime = "2026-02-24_11:00";
-      var buildVer = "v25:00";
+      var buildTime = '2026-02-24_11:00';
+      var buildVer = 'v25:00';
 
       // Extract course slug from returnTo, e.g. /courses/magickal-foundations/lesson → magickal-foundations
       function getCourseSlugFromReturnTo() {
         var params = new URLSearchParams(window.location.search);
-        var returnTo = params.get("returnTo") || "";
+        var returnTo = params.get('returnTo') || '';
         var match = returnTo.match(/^\/courses\/([^\/]+)\//);
         return match ? match[1] : null;
       }
@@ -103,29 +99,28 @@ const metadata = {
       // Update the Enroll button to point directly to PayPal for the specific course
       function updateEnrollLink() {
         var courseSlug = getCourseSlugFromReturnTo();
-        var enrollLink = document.getElementById("access-enroll-link");
+        var enrollLink = document.getElementById('access-enroll-link');
         if (!enrollLink || !courseSlug) return;
 
         var mapping = {
-          "magickal-foundations": "COURSETST123",
-          "chakra-mastery": "CHAKRA_PRO_97",
+          'magickal-foundations': 'COURSETST123',
+          'chakra-mastery': 'CHAKRA_PRO_97',
         };
 
         var buttonId = mapping[courseSlug];
         if (buttonId) {
-          enrollLink.href = "https://www.paypal.com/ncp/payment/" + buttonId;
-          enrollLink.title =
-            "Enroll directly in " + courseSlug.replace(/-/g, " ");
+          enrollLink.href = 'https://www.paypal.com/ncp/payment/' + buttonId;
+          enrollLink.title = 'Enroll directly in ' + courseSlug.replace(/-/g, ' ');
         }
       }
 
       function decodeJwt(token) {
         try {
-          if (!token || typeof token !== "string") return null;
-          var base64Url = token.split(".")[1];
+          if (!token || typeof token !== 'string') return null;
+          var base64Url = token.split('.')[1];
           if (!base64Url) return null;
-          var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-          while (base64.length % 4) base64 += "=";
+          var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          while (base64.length % 4) base64 += '=';
           return JSON.parse(atob(base64));
         } catch (e) {
           return { error: e.message };
@@ -133,25 +128,21 @@ const metadata = {
       }
 
       function hardReset() {
-        if (
-          confirm(
-            "This will log you out and clear all course-related session data. Proceed?",
-          )
-        ) {
+        if (confirm('This will log you out and clear all course-related session data. Proceed?')) {
           window.netlifyIdentity.logout();
-          document.cookie = "nf_jwt=; path=/; max-age=0";
+          document.cookie = 'nf_jwt=; path=/; max-age=0';
           sessionStorage.clear();
-          localStorage.removeItem("gotrue.user");
-          location.href = "/";
+          localStorage.removeItem('gotrue.user');
+          location.href = '/';
         }
       }
 
       // Helper: Call the server bridge to set the cookie via HTTP Headers
       // This bypasses browser-side JS blocking of the "nf_jwt" name.
       function setCookieViaBridge(token) {
-        return fetch("/.netlify/functions/set-auth-cookie", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        return fetch('/.netlify/functions/set-auth-cookie', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ token: token }),
         });
       }
@@ -161,11 +152,11 @@ const metadata = {
         var user = newUser || window.netlifyIdentity.currentUser();
         if (!user) return;
 
-        var guardKey = "access_denied_redirect_guard";
+        var guardKey = 'access_denied_redirect_guard';
         var isLooping = !!sessionStorage.getItem(guardKey);
 
         var courseSlug = getCourseSlugFromReturnTo();
-        var requiredRole = courseSlug ? "course:" + courseSlug : null;
+        var requiredRole = courseSlug ? 'course:' + courseSlug : null;
 
         user
           .jwt(true)
@@ -174,50 +165,28 @@ const metadata = {
               // TRY 1: Background Bridge (Prep)
               setCookieViaBridge(token)
                 .then(function () {
-                  processAuth(
-                    token,
-                    user,
-                    isLooping,
-                    requiredRole,
-                    buildTime,
-                    guardKey,
-                  );
+                  processAuth(token, user, isLooping, requiredRole, buildTime, guardKey);
                 })
                 .catch(function () {
-                  processAuth(
-                    token,
-                    user,
-                    isLooping,
-                    requiredRole,
-                    buildTime,
-                    guardKey,
-                  );
+                  processAuth(token, user, isLooping, requiredRole, buildTime, guardKey);
                 });
             }
           })
           .catch(function (err) {
-            showLoggedInMessage(user, "ERROR", { message: err.message });
+            showLoggedInMessage(user, 'ERROR', { message: err.message });
           });
       }
 
-      function processAuth(
-        token,
-        user,
-        isLooping,
-        requiredRole,
-        buildTime,
-        guardKey,
-      ) {
+      function processAuth(token, user, isLooping, requiredRole, buildTime, guardKey) {
         var claims = decodeJwt(token);
         var roles = (user.app_metadata && user.app_metadata.roles) || [];
-        var jwtRoles =
-          (claims && claims.app_metadata && claims.app_metadata.roles) || [];
+        var jwtRoles = (claims && claims.app_metadata && claims.app_metadata.roles) || [];
 
-        console.log("=== Access Denied v" + buildTime + " ===");
+        console.log('=== Access Denied v' + buildTime + ' ===');
 
         if (isLooping) {
           sessionStorage.removeItem(guardKey);
-          showLoggedInMessage(user, "LOOP", {
+          showLoggedInMessage(user, 'LOOP', {
             required: requiredRole,
             roles: roles,
             token: token,
@@ -225,12 +194,8 @@ const metadata = {
           return;
         }
 
-        if (
-          requiredRole &&
-          roles.indexOf(requiredRole) === -1 &&
-          jwtRoles.indexOf(requiredRole) === -1
-        ) {
-          showLoggedInMessage(user, "MISSING", {
+        if (requiredRole && roles.indexOf(requiredRole) === -1 && jwtRoles.indexOf(requiredRole) === -1) {
+          showLoggedInMessage(user, 'MISSING', {
             required: requiredRole,
             roles: roles,
           });
@@ -239,7 +204,7 @@ const metadata = {
 
         // User HAS the role — do NOT auto-redirect anymore.
         // Instead, show the bridge message and let them click the button.
-        showLoggedInMessage(user, "READY", {
+        showLoggedInMessage(user, 'READY', {
           required: requiredRole,
           roles: roles,
           token: token,
@@ -247,63 +212,51 @@ const metadata = {
       }
 
       function showLoggedInMessage(user, type, data) {
-        var title = document.querySelector("h1");
-        var desc = document.querySelector(".text-lg.text-muted");
-        var loginLink = document.getElementById("access-login-link");
+        var title = document.querySelector('h1');
+        var desc = document.querySelector('.text-lg.text-muted');
+        var loginLink = document.getElementById('access-login-link');
 
-        if (type === "READY" || type === "LOOP") {
-          if (title) title.textContent = "Access Verified!";
+        if (type === 'READY' || type === 'LOOP') {
           if (desc) {
-            var msg =
-              "<p class='mb-6'>Signed in as <strong>" +
-              user.email +
-              "</strong></p>";
-            msg +=
-              "<p class='text-emerald-700 font-bold mb-4'>Access synchronization required.</p>";
+            var msg = "<p class='mb-6'>Signed in as <strong>" + user.email + '</strong></p>';
+            msg += "<p class='text-emerald-700 font-bold mb-4'>Access synchronization required.</p>";
             msg +=
               "<p class='text-sm text-slate-500'>Click the button below to verify your permissions and enter the course.</p>";
             desc.innerHTML = msg;
           }
-        } else if (type === "MISSING") {
-          if (title) title.textContent = "Access Denied";
+        } else if (type === 'MISSING') {
+          if (title) title.textContent = 'Access Denied';
           if (desc) {
             desc.innerHTML =
               "<p class='mb-4'>Signed in as <strong>" +
               user.email +
-              "</strong></p>" +
-              "<p>Your account does not have the required role for this course.</p>";
+              '</strong></p>' +
+              '<p>Your account does not have the required role for this course.</p>';
           }
         } else {
-          if (title) title.textContent = "Something went wrong";
-          if (desc)
-            desc.textContent =
-              "Error: " + (data ? data.message : "Unknown error");
+          if (title) title.textContent = 'Something went wrong';
+          if (desc) desc.textContent = 'Error: ' + (data ? data.message : 'Unknown error');
         }
 
         if (loginLink) {
           var params = new URLSearchParams(window.location.search);
-          var returnTo = params.get("returnTo") || "/shop#courses";
+          var returnTo = params.get('returnTo') || '/shop#courses';
           var bridgeUrl =
-            "/.netlify/functions/set-auth-cookie?token=" +
-            encodeURIComponent(data?.token || "") +
-            "&returnTo=" +
+            '/.netlify/functions/set-auth-cookie?token=' +
+            encodeURIComponent(data?.token || '') +
+            '&returnTo=' +
             encodeURIComponent(returnTo) +
-            "&t=" +
+            '&t=' +
             Date.now();
 
           loginLink.textContent =
-            type === "READY" || type === "LOOP"
-              ? "Step 1: Sync Access Cookie"
-              : "Hard Reset Session";
-          loginLink.href =
-            type === "READY" || type === "LOOP"
-              ? bridgeUrl
-              : "javascript:hardReset()";
-          loginLink.style.display = "flex";
-          loginLink.style.backgroundColor = "#10b981";
+            type === 'READY' || type === 'LOOP' ? 'Step 1: Sync Access Cookie' : 'Hard Reset Session';
+          loginLink.href = type === 'READY' || type === 'LOOP' ? bridgeUrl : 'javascript:hardReset()';
+          loginLink.style.display = 'flex';
+          loginLink.style.backgroundColor = '#10b981';
 
           // Seamless Sync v24:10: If role is READY, auto-redirect to bridge after 800ms
-          if (type === "READY") {
+          if (type === 'READY') {
             setTimeout(function () {
               window.location.href = bridgeUrl;
             }, 800);
@@ -323,45 +276,35 @@ const metadata = {
       updateEnrollLink();
 
       // Fallback: in case init hasn't fired yet
-      window.netlifyIdentity.on("init", function (user) {
+      window.netlifyIdentity.on('init', function (user) {
         if (user) {
           tryRedirect(user);
         }
       });
 
       // If the user signs in FROM this page
-      window.netlifyIdentity.on("login", function (user) {
+      window.netlifyIdentity.on('login', function (user) {
         if (user) {
           tryRedirect(user);
         }
       });
 
       // Dev Spoof Logic
-      const spoofContainer = document.getElementById("dev-spoof-container");
-      const isLocal =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1";
+      const spoofContainer = document.getElementById('dev-spoof-container');
+      const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
       if (isLocal && spoofContainer) {
-        spoofContainer.classList.remove("hidden");
+        spoofContainer.classList.remove('hidden');
 
-        document
-          .getElementById("dev-spoof-magickal")
-          ?.addEventListener("click", () => {
-            sessionStorage.setItem("spoof_course:magickal-foundations", "true");
-            alert(
-              "Spoofed access to Magickal Foundations. You can now navigate back to the lesson.",
-            );
-          });
+        document.getElementById('dev-spoof-magickal')?.addEventListener('click', () => {
+          sessionStorage.setItem('spoof_course:magickal-foundations', 'true');
+          alert('Spoofed access to Magickal Foundations. You can now navigate back to the lesson.');
+        });
 
-        document
-          .getElementById("dev-spoof-chakra")
-          ?.addEventListener("click", () => {
-            sessionStorage.setItem("spoof_course:chakra-mastery", "true");
-            alert(
-              "Spoofed access to Chakra Mastery. You can now navigate back to the lesson.",
-            );
-          });
+        document.getElementById('dev-spoof-chakra')?.addEventListener('click', () => {
+          sessionStorage.setItem('spoof_course:chakra-mastery', 'true');
+          alert('Spoofed access to Chakra Mastery. You can now navigate back to the lesson.');
+        });
       }
     });
   </script>
