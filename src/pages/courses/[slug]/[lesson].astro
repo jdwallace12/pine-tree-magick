@@ -3,6 +3,7 @@ import Layout from '~/layouts/PageLayout.astro';
 import { Icon } from 'astro-icon/components';
 import { getCollection, getEntry } from 'astro:content';
 import { YouTube } from 'astro-embed';
+import Quiz from '~/components/widgets/Quiz.astro';
 import type { CollectionEntry } from 'astro:content';
 
 export interface Props {
@@ -126,6 +127,15 @@ const requiredRole = `course:${course?.slug}`;
       <div class="prose prose-lg dark:prose-invert max-w-none">
         <Content />
       </div>
+
+      {
+        lesson.data.quiz && lesson.data.quiz.length > 0 && (
+          <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700">
+            <h3 class="text-3xl font-heading font-bold mb-8 text-center">Knowledge Check</h3>
+            <Quiz title="" questions={lesson.data.quiz} showScore={false} />
+          </div>
+        )
+      }
 
       <!-- Lesson Navigation/Completion Container -->
       <div
