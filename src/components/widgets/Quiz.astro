@@ -39,7 +39,7 @@ const stringifiedQuestions = JSON.stringify(questions);
     <div class="question-container" id="question-container"></div>
   </div>
 
-  <div class="quiz-results hidden text-center py-8" id="quiz-results">
+  <div class="quiz-results hidden flex-col justify-center min-h-[250px] text-center" id="quiz-results">
     <div class="text-5xl mb-4">🎉</div>
     <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Quiz Complete!</h3>
     <p class="text-xl text-slate-600 dark:text-slate-300 mb-6 font-medium">
@@ -121,8 +121,8 @@ const stringifiedQuestions = JSON.stringify(questions);
       let userAnswers = new Array(questions.length).fill(null);
       let answerRevealed = false;
 
-      // Elements
       const progressEl = container.querySelector('.quiz-progress');
+      const quizBody = container.querySelector('.quiz-body');
       const questionContainer = container.querySelector('#question-container');
       const resultsEl = container.querySelector('#quiz-results');
       const scoreDisplay = container.querySelector('#score-display');
@@ -135,7 +135,9 @@ const stringifiedQuestions = JSON.stringify(questions);
 
         const q = questions[currentIndex];
         resultsEl!.classList.add('hidden');
+        resultsEl!.classList.remove('flex');
         quizHeader!.classList.remove('hidden');
+        quizBody!.classList.remove('hidden');
         answerRevealed = false;
 
         progressEl!.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
@@ -398,7 +400,9 @@ const stringifiedQuestions = JSON.stringify(questions);
       const renderResults = () => {
         questionContainer!.innerHTML = '';
         quizHeader!.classList.add('hidden');
+        quizBody!.classList.add('hidden');
         resultsEl!.classList.remove('hidden');
+        resultsEl!.classList.add('flex');
 
         if (showScore) {
           const score = calculateScore();
