@@ -3,7 +3,7 @@ export type Option = string | { text: string; image?: string };
 
 export interface Question {
   id: string | number;
-  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row' | 'reveal';
+  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row' | 'reveal' | 'reveal-row';
   question: string;
   image?: string;
   options?: Option[]; // for multiple choice, image-grid, or image-row
@@ -151,12 +151,16 @@ const stringifiedQuestions = JSON.stringify(questions);
         html += `<h3 class="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${q.question}</h3>`;
 
         if (
-          (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row' || q.type === 'reveal') &&
+          (q.type === 'multiple-choice' ||
+            q.type === 'image-grid' ||
+            q.type === 'image-row' ||
+            q.type === 'reveal' ||
+            q.type === 'reveal-row') &&
           q.options
         ) {
           const isGrid = q.type === 'image-grid' || q.type === 'reveal';
-          const isRow = q.type === 'image-row';
-          const isRevealType = q.type === 'reveal';
+          const isRow = q.type === 'image-row' || q.type === 'reveal-row';
+          const isRevealType = q.type === 'reveal' || q.type === 'reveal-row';
           const isFlippable = q.flip || isRevealType;
           const shouldHideText = q.hideText || isRevealType;
 
@@ -237,7 +241,13 @@ const stringifiedQuestions = JSON.stringify(questions);
         questionContainer!.innerHTML = html;
 
         // Attach listeners
-        if (q.type === 'multiple-choice' || q.type === 'image-grid' || q.type === 'image-row' || q.type === 'reveal') {
+        if (
+          q.type === 'multiple-choice' ||
+          q.type === 'image-grid' ||
+          q.type === 'image-row' ||
+          q.type === 'reveal' ||
+          q.type === 'reveal-row'
+        ) {
           const radios = questionContainer!.querySelectorAll('input[type="radio"]');
           radios.forEach((r) => {
             r.addEventListener('change', (e) => {
@@ -372,7 +382,8 @@ const stringifiedQuestions = JSON.stringify(questions);
             q.type === 'image-grid' ||
             q.type === 'image-row' ||
             q.type === 'text' ||
-            q.type === 'reveal'
+            q.type === 'reveal' ||
+            q.type === 'reveal-row'
           ) {
             const userAnswer = (userAnswers[idx] || '').toString().trim().toLowerCase();
             const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
