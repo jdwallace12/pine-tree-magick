@@ -142,7 +142,7 @@ const hasDiscount = discountCode && discountCode !== 'default';
         )}
       </div>
       <p>Audio readings are pre-recorded and include astrological insight and a Tarot card message from Spirit. Along with this detailed audio reading, you'll receive a guided ritual to help you work your desired manifestation. Each written ritual includes a link to a recorded meditation, journal prompts, altar suggestions, timing recommendations, and a step-by-step guide to help you manifest your intention.</p>
-
+    </div>
     <!-- Booking Form -->
     <div class="bg-primary/10 p-8 rounded-lg mt-12">
       <form 
@@ -402,6 +402,9 @@ const hasDiscount = discountCode && discountCode !== 'default';
             <Icon name="tabler:credit-card" id="submit-icon" class="w-5 h-5 mr-2" />
             <span id="submit-text">Proceed to Payment - ${currentPrice}</span>
           </button>
+          <p class="text-xs text-gray-400 text-center w-3/4 mx-auto mt-4">
+            By submitting this form you accept the terms of our <a href="/privacy" class="underline hover:text-primary transition-colors">privacy policy</a>.
+          </p>
         </div>
       </form>
     </div>
