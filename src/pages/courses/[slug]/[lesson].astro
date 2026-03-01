@@ -130,9 +130,11 @@ const requiredRole = `course:${course?.slug}`;
 
       {
         lesson.data.quiz && lesson.data.quiz.length > 0 && (
-          <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700">
-            <h3 class="text-3xl font-heading font-bold mb-8 text-center">Knowledge Check</h3>
-            <Quiz title="" questions={lesson.data.quiz} showScore={false} />
+          <div class="mt-16 w-[100vw] relative left-1/2 -translate-x-1/2 border-y border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            <h3 class="text-3xl font-heading font-bold mb-12 text-center">Knowledge Check</h3>
+            <div class="max-w-7xl mx-auto">
+              <Quiz title="" questions={lesson.data.quiz} showScore={false} />
+            </div>
           </div>
         )
       }

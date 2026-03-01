@@ -30,7 +30,7 @@ const stringifiedQuestions = JSON.stringify(questions);
   data-show-score={showScore.toString()}
 >
   <div class="quiz-header text-center mb-6">
-    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>
+    {title && <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>}
     <p class="quiz-progress text-slate-500 dark:text-slate-400 font-medium">Question 1 of {questions.length}</p>
   </div>
 
@@ -221,9 +221,13 @@ const stringifiedQuestions = JSON.stringify(questions);
                 <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 
                   ${isSelected ? 'selected' : 'unselected-row'}">
                   <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="w-5 h-5 text-primary-600 focus:ring-primary-500 border-slate-300 dark:bg-slate-800 flex-shrink-0" ${isSelected ? 'checked' : ''}>
-                  <div class="ml-4 flex flex-col sm:flex-row sm:items-center gap-3">
-                    ${optImage ? `<img src="${optImage}" class="h-20 w-auto object-cover rounded-lg border border-slate-200 dark:border-slate-700" alt="${escapeHtml(optValue)}" />` : ''}
-                    <span class="text-lg text-slate-700 dark:text-slate-200">${escapeHtml(optValue)}</span>
+                  <div class="ml-4 flex flex-col sm:flex-row sm:items-center gap-3 w-full">
+                    ${
+                      optImage
+                        ? `<img src="${optImage}" class="w-16 h-16 sm:w-24 sm:h-24 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm" alt="${escapeHtml(optValue)}" />`
+                        : ''
+                    }
+                    <span class="text-lg text-slate-700 dark:text-slate-200 font-medium">${escapeHtml(optValue)}</span>
                   </div>
                 </label>
               `;
