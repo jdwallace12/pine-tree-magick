@@ -5,6 +5,7 @@ module: 'Module 1: Getting Started'
 order: 1
 videoUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 isFree: true
+allowScore: true
 quiz:
   - id: 'q1'
     type: 'image-row'

@@ -174,6 +174,7 @@ const lessonCollection = defineCollection({
     slidesUrl: z.string().optional(),
     isFree: z.boolean().optional(),
     quiz: z.any().array().optional(),
+    allowScore: z.boolean().optional(),
     metadata: metadataDefinition(),
   }),
 });
