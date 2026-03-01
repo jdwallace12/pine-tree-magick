@@ -3,7 +3,7 @@ export type Option = string | { text: string; image?: string };
 
 export interface Question {
   id: string | number;
-  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row' | 'reveal' | 'reveal-row';
+  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row' | 'reveal-grid' | 'reveal-row';
   question: string;
   image?: string;
   options?: Option[]; // for multiple choice, image-grid, or image-row
@@ -154,13 +154,13 @@ const stringifiedQuestions = JSON.stringify(questions);
           (q.type === 'multiple-choice' ||
             q.type === 'image-grid' ||
             q.type === 'image-row' ||
-            q.type === 'reveal' ||
+            q.type === 'reveal-grid' ||
             q.type === 'reveal-row') &&
           q.options
         ) {
-          const isGrid = q.type === 'image-grid' || q.type === 'reveal';
+          const isGrid = q.type === 'image-grid' || q.type === 'reveal-grid';
           const isRow = q.type === 'image-row' || q.type === 'reveal-row';
-          const isRevealType = q.type === 'reveal' || q.type === 'reveal-row';
+          const isRevealType = q.type === 'reveal-grid' || q.type === 'reveal-row';
           const isFlippable = q.flip || isRevealType;
           const shouldHideText = q.hideText || isRevealType;
 
@@ -245,7 +245,7 @@ const stringifiedQuestions = JSON.stringify(questions);
           q.type === 'multiple-choice' ||
           q.type === 'image-grid' ||
           q.type === 'image-row' ||
-          q.type === 'reveal' ||
+          q.type === 'reveal-grid' ||
           q.type === 'reveal-row'
         ) {
           const radios = questionContainer!.querySelectorAll('input[type="radio"]');
@@ -382,7 +382,7 @@ const stringifiedQuestions = JSON.stringify(questions);
             q.type === 'image-grid' ||
             q.type === 'image-row' ||
             q.type === 'text' ||
-            q.type === 'reveal' ||
+            q.type === 'reveal-grid' ||
             q.type === 'reveal-row'
           ) {
             const userAnswer = (userAnswers[idx] || '').toString().trim().toLowerCase();
