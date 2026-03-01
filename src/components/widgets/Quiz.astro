@@ -1,0 +1,689 @@
+---
+export type Option = string | { text: string; image?: string };
+
+export interface Question {
+  id: string | number;
+  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row' | 'reveal-grid' | 'reveal-row';
+  question: string;
+  image?: string;
+  options?: Option[]; // for multiple choice, image-grid, or image-row
+  answer: string;
+  flip?: boolean;
+  hideText?: boolean;
+}
+
+export interface Props {
+  questions: Question[];
+  title?: string;
+  showScore?: boolean;
+}
+const { questions, title = 'Quiz', showScore = true } = Astro.props;
+const stringifiedQuestions = JSON.stringify(questions);
+---
+
+<!-- SAFELIST TAG FOR DYNAMIC TAILWIND CLASSES -->
+<div class="hidden grid grid-cols-2 md:grid-cols-4 aspect-square group-hover:opacity-90"></div>
+
+<div
+  class="quiz-container max-w-3xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 relative overflow-hidden"
+  data-questions={stringifiedQuestions}
+  data-show-score={showScore.toString()}
+>
+  <div class="quiz-header text-center mb-6">
+    <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>
+    <p class="quiz-progress text-slate-500 dark:text-slate-400 font-medium">Question 1 of {questions.length}</p>
+  </div>
+
+  <div class="quiz-body min-h-[250px] relative transition-opacity duration-300">
+    <!-- Question Content Injected Here by JS -->
+    <div class="question-container" id="question-container"></div>
+  </div>
+
+  <div class="quiz-results hidden text-center py-8" id="quiz-results">
+    <div class="text-5xl mb-4">🎉</div>
+    <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Quiz Complete!</h3>
+    <p class="text-xl text-slate-600 dark:text-slate-300 mb-6 font-medium">
+      Your score: <span id="score-display" class="text-primary-600 font-bold"></span> / <span id="total-display"></span>
+    </p>
+    <button
+      class="btn btn-primary px-8 py-3 rounded-lg font-bold bg-primary-600 hover:bg-primary-700 text-white transition-all shadow-md hover:shadow-lg w-full max-w-xs mx-auto"
+      id="btn-restart"
+    >
+      Restart Quiz
+    </button>
+  </div>
+</div>
+
+<script>
+  // ─── Pink Particle Explosion (CSS-based, fires over a target element) ───
+  function createParticleExplosion(targetEl: HTMLElement, containerEl: HTMLElement) {
+    const targetRect = targetEl.getBoundingClientRect();
+    const containerRect = containerEl.getBoundingClientRect();
+
+    // Center of the target element relative to the quiz container
+    const cx = targetRect.left - containerRect.left + targetRect.width / 2;
+    const cy = targetRect.top - containerRect.top + targetRect.height / 2;
+
+    const particleCount = 24;
+    const colors = ['#f59bbb', '#f7b7cc', '#fcd5e0', '#ffffff', '#e88aae', '#9acac6'];
+
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'quiz-particle';
+
+      // Random direction and distance
+      const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.5;
+      const distance = 40 + Math.random() * 80;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      const size = 4 + Math.random() * 8;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const duration = 600 + Math.random() * 400;
+      const delay = Math.random() * 100;
+
+      particle.style.cssText = `
+        position: absolute;
+        left: ${cx}px;
+        top: ${cy}px;
+        width: ${size}px;
+        height: ${size}px;
+        border-radius: 50%;
+        background: ${color};
+        box-shadow: 0 0 ${size}px ${color};
+        pointer-events: none;
+        z-index: 50;
+        animation: quizParticleFly ${duration}ms ${delay}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        --tx: ${tx}px;
+        --ty: ${ty}px;
+      `;
+
+      containerEl.appendChild(particle);
+
+      // Clean up after animation
+      setTimeout(() => particle.remove(), duration + delay + 50);
+    }
+  }
+
+  // ─── Quiz Logic ───
+  const setupQuizzes = () => {
+    const quizContainers = document.querySelectorAll('.quiz-container');
+
+    quizContainers.forEach((container) => {
+      if (container.hasAttribute('data-quiz-init')) return;
+      container.setAttribute('data-quiz-init', 'true');
+
+      const questionsStr = container.getAttribute('data-questions');
+      if (!questionsStr) return;
+
+      const questions = JSON.parse(questionsStr);
+      const showScore = container.getAttribute('data-show-score') === 'true';
+      let currentIndex = 0;
+      let userAnswers = new Array(questions.length).fill(null);
+      let answerRevealed = false;
+
+      // Elements
+      const progressEl = container.querySelector('.quiz-progress');
+      const questionContainer = container.querySelector('#question-container');
+      const resultsEl = container.querySelector('#quiz-results');
+      const scoreDisplay = container.querySelector('#score-display');
+      const totalDisplay = container.querySelector('#total-display');
+      const btnRestart = container.querySelector('#btn-restart');
+      const quizHeader = container.querySelector('.quiz-header');
+
+      const renderQuestion = () => {
+        if (currentIndex >= questions.length || currentIndex < 0) return;
+
+        const q = questions[currentIndex];
+        resultsEl!.classList.add('hidden');
+        quizHeader!.classList.remove('hidden');
+        answerRevealed = false;
+
+        progressEl!.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+
+        // Slide-in animation
+        (questionContainer as HTMLElement).classList.remove('quiz-slide-out');
+        (questionContainer as HTMLElement).classList.add('quiz-slide-in');
+
+        let html = ``;
+        if (q.image) {
+          html += `<img src="${escapeHtml(q.image)}" alt="Question Image" class="w-full max-h-64 object-cover object-center rounded-xl mb-6 shadow-sm" />`;
+        }
+        html += `<h3 class="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-6 leading-snug">${q.question}</h3>`;
+
+        if (
+          (q.type === 'multiple-choice' ||
+            q.type === 'image-grid' ||
+            q.type === 'image-row' ||
+            q.type === 'reveal-grid' ||
+            q.type === 'reveal-row') &&
+          q.options
+        ) {
+          const isGrid = q.type === 'image-grid' || q.type === 'reveal-grid';
+          const isRow = q.type === 'image-row' || q.type === 'reveal-row';
+          const isRevealType = q.type === 'reveal-grid' || q.type === 'reveal-row';
+          const isFlippable = q.flip || isRevealType;
+          const shouldHideText = q.hideText || isRevealType;
+
+          let containerClass = 'flex flex-col gap-3';
+          if (isGrid) {
+            containerClass = 'custom-image-grid';
+          } else if (isRow) {
+            containerClass = 'custom-image-row';
+          }
+
+          html += `<div class="options-container ${containerClass}">`;
+          q.options.forEach((optItem: any, idx: number) => {
+            let optValue = '';
+            let optImage = null;
+
+            if (typeof optItem === 'string') {
+              optValue = optItem;
+            } else if (typeof optItem === 'object' && optItem !== null) {
+              optValue = optItem.text || '';
+              optImage = optItem.image || null;
+            }
+
+            const isSelected = userAnswers[currentIndex] === optValue;
+
+            if (isGrid || isRow) {
+              const flipClass = isFlippable ? 'flip-card' : '';
+              html += `
+                <label class="custom-grid-option flex flex-col h-full border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group
+                  ${isSelected ? 'selected flipped' : 'unselected'} ${flipClass}">
+                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="custom-radio-input" ${isSelected ? 'checked' : ''}>
+                  ${
+                    optImage
+                      ? `<div class="custom-image-wrapper">
+                          ${
+                            isFlippable
+                              ? `<div class="flip-card-inner">
+                                  <div class="flip-card-front bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-4xl">
+                                    ✨
+                                  </div>
+                                  <div class="flip-card-back">
+                                    <img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" />
+                                  </div>
+                                </div>`
+                              : `<img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" />`
+                          }
+                        </div>`
+                      : '<div class="custom-image-wrapper bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>'
+                  }
+                  <div class="p-4 text-center border-t border-slate-100 dark:border-slate-700/50 ${shouldHideText ? 'reveal-text' : ''}">
+                    <span class="font-semibold text-sm md:text-base text-slate-800 dark:text-slate-200">${escapeHtml(optValue)}</span>
+                  </div>
+                </label>
+              `;
+            } else {
+              html += `
+                <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 
+                  ${isSelected ? 'selected' : 'unselected-row'}">
+                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="w-5 h-5 text-primary-600 focus:ring-primary-500 border-slate-300 dark:bg-slate-800 flex-shrink-0" ${isSelected ? 'checked' : ''}>
+                  <div class="ml-4 flex flex-col sm:flex-row sm:items-center gap-3">
+                    ${optImage ? `<img src="${optImage}" class="h-20 w-auto object-cover rounded-lg border border-slate-200 dark:border-slate-700" alt="${escapeHtml(optValue)}" />` : ''}
+                    <span class="text-lg text-slate-700 dark:text-slate-200">${escapeHtml(optValue)}</span>
+                  </div>
+                </label>
+              `;
+            }
+          });
+          html += `</div>`;
+        } else if (q.type === 'text') {
+          const val = userAnswers[currentIndex] || '';
+          html += `
+            <div class="flex gap-3">
+              <input type="text" class="flex-1 p-4 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow" placeholder="Type your answer here..." value="${escapeHtml(val)}" data-q-input="true" />
+              <button type="button" class="quiz-submit-btn px-6 py-4 rounded-xl font-bold bg-primary-600 hover:bg-primary-700 text-white transition-colors shadow-md hover:shadow-lg" data-submit-btn="true">Submit</button>
+            </div>
+          `;
+        }
+
+        questionContainer!.innerHTML = html;
+
+        // Attach listeners
+        if (
+          q.type === 'multiple-choice' ||
+          q.type === 'image-grid' ||
+          q.type === 'image-row' ||
+          q.type === 'reveal-grid' ||
+          q.type === 'reveal-row'
+        ) {
+          const radios = questionContainer!.querySelectorAll('input[type="radio"]');
+          radios.forEach((r) => {
+            r.addEventListener('change', (e) => {
+              if (answerRevealed) return;
+              userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
+              revealAnswer(q);
+            });
+          });
+        } else if (q.type === 'text') {
+          const input = questionContainer!.querySelector('input[data-q-input="true"]');
+          const submitBtn = questionContainer!.querySelector('[data-submit-btn]');
+          input!.addEventListener('input', (e) => {
+            userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
+          });
+          input!.addEventListener('keydown', (e) => {
+            if ((e as KeyboardEvent).key === 'Enter' && !answerRevealed) {
+              userAnswers[currentIndex] = (input as HTMLInputElement).value;
+              revealAnswer(q);
+            }
+          });
+          if (submitBtn) {
+            submitBtn.addEventListener('click', () => {
+              if (answerRevealed) return;
+              userAnswers[currentIndex] = (input as HTMLInputElement).value;
+              revealAnswer(q);
+            });
+          }
+        }
+      };
+
+      const revealAnswer = (q: any) => {
+        answerRevealed = true;
+        const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
+        const userAnswer = (userAnswers[currentIndex] || '').toString().trim().toLowerCase();
+        const isCorrect = userAnswer === correctAnswer;
+
+        if (q.type === 'text') {
+          const input = questionContainer!.querySelector('input[data-q-input="true"]') as HTMLInputElement;
+          if (input) input.disabled = true;
+
+          const feedbackEl = document.createElement('div');
+          feedbackEl.className = 'mt-4 p-4 rounded-xl font-semibold text-lg flex items-center gap-3 animate-fade-in';
+          if (isCorrect) {
+            feedbackEl.classList.add(
+              'bg-emerald-50',
+              'dark:bg-emerald-900/30',
+              'text-emerald-700',
+              'dark:text-emerald-300',
+              'border',
+              'border-emerald-200',
+              'dark:border-emerald-700'
+            );
+            feedbackEl.innerHTML = `<span class="text-2xl">✓</span> Correct!`;
+            // Fire particle explosion over the input
+            createParticleExplosion(input, container as HTMLElement);
+          } else {
+            feedbackEl.classList.add(
+              'bg-red-50',
+              'dark:bg-red-900/30',
+              'text-red-700',
+              'dark:text-red-300',
+              'border',
+              'border-red-200',
+              'dark:border-red-700'
+            );
+            feedbackEl.innerHTML = `<span class="text-2xl">✗</span> The correct answer is: <strong>${escapeHtml(q.answer)}</strong>`;
+          }
+          questionContainer!.appendChild(feedbackEl);
+        } else {
+          // Multiple choice / grid / row / reveal — highlight options
+          const labels = questionContainer!.querySelectorAll('label');
+          const radios = questionContainer!.querySelectorAll('input[type="radio"]');
+
+          // Disable all radios
+          radios.forEach((r) => ((r as HTMLInputElement).disabled = true));
+
+          // Flip all cards to reveal images and show hidden text
+          labels.forEach((label) => {
+            label.classList.add('flipped');
+            const revealText = label.querySelector('.reveal-text');
+            if (revealText) (revealText as HTMLElement).style.opacity = '1';
+          });
+
+          let correctLabel: HTMLElement | null = null;
+
+          labels.forEach((label) => {
+            const radio = label.querySelector('input[type="radio"]') as HTMLInputElement;
+            if (!radio) return;
+            const val = radio.value.trim().toLowerCase();
+
+            label.classList.remove('selected', 'unselected', 'unselected-row');
+            label.classList.add('pointer-events-none');
+
+            if (val === correctAnswer) {
+              label.classList.add('quiz-answer-correct');
+              correctLabel = label as HTMLElement;
+            } else if (radio.checked && val !== correctAnswer) {
+              label.classList.add('quiz-answer-wrong');
+            } else {
+              label.classList.add('quiz-answer-dim');
+            }
+          });
+
+          // Fire pink particle explosion over the correct answer
+          if (isCorrect && correctLabel) {
+            createParticleExplosion(correctLabel, container as HTMLElement);
+          }
+        }
+
+        // Auto-advance: slide out, then render next after 2 seconds
+        setTimeout(() => {
+          (questionContainer as HTMLElement).classList.remove('quiz-slide-in');
+          (questionContainer as HTMLElement).classList.add('quiz-slide-out');
+
+          // Wait for slide-out animation to finish (400ms) then advance
+          setTimeout(() => {
+            if (currentIndex < questions.length - 1) {
+              currentIndex++;
+              renderQuestion();
+            } else {
+              renderResults();
+            }
+          }, 400);
+        }, 2000);
+      };
+
+      const calculateScore = () => {
+        let score = 0;
+        questions.forEach((q: any, idx: number) => {
+          if (
+            q.type === 'multiple-choice' ||
+            q.type === 'image-grid' ||
+            q.type === 'image-row' ||
+            q.type === 'text' ||
+            q.type === 'reveal-grid' ||
+            q.type === 'reveal-row'
+          ) {
+            const userAnswer = (userAnswers[idx] || '').toString().trim().toLowerCase();
+            const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
+            if (userAnswer === correctAnswer) {
+              score++;
+            }
+          }
+        });
+        return score;
+      };
+
+      const renderResults = () => {
+        questionContainer!.innerHTML = '';
+        quizHeader!.classList.add('hidden');
+        resultsEl!.classList.remove('hidden');
+
+        if (showScore) {
+          const score = calculateScore();
+          scoreDisplay!.textContent = score.toString();
+          totalDisplay!.textContent = questions.length.toString();
+          (resultsEl!.querySelector('p') as HTMLElement).classList.remove('hidden');
+        } else {
+          (resultsEl!.querySelector('p') as HTMLElement).classList.add('hidden');
+        }
+
+        // Fire a celebration explosion over the results emoji
+        const emojiEl = resultsEl!.querySelector('div') as HTMLElement;
+        if (emojiEl) {
+          createParticleExplosion(emojiEl, container as HTMLElement);
+          setTimeout(() => createParticleExplosion(emojiEl, container as HTMLElement), 300);
+        }
+      };
+
+      btnRestart!.addEventListener('click', () => {
+        currentIndex = 0;
+        userAnswers = new Array(questions.length).fill(null);
+        renderQuestion();
+      });
+
+      const escapeHtml = (unsafe: any) => {
+        if (!unsafe) return '';
+        return unsafe
+          .toString()
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      };
+
+      // Initial render
+      renderQuestion();
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', setupQuizzes);
+  document.addEventListener('astro:page-load', setupQuizzes);
+</script>
+
+<style is:global>
+  /* ─── Particle Explosion Keyframes ─── */
+  @keyframes quizParticleFly {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translate(var(--tx), var(--ty)) scale(0);
+      opacity: 0;
+    }
+  }
+
+  /* ─── Quiz Body Animations ─── */
+  .quiz-body {
+    animation: fadeIn 0.4s ease-out;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ─── Question Slide Transitions ─── */
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(60px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutLeft {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-60px);
+    }
+  }
+
+  .quiz-slide-in {
+    animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .quiz-slide-out {
+    animation: slideOutLeft 0.4s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  /* ─── Answer Reveal Styles ─── */
+  .quiz-answer-correct {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 2px #10b981 !important;
+    background-color: rgb(16 185 129 / 10%) !important;
+    position: relative;
+  }
+
+  .quiz-answer-correct::after {
+    content: '✓';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #10b981;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .quiz-answer-wrong {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px #ef4444 !important;
+    background-color: rgb(239 68 68 / 10%) !important;
+    position: relative;
+  }
+
+  .quiz-answer-wrong::after {
+    content: '✗';
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ef4444;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .quiz-answer-dim {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+  }
+
+  /* ─── Image Grid ─── */
+  .custom-image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .custom-image-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .custom-image-row {
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+    }
+  }
+
+  .custom-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+  }
+
+  .custom-grid-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.3s ease;
+  }
+
+  .custom-grid-option:hover .custom-grid-image {
+    transform: scale(1.05);
+  }
+
+  .custom-radio-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .selected {
+    border-color: #f59bbb;
+    box-shadow: 0 0 0 2px #f59bbb;
+    background-color: rgb(245 155 187 / 10%);
+  }
+
+  .unselected {
+    border-color: #e2e8f0;
+    background-color: transparent;
+  }
+
+  .unselected:hover {
+    border-color: #f59bbb;
+    background-color: rgb(245 155 187 / 5%);
+  }
+
+  .unselected-row {
+    border-color: #e2e8f0;
+  }
+
+  .unselected-row:hover {
+    border-color: #f59bbb;
+    background-color: rgb(245 155 187 / 5%);
+  }
+
+  .dark .unselected {
+    border-color: #334155;
+  }
+
+  .dark .unselected-row {
+    border-color: #334155;
+  }
+
+  /* ─── Flip Card Styles ─── */
+  .flip-card {
+    perspective: 1000px;
+  }
+
+  .flip-card .custom-image-wrapper {
+    perspective: 1000px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front,
+  .flip-card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+  }
+
+  .flip-card-front {
+    z-index: 2;
+  }
+
+  .flip-card-back {
+    z-index: 1;
+    transform: rotateY(180deg);
+  }
+
+  .flip-card .reveal-text {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    transition-delay: 0.3s;
+  }
+
+  .flip-card.flipped .reveal-text {
+    opacity: 1;
+  }
+</style>
