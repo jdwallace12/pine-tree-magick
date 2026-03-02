@@ -133,7 +133,12 @@ const requiredRole = `course:${course?.slug}`;
           <div class="mt-16 w-[100vw] relative left-1/2 -translate-x-1/2 border-y border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 py-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
             <h3 class="text-3xl font-heading font-bold mb-12 text-center">Knowledge Check</h3>
             <div class="max-w-7xl mx-auto">
-              <Quiz title="" questions={lesson.data.quiz} showScore={lesson.data.allowScore ?? false} />
+              <Quiz
+                title=""
+                questions={lesson.data.quiz}
+                showScore={lesson.data.allowScore ?? false}
+                hideFeedback={lesson.data.hideFeedback ?? false}
+              />
             </div>
           </div>
         )
@@ -162,7 +167,7 @@ const requiredRole = `course:${course?.slug}`;
           class="flex items-center gap-2 px-8 py-3 rounded-full font-bold transition-all duration-300 border-2 w-full sm:w-auto justify-center"
         >
           <span class="icon-pending italic">Mark as Completed</span>
-          <span class="icon-completed hidden flex items-center gap-2"
+          <span class="icon-completed hidden items-center gap-2"
             >Completed <Icon name="tabler:circle-check" class="w-5 h-5" /></span
           >
         </button>
@@ -221,7 +226,10 @@ const requiredRole = `course:${course?.slug}`;
             'hover:border-primary'
           );
           if (pending) pending.classList.add('hidden');
-          if (completed) completed.classList.remove('hidden');
+          if (completed) {
+            completed.classList.remove('hidden');
+            completed.classList.add('flex');
+          }
         } else {
           btn.classList.remove('bg-green-100', 'text-green-800', 'border-green-200');
           btn.classList.add(
@@ -232,7 +240,10 @@ const requiredRole = `course:${course?.slug}`;
             'hover:border-primary'
           );
           if (pending) pending.classList.remove('hidden');
-          if (completed) completed.classList.add('hidden');
+          if (completed) {
+            completed.classList.add('hidden');
+            completed.classList.remove('flex');
+          }
         }
       };
 

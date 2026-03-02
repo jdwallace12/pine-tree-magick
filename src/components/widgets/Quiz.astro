@@ -1,23 +1,13 @@
 ---
-export type Option = string | { text: string; image?: string };
-
-export interface Question {
-  id: string | number;
-  type: 'multiple-choice' | 'text' | 'image-grid' | 'image-row' | 'reveal-grid' | 'reveal-row';
-  question: string;
-  image?: string;
-  options?: Option[]; // for multiple choice, image-grid, or image-row
-  answer: string;
-  flip?: boolean;
-  hideText?: boolean;
-}
+import type { Question } from '~/types/quiz';
 
 export interface Props {
   questions: Question[];
   title?: string;
   showScore?: boolean;
+  hideFeedback?: boolean;
 }
-const { questions, title = 'Quiz', showScore = true } = Astro.props;
+const { questions, title = 'Quiz', showScore = true, hideFeedback = false } = Astro.props;
 const stringifiedQuestions = JSON.stringify(questions);
 ---
 
@@ -28,6 +18,7 @@ const stringifiedQuestions = JSON.stringify(questions);
   class="quiz-container w-full mx-auto p-8 md:p-12 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 relative overflow-hidden"
   data-questions={stringifiedQuestions}
   data-show-score={showScore.toString()}
+  data-hide-feedback={hideFeedback.toString()}
 >
   <div class="quiz-header text-center mb-6">
     {title && <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">{title}</h2>}
@@ -117,9 +108,11 @@ const stringifiedQuestions = JSON.stringify(questions);
 
       const questions = JSON.parse(questionsStr);
       const showScore = container.getAttribute('data-show-score') === 'true';
+      const globalHideFeedback = container.getAttribute('data-hide-feedback') === 'true';
       let currentIndex = 0;
       let userAnswers = new Array(questions.length).fill(null);
       let answerRevealed = false;
+      let qualityScores = {};
 
       const progressEl = container.querySelector('.quiz-progress');
       const quizBody = container.querySelector('.quiz-body');
@@ -203,10 +196,10 @@ const stringifiedQuestions = JSON.stringify(questions);
                                     ✨
                                   </div>
                                   <div class="flip-card-back">
-                                    <img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" />
+                                    <img src="${escapeHtml(optImage)}" class="custom-grid-image" alt="${escapeHtml(optValue)}" loading="lazy" />
                                   </div>
                                 </div>`
-                              : `<img src="${optImage}" class="custom-grid-image" alt="${escapeHtml(optValue)}" />`
+                              : `<img src="${escapeHtml(optImage)}" class="custom-grid-image" alt="${escapeHtml(optValue)}" loading="lazy" />`
                           }
                         </div>`
                       : '<div class="custom-image-wrapper bg-slate-100 flex items-center justify-center text-slate-400">No Image</div>'
@@ -224,7 +217,7 @@ const stringifiedQuestions = JSON.stringify(questions);
                   <div class="ml-4 flex flex-col sm:flex-row sm:items-center gap-3 w-full">
                     ${
                       optImage
-                        ? `<img src="${optImage}" class="w-16 h-16 sm:w-24 sm:h-24 object-cover rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm" alt="${escapeHtml(optValue)}" />`
+                        ? `<img src="${escapeHtml(optImage)}" class="w-24 h-24 sm:w-32 sm:h-32 object-cover rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm" alt="${escapeHtml(optValue)}" loading="lazy" />`
                         : ''
                     }
                     <span class="text-lg text-slate-700 dark:text-slate-200 font-medium">${escapeHtml(optValue)}</span>
@@ -238,7 +231,7 @@ const stringifiedQuestions = JSON.stringify(questions);
           const val = userAnswers[currentIndex] || '';
           html += `
             <div class="flex gap-3">
-              <input type="text" class="flex-1 p-4 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-shadow" placeholder="Type your answer here..." value="${escapeHtml(val)}" data-q-input="true" />
+              <input type="text" class="flex-1 p-4 border border-slate-300 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-lg focus:ring-2 focus:ring-[#f59bbb]/50 focus:border-[#f59bbb] transition-shadow outline-none" placeholder="Type your answer here..." value="${escapeHtml(val)}" data-q-input="true" />
               <button type="button" class="quiz-submit-btn px-6 py-4 rounded-xl font-bold bg-primary-600 hover:bg-primary-700 text-white transition-colors shadow-md hover:shadow-lg" data-submit-btn="true">Submit</button>
             </div>
           `;
@@ -286,11 +279,40 @@ const stringifiedQuestions = JSON.stringify(questions);
 
       const revealAnswer = (q: any) => {
         answerRevealed = true;
+
+        const hideFeedback = globalHideFeedback || q.hideFeedback || !q.answer;
         const correctAnswer = (q.answer || '').toString().trim().toLowerCase();
         const userAnswer = (userAnswers[currentIndex] || '').toString().trim().toLowerCase();
         const isCorrect = userAnswer === correctAnswer;
 
-        if (q.type === 'text') {
+        if (hideFeedback) {
+          // No visual green/red, just flip if needed
+          if (q.type !== 'text') {
+            const labels = questionContainer!.querySelectorAll('label');
+            const radios = questionContainer!.querySelectorAll('input[type="radio"]');
+            radios.forEach((r) => ((r as HTMLInputElement).disabled = true));
+            labels.forEach((label) => {
+              label.classList.add('flipped');
+              const revealText = label.querySelector('.reveal-text');
+              if (revealText) (revealText as HTMLElement).style.opacity = '1';
+              label.classList.add('pointer-events-none');
+
+              // Highlight the selected one in brand pink
+              const radio = label.querySelector('input[type="radio"]') as HTMLInputElement;
+              if (radio && radio.checked) {
+                label.classList.add('quiz-answer-selected');
+              } else {
+                label.classList.add('quiz-answer-dim');
+              }
+            });
+          } else {
+            const input = questionContainer!.querySelector('input[data-q-input="true"]') as HTMLInputElement;
+            if (input) {
+              input.disabled = true;
+              input.classList.add('border-primary-400', 'ring-2', 'ring-primary-500/20');
+            }
+          }
+        } else if (q.type === 'text') {
           const input = questionContainer!.querySelector('input[data-q-input="true"]') as HTMLInputElement;
           if (input) input.disabled = true;
 
@@ -357,9 +379,15 @@ const stringifiedQuestions = JSON.stringify(questions);
             }
           });
 
-          // Fire pink particle explosion over the correct answer
-          if (isCorrect && correctLabel) {
-            createParticleExplosion(correctLabel, container as HTMLElement);
+          // Fire pink particle explosion over the correct or selected answer
+          const labelToExplode = hideFeedback
+            ? questionContainer!.querySelector('.quiz-answer-selected')
+            : isCorrect
+              ? correctLabel
+              : null;
+
+          if (labelToExplode) {
+            createParticleExplosion(labelToExplode as HTMLElement, container as HTMLElement);
           }
         }
 
@@ -377,7 +405,7 @@ const stringifiedQuestions = JSON.stringify(questions);
               renderResults();
             }
           }, 400);
-        }, 2000);
+        }, 750);
       };
 
       const calculateScore = () => {
@@ -410,24 +438,68 @@ const stringifiedQuestions = JSON.stringify(questions);
 
         if (showScore) {
           const score = calculateScore();
-          scoreDisplay!.textContent = score.toString();
-          totalDisplay!.textContent = questions.length.toString();
-          (resultsEl!.querySelector('p') as HTMLElement).classList.remove('hidden');
+          const categories = calculateCategories();
+
+          const hasCategories = Object.keys(categories).length > 0;
+          const hasTraditionalScore = questions.some((q) => q.answer);
+
+          if (hasTraditionalScore) {
+            scoreDisplay!.textContent = score.toString();
+            totalDisplay!.textContent = questions.length.toString();
+            resultsEl!.querySelector('p')!.classList.remove('hidden');
+          } else {
+            resultsEl!.querySelector('p')!.classList.add('hidden');
+          }
+
+          if (hasCategories) {
+            const entries = Object.entries(categories);
+            const topCategoryEntry = entries.reduce((a, b) => ((a[1] as number) > (b[1] as number) ? a : b));
+            const topCategory = topCategoryEntry[0];
+            const categoryEl = document.createElement('div');
+            categoryEl.className =
+              'mt-6 p-6 bg-primary-50 dark:bg-primary-900/20 rounded-2xl border border-primary-100 dark:border-primary-800/50 animate-fade-in';
+            categoryEl.innerHTML = `
+              <h4 class="text-sm font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-1">Your Primary Path</h4>
+              <p class="text-3xl font-bold text-slate-800 dark:text-white capitalize">${topCategory}</p>
+            `;
+            resultsEl!.prepend(categoryEl);
+          }
         } else {
-          (resultsEl!.querySelector('p') as HTMLElement).classList.add('hidden');
+          resultsEl!.querySelector('p')!.classList.add('hidden');
         }
 
         // Fire a celebration explosion over the results emoji
-        const emojiEl = resultsEl!.querySelector('div') as HTMLElement;
+        const emojiEl = resultsEl!.querySelector('div');
         if (emojiEl) {
           createParticleExplosion(emojiEl, container as HTMLElement);
-          setTimeout(() => createParticleExplosion(emojiEl, container as HTMLElement), 300);
+          setTimeout(() => createParticleExplosion(emojiEl!, container as HTMLElement), 300);
         }
+      };
+
+      const calculateCategories = () => {
+        const categories = {};
+        questions.forEach((q, idx) => {
+          const selectedText = userAnswers[idx];
+          if (!selectedText) return;
+
+          const option = q.options?.find((o) => (typeof o === 'string' ? o : o.text) === selectedText);
+          if (option && typeof option === 'object' && option.qualities) {
+            Object.entries(option.qualities).forEach(([cat, weight]) => {
+              categories[cat] = (categories[cat] || 0) + (weight as number);
+            });
+          }
+        });
+        return categories;
       };
 
       btnRestart!.addEventListener('click', () => {
         currentIndex = 0;
         userAnswers = new Array(questions.length).fill(null);
+        // Remove injected category element if any
+        const existingCategory = resultsEl!.querySelector('.animate-fade-in');
+        if (existingCategory && existingCategory.tagName === 'DIV') {
+          existingCategory.remove();
+        }
         renderQuestion();
       });
 
@@ -556,22 +628,36 @@ const stringifiedQuestions = JSON.stringify(questions);
     transition: opacity 0.3s ease;
   }
 
+  .quiz-answer-selected {
+    border-color: #f59bbb !important;
+    box-shadow: 0 0 0 2px #f59bbb !important;
+    background-color: rgb(245 155 187 / 15%) !important;
+    position: relative;
+    z-index: 10;
+  }
+
   /* ─── Image Grid ─── */
   .custom-image-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .custom-image-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
   }
 
   .custom-image-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
+    gap: 1.5rem;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     .custom-image-row {
-      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
   }
 
@@ -580,6 +666,11 @@ const stringifiedQuestions = JSON.stringify(questions);
     width: 100%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
+    background-color: rgb(241 245 249);
+  }
+
+  .dark .custom-image-wrapper {
+    background-color: rgb(30 41 59);
   }
 
   .custom-grid-image {
@@ -587,11 +678,24 @@ const stringifiedQuestions = JSON.stringify(questions);
     height: 100%;
     object-fit: cover;
     object-position: center;
-    transition: transform 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .custom-grid-option {
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .custom-grid-option:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 
   .custom-grid-option:hover .custom-grid-image {
-    transform: scale(1.05);
+    transform: scale(1.1);
   }
 
   .custom-radio-input {
@@ -608,13 +712,14 @@ const stringifiedQuestions = JSON.stringify(questions);
 
   .selected {
     border-color: #f59bbb;
-    box-shadow: 0 0 0 2px #f59bbb;
+    box-shadow: 0 0 15px rgba(245, 155, 187, 0.3);
     background-color: rgb(245 155 187 / 10%);
   }
 
   .unselected {
     border-color: #e2e8f0;
     background-color: transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .unselected:hover {
