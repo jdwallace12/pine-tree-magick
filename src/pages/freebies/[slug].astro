@@ -67,7 +67,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
         <Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to Shop
       </a>
       <a class="btn-primary ml-2 py-2.5 px-5.5 md:px-6 font-semibold shadow-none text-sm w-auto" href="#download"
-        >{isRedirect ? 'Get Access' : 'Download'}</a
+        >{isRedirect ? 'Get My Freebie' : 'Download'}</a
       >
     </div>
 
@@ -92,7 +92,7 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
               This freebie has expired and is no longer available.
             </div>
           ) : (
-            <div class="text-center mt-2" id="download">
+            <div class="text-center mt-2 scroll-mt-32" id="download">
               <div class="bg-primary/10 p-8 rounded-lg mt-6">
                 <form
                   name="freebie-download"
@@ -165,7 +165,11 @@ const isExpired = expirationDate ? new Date() > new Date(expirationDate) : false
                 You'll be redirected {isRedirect ? 'to your freebie' : 'to your PDF'} after submitting.
               </p>
               <p class="text-xs text-gray-400 text-center w-3/4 mx-auto mt-2">
-                By submitting this form you accept the terms of our <a href="/privacy" class="underline hover:text-primary transition-colors">privacy policy</a>.
+                By submitting this form you accept the terms of our{' '}
+                <a href="/privacy" class="text-gray-400 font-normal underline hover:text-primary transition-colors">
+                  privacy policy
+                </a>
+                .
               </p>
             </div>
           )

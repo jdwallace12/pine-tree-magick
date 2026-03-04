@@ -11,7 +11,7 @@ const { title, payPalButtonId, formName, itemType, showAllergies = false } = Ast
 ---
 
 <!-- Purchase Form -->
-<div class="text-center mt-2" id="purchase">
+<div class="text-center mt-2 scroll-mt-32" id="purchase">
   <div class="bg-primary/10 p-8 rounded-lg mt-6">
     <form
       name={formName}
@@ -100,7 +100,10 @@ const { title, payPalButtonId, formName, itemType, showAllergies = false } = Ast
     You will be redirected to PayPal checkout after submitting your information.
   </p>
   <p class="text-xs text-gray-400 text-center w-3/4 mx-auto mt-2">
-    By submitting this form you accept the terms of our <a href="/privacy" class="underline hover:text-primary transition-colors">privacy policy</a>.
+    By submitting this form you accept the terms of our <a
+      href="/privacy"
+      class="text-gray-400 font-normal underline hover:text-primary transition-colors">privacy policy</a
+    >.
   </p>
 </div>
 
