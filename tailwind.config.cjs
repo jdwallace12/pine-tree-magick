@@ -8,7 +8,7 @@ module.exports = {
           css: {
             'h1, h2, h3, h4': {
               fontWeight: '700',
-              fontFamily: 'var(--font-heading)',
+              fontFamily: 'var(--aw-font-heading)',
               color: 'var(--tw-prose-headings)',
             },
             'ul > li': {

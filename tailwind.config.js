@@ -23,6 +23,17 @@ module.exports = {
         serif: ['var(--aw-font-serif, ui-serif)', ...defaultTheme.fontFamily.serif],
         heading: ['var(--aw-font-heading, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
       },
+      typography: {
+        DEFAULT: {
+          css: {
+            'h1, h2, h3, h4': {
+              fontWeight: '700',
+              fontFamily: 'var(--aw-font-heading)',
+              color: 'var(--tw-prose-headings)',
+            },
+          },
+        },
+      },
     },
   },
   plugins: [
