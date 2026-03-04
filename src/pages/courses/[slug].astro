@@ -6,7 +6,7 @@ import { Icon } from 'astro-icon/components';
 import { getCollection, getEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-  const courses = await getCollection('course');
+  const courses = await getCollection('course', ({ data }) => data.published === true);
   return courses.map((course) => ({
     params: { slug: course.slug },
     props: { course },

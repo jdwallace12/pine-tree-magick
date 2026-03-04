@@ -7,7 +7,7 @@ async function getActiveShopLinks() {
   // Get collections
   const bundles = await getCollection('bundle');
   const rituals = await getCollection('ritual');
-  const courses = await getCollection('course');
+  const courses = await getCollection('course', ({ data }) => data.published === true);
   const freebies = await getCollection('freebie');
 
   // Check for active items

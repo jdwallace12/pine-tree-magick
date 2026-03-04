@@ -20,7 +20,7 @@ export interface Props {
 
 export async function getStaticPaths() {
   const lessons = await getCollection('lesson');
-  const courses = await getCollection('course');
+  const courses = await getCollection('course', ({ data }) => data.published === true);
 
   // Group lessons by course
   const courseLessonsMap = lessons.reduce(

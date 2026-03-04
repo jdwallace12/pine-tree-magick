@@ -149,6 +149,7 @@ const courseCollection = defineCollection({
     image: z.string(),
     price: z.number(),
     payPalButtonId: z.string(),
+    published: z.boolean().optional(),
     modules: z.array(z.string()).optional(), // List of module names in order
     features: z
       .array(

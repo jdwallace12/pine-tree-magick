@@ -17,7 +17,7 @@ const {
 // Use passed items or fetch from collection
 let activeCourses = items || [];
 if (!items) {
-  activeCourses = await getCollection('course');
+  activeCourses = await getCollection('course', ({ data }) => data.published === true);
   // Sort by order if available
   // @ts-ignore
   activeCourses.sort((a, b) => (a.data.order ?? 999) - (b.data.order ?? 999));
