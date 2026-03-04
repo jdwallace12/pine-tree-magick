@@ -35,7 +35,7 @@ const stringifiedQuestions = JSON.stringify(questions);
       Your score: <span id="score-display" class="text-[#f59bbb] font-bold"></span> / <span id="total-display"></span>
     </p>
     <button
-      class="mt-8 px-8 py-3 rounded-full font-bold bg-[#f59bbb] hover:bg-[#e88aae] text-white transition-all shadow-md hover:shadow-lg w-full max-w-xs mx-auto"
+      class="mt-8 px-8 py-3 rounded-full font-bold bg-[#f59bbb] hover:bg-[#e88aae] text-slate-900 transition-all shadow-md hover:shadow-lg w-full max-w-xs mx-auto"
       id="btn-restart"
     >
       Restart Quiz
@@ -181,7 +181,7 @@ const stringifiedQuestions = JSON.stringify(questions);
             if (isGrid || isRow) {
               const flipClass = isFlippable ? 'flip-card' : '';
               html += `
-                <label class="custom-grid-option flex flex-col h-full border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group
+                <label tabindex="0" role="button" class="custom-grid-option flex flex-col h-full border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group
                   ${isSelected ? 'selected flipped' : 'unselected'} ${flipClass}">
                   <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="custom-radio-input" ${isSelected ? 'checked' : ''}>
                   ${
@@ -209,9 +209,9 @@ const stringifiedQuestions = JSON.stringify(questions);
               `;
             } else {
               html += `
-                <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 
+                <label tabindex="0" role="button" class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 
                   ${isSelected ? 'selected' : 'unselected-row'}">
-                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="quiz-radio w-5 h-5 border-slate-300 dark:bg-slate-800 flex-shrink-0" ${isSelected ? 'checked' : ''}>
+                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="quiz-radio w-5 h-5 border-slate-300 dark:bg-slate-800 flex-shrink-0" tabindex="-1" ${isSelected ? 'checked' : ''}>
                   <div class="ml-4 flex flex-col sm:flex-row sm:items-center gap-3 w-full">
                     ${
                       optImage
@@ -251,6 +251,23 @@ const stringifiedQuestions = JSON.stringify(questions);
               if (answerRevealed) return;
               userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
               revealAnswer(q);
+            });
+          });
+
+          // Keyboard: let users tab to each label and press Enter/Space to select
+          const labels = questionContainer!.querySelectorAll('label[tabindex]');
+          labels.forEach((label) => {
+            label.addEventListener('keydown', (e) => {
+              const key = (e as KeyboardEvent).key;
+              if (key === 'Enter' || key === ' ') {
+                e.preventDefault();
+                if (answerRevealed) return;
+                const radio = label.querySelector('input[type="radio"]') as HTMLInputElement;
+                if (radio) {
+                  radio.checked = true;
+                  radio.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+              }
             });
           });
         } else if (q.type === 'text') {
@@ -740,6 +757,21 @@ const stringifiedQuestions = JSON.stringify(questions);
 
   .dark .unselected-row {
     border-color: #334155;
+  }
+
+  /* ─── Keyboard Focus Styles ─── */
+  .unselected-row:focus-within,
+  .unselected:focus-within {
+    border-color: #f59bbb;
+    box-shadow: 0 0 0 3px rgba(245, 155, 187, 0.3);
+    background-color: rgb(245 155 187 / 5%);
+    outline: none;
+  }
+
+  .custom-grid-option:focus-within {
+    border-color: #f59bbb;
+    box-shadow: 0 0 0 3px rgba(245, 155, 187, 0.3);
+    outline: none;
   }
 
   /* ─── Flip Card Styles ─── */
