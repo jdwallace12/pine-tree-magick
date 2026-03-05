@@ -2,7 +2,7 @@
 published: true
 title: "Magickal Foundations: A Beginner's Guide"
 description: 'Master the basics of ritual, energy work, and intention setting in this comprehensive foundation course.'
-image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=800'
+image: '/assets/images/forest-fog.webp'
 price: 27
 payPalButtonId: 'COURSETST123'
 modules:
@@ -23,4 +23,20 @@ features:
     icon: 'tabler:tools'
 ---
 
-Welcome to Magickal Foundations! This course will guide you through the initial steps of your magickal journey.
+## Who is this course for?
+
+Whether you're just starting your spiritual practice or you've been dabbling and want to build a more solid, consistent foundation, this course is designed for you. We'll strip away the complex jargon and focus on the core principles that make your magick actually work.
+
+## What you'll achieve
+
+By the end of these lessons, you will have the confidence to:
+
+- Set up a regular, intentional practice that fits your lifestyle.
+- Understand the basic building blocks of any successful spell or ritual.
+- Protect your energy and space with simple, everyday tools.
+
+## How to use this course
+
+Take this at your own pace! We recommend completing one module per week to give yourself time to integrate the practices into your daily life. Keep a dedicated journal or Book of Shadows handy for the exercises.
+
+Let's get started. 🌿

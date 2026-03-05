@@ -1,16 +1,18 @@
 ---
 export interface Props {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl';
 }
 
 const { size = 'md' } = Astro.props;
 
 const heights = {
-  xs: 'h-4', // 16px
-  sm: 'h-8', // 32px
-  md: 'h-12', // 48px
-  lg: 'h-16', // 64px
-  xl: 'h-24', // 96px
+  xs: 'h-1', // 4px
+  sm: 'h-2', // 8px
+  md: 'h-4', // 16px
+  lg: 'h-6', // 24px
+  xl: 'h-9', // 36px
+  '2xl': 'h-12', // 48px
+  '3xl': 'h-16', // 64px
 };
 
 const heightClass = heights[size] || heights.md;

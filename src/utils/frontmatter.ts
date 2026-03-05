@@ -8,7 +8,7 @@ export const readingTimeRemarkPlugin: RemarkPlugin = () => {
     const textOnPage = toString(tree);
     const readingTime = Math.ceil(getReadingTime(textOnPage).minutes);
 
-    (file.data.astro as any).frontmatter.readingTime = readingTime;
+    (file.data.astro as { frontmatter: Record<string, unknown> }).frontmatter.readingTime = readingTime;
   };
 };
 
@@ -53,6 +53,7 @@ export const figureImagesRehypePlugin: RehypePlugin = () => {
     visit(tree, 'element', function (node, index, parent) {
       if (node.tagName === 'img' && parent && typeof index === 'number') {
         const title = node.properties?.title as string | undefined;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const figure: any = {
           type: 'element',
           tagName: 'figure',

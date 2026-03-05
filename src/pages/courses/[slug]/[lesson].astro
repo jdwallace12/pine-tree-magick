@@ -113,11 +113,11 @@ const requiredRole = `course:${course?.slug}`;
     </nav>
 
     <div id="lesson-content" data-required-role={lesson.data.isFree ? '' : requiredRole}>
-      <h1 class="text-4xl font-heading font-bold mb-6">{lesson.data.title}</h1>
+      <h1 class="text-3xl font-heading font-bold mb-4">{lesson.data.title}</h1>
       <p class="text-muted mb-8">{lesson.data.module}</p>
 
       <div
-        class="prose prose-lg leading-relaxed tracking-wide dark:prose-invert dark:text-slate-300 max-w-none prose-table:bg-[#0f172a] prose-table:text-slate-300 prose-th:text-slate-200 prose-td:text-slate-300 lesson-content"
+        class="mt-12 prose prose-lg leading-relaxed tracking-wide dark:prose-invert dark:text-slate-300 max-w-none prose-table:bg-[#0f172a] prose-table:text-slate-300 prose-th:text-slate-200 prose-td:text-slate-300 lesson-content"
       >
         <Content />
       </div>
