@@ -47,3 +47,28 @@ export const lazyImagesRehypePlugin: RehypePlugin = () => {
     });
   };
 };
+
+export const figureImagesRehypePlugin: RehypePlugin = () => {
+  return function (tree) {
+    visit(tree, 'element', function (node, index, parent) {
+      if (node.tagName === 'img' && parent && typeof index === 'number') {
+        const title = node.properties?.title as string | undefined;
+        const figure: any = {
+          type: 'element',
+          tagName: 'figure',
+          properties: { class: 'lesson-figure' },
+          children: [node],
+        };
+        if (title) {
+          figure.children.push({
+            type: 'element',
+            tagName: 'figcaption',
+            properties: {},
+            children: [{ type: 'text', value: title }],
+          });
+        }
+        parent.children[index] = figure;
+      }
+    });
+  };
+};

@@ -67,6 +67,8 @@ If you're just going through the motions, and nothing is shifting, here's the co
 
 In this first lesson, we're going to explore what ritual _actually_ is and why it matters in your practice.
 
+![A lit candle surrounded by crystals and herbs on a wooden altar](/assets/images/forest-fog.webp 'A simple altar set with intention — the first step of any meaningful ritual.')
+
 ---
 
 ## 🗝️ Key Concepts
@@ -105,6 +107,8 @@ I am rooted in the present.
 My intention is clear.
 My will is focused.
 ```
+
+![Hands held open with incense smoke rising gently above them](/assets/images/kezar.webp 'Grounding yourself before a ritual opens the channel for focused intention.')
 
 By the end of this lesson, you'll be able to build rituals that actually _feel_ aligned and stop the stagnant, boring routines.
 

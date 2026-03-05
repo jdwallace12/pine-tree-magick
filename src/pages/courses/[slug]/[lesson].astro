@@ -300,6 +300,7 @@ const requiredRole = `course:${course?.slug}`;
       background-color: transparent;
       border-color: #334155;
       width: 100%;
+      margin: 0;
     }
     .lesson-content th {
       background-color: transparent;
@@ -315,6 +316,23 @@ const requiredRole = `course:${course?.slug}`;
     }
     .lesson-content pre {
       background-color: #0f172a !important;
+    }
+    .lesson-content .lesson-figure {
+      margin: 32px 0;
+      text-align: center;
+    }
+    .lesson-content .lesson-figure img {
+      border-radius: 12px;
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
+    }
+    .lesson-content .lesson-figure figcaption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      font-style: italic;
+      letter-spacing: 0.02em;
     }
   </style>
 
