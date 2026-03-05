@@ -124,7 +124,9 @@ const requiredRole = `course:${course?.slug}`;
         )
       }
 
-      <div class="prose prose-lg dark:prose-invert max-w-none">
+      <div
+        class="prose prose-lg dark:prose-invert max-w-none prose-table:bg-[#0f172a] prose-table:text-slate-300 prose-th:text-slate-200 prose-td:text-slate-300 lesson-content"
+      >
         <Content />
       </div>
 
@@ -285,6 +287,36 @@ const requiredRole = `course:${course?.slug}`;
     window.initProgress = initProgress;
     document.addEventListener('astro:page-load', initProgress);
   </script>
+
+  <style is:global>
+    .lesson-content .table-wrapper {
+      padding: 24px;
+      background-color: #0f172a;
+      border-radius: 12px;
+      margin: 24px 0;
+      overflow: auto;
+    }
+    .lesson-content table {
+      background-color: transparent;
+      border-color: #334155;
+      width: 100%;
+    }
+    .lesson-content th {
+      background-color: transparent;
+      color: #e2e8f0;
+      border-color: #334155;
+      padding: 12px 16px;
+    }
+    .lesson-content td {
+      color: #cbd5e1;
+      border-color: #334155;
+      padding: 12px 16px;
+      background-color: transparent;
+    }
+    .lesson-content pre {
+      background-color: #0f172a !important;
+    }
+  </style>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {

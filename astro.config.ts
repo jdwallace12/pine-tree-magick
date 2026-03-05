@@ -81,6 +81,18 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [readingTimeRemarkPlugin],
     rehypePlugins: [responsiveTablesRehypePlugin, lazyImagesRehypePlugin],
+    shikiConfig: {
+      theme: 'github-dark',
+      transformers: [
+        {
+          pre(node) {
+            node.properties.style = (node.properties.style as string || '')
+              .replace(/background-color:[^;]+;?/, '')
+              + ' background-color:#0f172a;';
+          }
+        }
+      ]
+    },
   },
 
   vite: {
