@@ -1,0 +1,156 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Quiz from '~/components/widgets/Quiz.astro';
+
+const metadata = {
+  title: 'Discover Your Clair | Pine Tree Magick',
+  description:
+    'Find out which psychic sense is your strongest — clairvoyance, clairsentience, claircognizance, or clairaudience.',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+import type { Question } from '~/types/quiz';
+
+const questions: Question[] = [
+  {
+    id: 'q1',
+    type: 'multiple-choice' as const,
+    question: 'When you rearrange your living room, you tend to:',
+    options: [
+      { text: 'Have a gut knowing where to put the couch, TV, bookshelf, etc.', qualities: { Claircognizance: 1 } },
+      { text: 'Visualize how you want the room to look', qualities: { Clairvoyance: 1 } },
+      { text: 'Hear a little voice telling you, "Put the couch over there."', qualities: { Clairaudience: 1 } },
+      { text: 'Prioritize how you want the space to make you feel', qualities: { Clairsentience: 1 } },
+    ],
+    hideFeedback: true,
+  },
+  {
+    id: 'q2',
+    type: 'multiple-choice' as const,
+    question: 'When you dream, you often:',
+    options: [
+      { text: 'Hear voices, music, and sounds clearly', qualities: { Clairaudience: 1 } },
+      { text: 'Have strong emotional reactions, like sadness, anger, or happiness', qualities: { Clairsentience: 1 } },
+      { text: 'See vivid colors and clear scenes', qualities: { Clairvoyance: 1 } },
+      {
+        text: 'Immediately know the meaning of the dream, either while asleep or upon waking',
+        qualities: { Claircognizance: 1 },
+      },
+    ],
+    hideFeedback: true,
+  },
+  {
+    id: 'q3',
+    type: 'multiple-choice' as const,
+    question: 'When you close your eyes during meditation, do you:',
+    options: [
+      { text: 'Feel sensations throughout your body', qualities: { Clairsentience: 1 } },
+      { text: 'Receive sudden information that you previously did not have', qualities: { Claircognizance: 1 } },
+      { text: 'Hear voices, sounds, or music', qualities: { Clairaudience: 1 } },
+      { text: "Get strong visuals, colors, and shapes in your mind's eye", qualities: { Clairvoyance: 1 } },
+    ],
+    hideFeedback: true,
+  },
+  {
+    id: 'q4',
+    type: 'multiple-choice' as const,
+    question: 'When you read a book you love, what stands out the most with the main character:',
+    options: [
+      { text: 'You can hear them speaking the dialogue clearly', qualities: { Clairaudience: 1 } },
+      { text: 'You can visualize them clearly in your head', qualities: { Clairvoyance: 1 } },
+      { text: 'You can feel their emotions for them', qualities: { Clairsentience: 1 } },
+      { text: "You just know what's going to happen next", qualities: { Claircognizance: 1 } },
+    ],
+    hideFeedback: true,
+  },
+  {
+    id: 'q5',
+    type: 'multiple-choice' as const,
+    question: "What's most important to you in your daily life:",
+    options: [
+      { text: 'How you are currently feeling', qualities: { Clairsentience: 1 } },
+      { text: 'How things sound', qualities: { Clairaudience: 1 } },
+      { text: 'How things look and appear', qualities: { Clairvoyance: 1 } },
+      { text: 'How much you know', qualities: { Claircognizance: 1 } },
+    ],
+    hideFeedback: true,
+  },
+  {
+    id: 'q6',
+    type: 'multiple-choice' as const,
+    question: "What's your favorite sense:",
+    options: [
+      { text: 'My instincts', qualities: { Claircognizance: 1 } },
+      { text: 'My hearing', qualities: { Clairaudience: 1 } },
+      { text: 'My sight', qualities: { Clairvoyance: 1 } },
+      { text: 'My touch', qualities: { Clairsentience: 1 } },
+    ],
+    hideFeedback: true,
+  },
+  {
+    id: 'q7',
+    type: 'multiple-choice' as const,
+    question: 'When you make a decision, do you:',
+    options: [
+      { text: 'Pay attention to how it makes you feel', qualities: { Clairsentience: 1 } },
+      { text: 'Visualize the outcome', qualities: { Clairvoyance: 1 } },
+      { text: 'Hear a voice telling you which way to go', qualities: { Clairaudience: 1 } },
+      { text: 'Just know what to do', qualities: { Claircognizance: 1 } },
+    ],
+    hideFeedback: true,
+  },
+];
+---
+
+<Layout metadata={metadata}>
+  <section class="py-16 md:py-24 bg-white dark:bg-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-12">
+        <p class="text-base text-secondary dark:text-secondary font-bold tracking-wide uppercase">Free Quiz</p>
+        <h1 class="text-4xl md:text-5xl font-heading mt-2 mb-4">Discover Your Clair</h1>
+        <p class="text-xl text-muted max-w-2xl mx-auto">
+          Find out which psychic sense — clairvoyance, clairsentience, claircognizance, or clairaudience — is your
+          strongest through this easy quiz!
+        </p>
+      </div>
+
+      <Quiz title="" questions={questions} showScore={true} hideFeedback={true} />
+
+      <div class="mt-16 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-heading mb-8 text-center">The Four Clairs</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+            <h3 class="text-lg font-bold mb-2 text-[#f59bbb]">👁️ Clairvoyance</h3>
+            <p class="text-muted text-sm">
+              <strong>Clear Seeing</strong> — You receive psychic information through vivid mental images, colors, and visual
+              flashes. You're a natural visualizer.
+            </p>
+          </div>
+          <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+            <h3 class="text-lg font-bold mb-2 text-[#9acac6]">💗 Clairsentience</h3>
+            <p class="text-muted text-sm">
+              <strong>Clear Feeling</strong> — You pick up on energy through emotions and physical sensations. You're deeply
+              empathic and feel the world around you.
+            </p>
+          </div>
+          <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+            <h3 class="text-lg font-bold mb-2 text-[#c9a0dc]">⚡ Claircognizance</h3>
+            <p class="text-muted text-sm">
+              <strong>Clear Knowing</strong> — You receive sudden downloads of knowledge with absolute certainty, without
+              knowing how you know it.
+            </p>
+          </div>
+          <div class="p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+            <h3 class="text-lg font-bold mb-2 text-[#f0c75e]">🎵 Clairaudience</h3>
+            <p class="text-muted text-sm">
+              <strong>Clear Hearing</strong> — You receive guidance through inner voices, sounds, or music. You may hear
+              messages that others can't.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
