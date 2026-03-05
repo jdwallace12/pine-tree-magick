@@ -170,7 +170,6 @@ const lessonCollection = defineCollection({
     course: z.string(), // Slug of the course
     module: z.string(), // Name of the module it belongs to
     order: z.number(),  // Order within the module
-    videoUrl: z.string().optional(),
     pdfUrl: z.string().optional(),
     slidesUrl: z.string().optional(),
     isFree: z.boolean().optional(),

@@ -116,16 +116,8 @@ const requiredRole = `course:${course?.slug}`;
       <h1 class="text-4xl font-heading font-bold mb-6">{lesson.data.title}</h1>
       <p class="text-muted mb-8">{lesson.data.module}</p>
 
-      {
-        lesson.data.videoUrl && (
-          <div class="aspect-video mb-12 rounded-xl overflow-hidden shadow-lg">
-            <YouTube id={lesson.data.videoUrl} />
-          </div>
-        )
-      }
-
       <div
-        class="prose prose-lg dark:prose-invert max-w-none prose-table:bg-[#0f172a] prose-table:text-slate-300 prose-th:text-slate-200 prose-td:text-slate-300 lesson-content"
+        class="prose prose-lg leading-relaxed tracking-wide dark:prose-invert dark:text-slate-300 max-w-none prose-table:bg-[#0f172a] prose-table:text-slate-300 prose-th:text-slate-200 prose-td:text-slate-300 lesson-content"
       >
         <Content />
       </div>
@@ -318,7 +310,7 @@ const requiredRole = `course:${course?.slug}`;
       background-color: #0f172a !important;
     }
     .lesson-content .lesson-figure {
-      margin: 32px 0;
+      margin: 64px 0;
       text-align: center;
     }
     .lesson-content .lesson-figure img {

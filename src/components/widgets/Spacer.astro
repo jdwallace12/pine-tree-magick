@@ -1,0 +1,19 @@
+---
+export interface Props {
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+}
+
+const { size = 'md' } = Astro.props;
+
+const heights = {
+  xs: 'h-4', // 16px
+  sm: 'h-8', // 32px
+  md: 'h-12', // 48px
+  lg: 'h-16', // 64px
+  xl: 'h-24', // 96px
+};
+
+const heightClass = heights[size] || heights.md;
+---
+
+<div class={`w-full ${heightClass}`} aria-hidden="true"></div>
