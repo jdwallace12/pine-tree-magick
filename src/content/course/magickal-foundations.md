@@ -1,5 +1,5 @@
 ---
-published: false
+published: true
 title: "Magickal Foundations: A Beginner's Guide"
 description: 'Master the basics of ritual, energy work, and intention setting in this comprehensive foundation course.'
 image: '/assets/images/forest-fog.webp'
