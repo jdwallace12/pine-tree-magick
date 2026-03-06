@@ -113,18 +113,12 @@ const requiredRole = `course:${course?.slug}`;
     </nav>
 
     <div id="lesson-content" data-required-role={lesson.data.isFree ? '' : requiredRole}>
-      <h1 class="text-4xl font-heading font-bold mb-6">{lesson.data.title}</h1>
+      <h1 class="text-3xl font-heading font-bold mb-4">{lesson.data.title}</h1>
       <p class="text-muted mb-8">{lesson.data.module}</p>
 
-      {
-        lesson.data.videoUrl && (
-          <div class="aspect-video mb-12 rounded-xl overflow-hidden shadow-lg">
-            <YouTube id={lesson.data.videoUrl} />
-          </div>
-        )
-      }
-
-      <div class="prose prose-lg dark:prose-invert max-w-none">
+      <div
+        class="mt-12 prose prose-lg leading-relaxed tracking-wide dark:prose-invert dark:text-slate-300 max-w-none prose-table:bg-[#0f172a] prose-table:text-slate-300 prose-th:text-slate-200 prose-td:text-slate-300 lesson-content"
+      >
         <Content />
       </div>
 
@@ -285,6 +279,75 @@ const requiredRole = `course:${course?.slug}`;
     window.initProgress = initProgress;
     document.addEventListener('astro:page-load', initProgress);
   </script>
+
+  <style is:global>
+    .lesson-content .table-wrapper {
+      padding: 24px;
+      background-color: #0f172a;
+      border-radius: 12px;
+      margin: 24px 0;
+      overflow: auto;
+      border: 1px solid #334155;
+      box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .lesson-content table {
+      background-color: transparent;
+      border-color: #334155;
+      width: 100%;
+      margin: 0;
+    }
+    .lesson-content th {
+      background-color: transparent;
+      color: #e2e8f0;
+      border-color: #334155;
+      padding: 12px 16px;
+    }
+    .lesson-content td {
+      color: #cbd5e1;
+      border-color: #334155;
+      padding: 12px 16px;
+      background-color: transparent;
+    }
+    .lesson-content pre {
+      background-color: #0f172a !important;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .lesson-content .lesson-figure {
+      margin: 64px 0;
+      text-align: center;
+    }
+    .lesson-content .lesson-figure img {
+      border-radius: 12px;
+      max-width: 100%;
+      display: block;
+      margin: 0 auto;
+      box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border: 1px solid #334155;
+    }
+    .lesson-content lite-youtube {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.1),
+        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      border: 1px solid #334155;
+    }
+    .lesson-content .lesson-figure figcaption {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      font-style: italic;
+      letter-spacing: 0.02em;
+    }
+  </style>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {

@@ -6,10 +6,13 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
+            lineHeight: '1.8',
             'h1, h2, h3, h4': {
               fontWeight: '700',
               fontFamily: 'var(--aw-font-heading)',
               color: 'var(--tw-prose-headings)',
+              marginTop: '2em',
+              marginBottom: '1em',
             },
             'ul > li': {
               '&::before': {
@@ -23,13 +26,14 @@ module.exports = {
               },
             },
             'p': {
-              marginTop: '1.25em',
-              marginBottom: '1.25em',
+              marginTop: '1.5em',
+              marginBottom: '1.5em',
             },
           },
         },
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require('@tailwindcss/typography')],
 } 
