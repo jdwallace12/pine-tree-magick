@@ -428,9 +428,10 @@ import { Icon } from 'astro-icon/components';
             '<span class="animate-spin mr-3 border-2 border-slate-600 dark:border-slate-300 border-t-transparent rounded-full w-5 h-5"></span> Redirecting...';
         }
 
-        // Use external provider login method on Gotrue instance
-        // This will redirect the user to Google.
-        await gotrue.loginExternalProvider('google');
+        // Get the Google OAuth URL from GoTrue and redirect
+        // @ts-ignore
+        const url = gotrue.loginExternalUrl('google');
+        window.location.href = url;
       } catch (err: any) {
         this.showError(err.message || 'Error connecting to Google');
         if (this.googleBtn) {
