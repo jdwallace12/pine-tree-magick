@@ -56,7 +56,7 @@ quiz:
     answer: 'Gemini'
 ---
 
-import { YouTube } from 'astro-embed';
+import Video from '~/components/widgets/Video.astro';
 import Spacer from '~/components/widgets/Spacer.astro';
 
 # Welcome to the Course!
@@ -99,11 +99,16 @@ To begin, you'll need to understand how different magical elements correspond to
 | **Fire**  | Transformation, passion, energy   | Candles, sunlight, ash, wands        |
 | **Water** | Emotion, intuition, healing       | Chalice, shells, moon water, mirrors |
 
-<Spacer size="sm" />
+<Spacer size="xs" />
 
 ## 🎥 Watch: Ritual in Practice
 
-<YouTube id="https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+<Video
+  id="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+  caption="An example of setting up a basic altar space before performing ritual work."
+/>
 
 By the end of this lesson, you'll be able to build rituals that actually _feel_ aligned and stop the stagnant, boring routines.
 
