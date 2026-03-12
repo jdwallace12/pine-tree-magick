@@ -13,7 +13,7 @@ import type { AstroIntegration } from 'astro';
 
 import astrowind from './vendor/integration';
 
-import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
+import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin, figureImagesRehypePlugin } from './src/utils/frontmatter';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -80,7 +80,19 @@ export default defineConfig({
 
   markdown: {
     remarkPlugins: [readingTimeRemarkPlugin],
-    rehypePlugins: [responsiveTablesRehypePlugin, lazyImagesRehypePlugin],
+    rehypePlugins: [responsiveTablesRehypePlugin, lazyImagesRehypePlugin, figureImagesRehypePlugin],
+    shikiConfig: {
+      theme: 'github-dark',
+      transformers: [
+        {
+          pre(node) {
+            node.properties.style = (node.properties.style as string || '')
+              .replace(/background-color:[^;]+;?/, '')
+              + ' background-color:#0f172a;';
+          }
+        }
+      ]
+    },
   },
 
   vite: {

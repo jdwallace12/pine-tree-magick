@@ -38,6 +38,23 @@ import { Icon } from 'astro-icon/components';
 
       <!-- Forms Section -->
       <div id="auth-forms">
+        <!-- External Providers -->
+        <div id="external-providers" class="mb-6">
+          <button
+            type="button"
+            id="google-signin-btn"
+            class="w-full py-3.5 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-2xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+          >
+            <Icon name="tabler:brand-google-filled" class="w-5 h-5 text-red-500" />
+            Continue with Google
+          </button>
+
+          <div class="relative flex py-6 items-center">
+            <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+            <span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-bold uppercase tracking-widest">Or</span>
+            <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+          </div>
+        </div>
         <!-- Login Form -->
         <form id="login-form" class="space-y-4">
           <div>
@@ -182,6 +199,8 @@ import { Icon } from 'astro-icon/components';
     switcherText: HTMLElement;
     showRecoveryBtn: HTMLElement;
     switchToSignupBtn: HTMLElement;
+    externalProvidersWrap: HTMLElement;
+    googleBtn: HTMLElement;
 
     constructor() {
       this.modal = document.getElementById('auth-modal');
@@ -199,6 +218,8 @@ import { Icon } from 'astro-icon/components';
 
       this.showRecoveryBtn = document.getElementById('show-recovery');
       this.switchToSignupBtn = document.getElementById('switch-to-signup');
+      this.externalProvidersWrap = document.getElementById('external-providers');
+      this.googleBtn = document.getElementById('google-signin-btn');
 
       this.init();
     }
@@ -216,6 +237,8 @@ import { Icon } from 'astro-icon/components';
           this.showView('login');
         }
       });
+
+      this.googleBtn?.addEventListener('click', () => this.handleGoogleLogin());
 
       this.loginForm?.addEventListener('submit', (e) => this.handleLogin(e));
       this.signupForm?.addEventListener('submit', (e) => this.handleSignup(e));
@@ -252,16 +275,19 @@ import { Icon } from 'astro-icon/components';
       this.loginForm.classList.add('hidden');
       this.signupForm.classList.add('hidden');
       this.recoveryForm.classList.add('hidden');
+      if (this.externalProvidersWrap) this.externalProvidersWrap.classList.add('hidden');
 
       if (view === 'login') {
         this.title.textContent = 'Welcome Back';
         this.subtitle.textContent = 'Enter your details to access your courses';
         this.loginForm.classList.remove('hidden');
+        if (this.externalProvidersWrap) this.externalProvidersWrap.classList.remove('hidden');
         this.switcherText.innerHTML = `Don't have an account? <button id="switch-to-signup" class="text-primary hover:underline font-bold ml-1">Sign up free</button>`;
       } else if (view === 'signup') {
         this.title.textContent = 'Join the Coven';
         this.subtitle.textContent = 'Create your account to start learning';
         this.signupForm.classList.remove('hidden');
+        if (this.externalProvidersWrap) this.externalProvidersWrap.classList.remove('hidden');
         this.switcherText.innerHTML = `Already have an account? <button id="switch-to-signup" class="text-primary hover:underline font-bold ml-1">Log in</button>`;
       } else if (view === 'recovery') {
         this.title.textContent = 'Recover Password';
@@ -383,6 +409,35 @@ import { Icon } from 'astro-icon/components';
       } catch (err: any) {
         this.showError(err.message || 'Error sending recovery email');
         submitBtn.innerHTML = 'Send Recovery Email';
+      }
+    }
+
+    async handleGoogleLogin() {
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError(
+          'Authentication service is not available. Please make sure Identity is enabled on your Netlify site.'
+        );
+        return;
+      }
+
+      try {
+        if (this.googleBtn) {
+          this.googleBtn.innerHTML =
+            '<span class="animate-spin mr-3 border-2 border-slate-600 dark:border-slate-300 border-t-transparent rounded-full w-5 h-5"></span> Redirecting...';
+        }
+
+        // Get the Google OAuth URL from GoTrue and redirect
+        // @ts-ignore
+        const url = gotrue.loginExternalUrl('google');
+        window.location.href = url;
+      } catch (err: any) {
+        this.showError(err.message || 'Error connecting to Google');
+        if (this.googleBtn) {
+          this.googleBtn.innerHTML =
+            '<Icon name="tabler:brand-google-filled" class="w-5 h-5 text-red-500" /> Continue with Google';
+        }
       }
     }
   }
