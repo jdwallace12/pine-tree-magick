@@ -32,3 +32,7 @@
   [context.production.environment]
     PAYPAL_ENV = "live"
 
+
+[[edge_functions]]
+  path = "/courses/*"
+  function = "access-guard"

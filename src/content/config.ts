@@ -142,6 +142,44 @@ const newsletterCollection = defineCollection({
   }),
 });
 
+const courseCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    image: z.string(),
+    price: z.number(),
+    payPalButtonId: z.string(),
+    published: z.boolean().optional(),
+    modules: z.array(z.string()).optional(), // List of module names in order
+    features: z
+      .array(
+        z.object({
+          title: z.string(),
+          description: z.string(),
+          icon: z.string().optional(),
+        })
+      )
+      .optional(),
+    metadata: metadataDefinition(),
+  }),
+});
+
+const lessonCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    course: z.string(), // Slug of the course
+    module: z.string(), // Name of the module it belongs to
+    order: z.number(),  // Order within the module
+    pdfUrl: z.string().optional(),
+    slidesUrl: z.string().optional(),
+    isFree: z.boolean().optional(),
+    hideFeedback: z.boolean().optional(),
+    quiz: z.any().array().optional(),
+    allowScore: z.boolean().optional(),
+    metadata: metadataDefinition(),
+  }),
+});
+
 
 export const collections = {
   post: postCollection,
@@ -150,4 +188,6 @@ export const collections = {
   bundle: bundleCollection,
   freebie: freebieCollection,
   newsletter: newsletterCollection,
+  course: courseCollection,
+  lesson: lessonCollection,
 };

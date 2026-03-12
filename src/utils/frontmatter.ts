@@ -8,7 +8,7 @@ export const readingTimeRemarkPlugin: RemarkPlugin = () => {
     const textOnPage = toString(tree);
     const readingTime = Math.ceil(getReadingTime(textOnPage).minutes);
 
-    (file.data.astro as any).frontmatter.readingTime = readingTime;
+    (file.data.astro as { frontmatter: Record<string, unknown> }).frontmatter.readingTime = readingTime;
   };
 };
 
@@ -25,6 +25,7 @@ export const responsiveTablesRehypePlugin: RehypePlugin = () => {
           tagName: 'div',
           properties: {
             style: 'overflow:auto',
+            class: 'table-wrapper',
           },
           children: [child],
         };
@@ -42,6 +43,32 @@ export const lazyImagesRehypePlugin: RehypePlugin = () => {
     visit(tree, 'element', function (node) {
       if (node.tagName === 'img') {
         node.properties.loading = 'lazy';
+      }
+    });
+  };
+};
+
+export const figureImagesRehypePlugin: RehypePlugin = () => {
+  return function (tree) {
+    visit(tree, 'element', function (node, index, parent) {
+      if (node.tagName === 'img' && parent && typeof index === 'number') {
+        const title = node.properties?.title as string | undefined;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const figure: any = {
+          type: 'element',
+          tagName: 'figure',
+          properties: { class: 'lesson-figure' },
+          children: [node],
+        };
+        if (title) {
+          figure.children.push({
+            type: 'element',
+            tagName: 'figcaption',
+            properties: {},
+            children: [{ type: 'text', value: title }],
+          });
+        }
+        parent.children[index] = figure;
       }
     });
   };

@@ -1,0 +1,473 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div
+  id="auth-modal"
+  class="fixed inset-0 z-[100] hidden overflow-y-auto"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
+  <!-- Backdrop -->
+  <div id="auth-modal-backdrop" class="fixed inset-0 bg-[#1a263a]/80 backdrop-blur-sm transition-opacity opacity-0">
+  </div>
+
+  <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+    <div
+      id="auth-modal-container"
+      class="relative transform overflow-hidden rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-8 md:p-12 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg opacity-0 scale-95 translate-y-4"
+    >
+      <!-- Close Button -->
+      <button id="close-auth-modal" class="absolute right-6 top-6 text-slate-400 hover:text-primary transition-colors">
+        <Icon name="tabler:x" class="w-6 h-6" />
+      </button>
+
+      <!-- Logo/Brand -->
+      <div class="mb-8 text-center">
+        <h2 id="modal-title" class="text-3xl font-heading mb-2">Welcome Back</h2>
+        <p id="modal-subtitle" class="text-muted">Enter your details to access your courses</p>
+      </div>
+
+      <!-- Error Message -->
+      <div
+        id="auth-error"
+        class="hidden mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-2xl text-red-600 dark:text-red-400 text-sm font-medium"
+      >
+      </div>
+
+      <!-- Forms Section -->
+      <div id="auth-forms">
+        <!-- External Providers -->
+        <div id="external-providers" class="mb-6">
+          <button
+            type="button"
+            id="google-signin-btn"
+            class="w-full py-3.5 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-semibold rounded-2xl shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+          >
+            <Icon name="tabler:brand-google-filled" class="w-5 h-5 text-red-500" />
+            Continue with Google
+          </button>
+
+          <div class="relative flex py-6 items-center">
+            <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+            <span class="flex-shrink-0 mx-4 text-slate-400 text-xs font-bold uppercase tracking-widest">Or</span>
+            <div class="flex-grow border-t border-slate-200 dark:border-slate-700"></div>
+          </div>
+        </div>
+        <!-- Login Form -->
+        <form id="login-form" class="space-y-4">
+          <div>
+            <label for="login-email" class="block text-xs font-bold text-muted uppercase tracking-widest mb-2 ml-1"
+              >Email Address</label
+            >
+            <input
+              type="email"
+              id="login-email"
+              required
+              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+              placeholder="name@example.com"
+            />
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-2">
+              <label for="login-password" class="block text-xs font-bold text-muted uppercase tracking-widest ml-1"
+                >Password</label
+              >
+              <button type="button" id="show-recovery" class="text-xs font-bold text-primary hover:underline"
+                >Forgot password?</button
+              >
+            </div>
+            <input
+              type="password"
+              id="login-password"
+              required
+              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+              placeholder="••••••••"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full py-4 bg-black dark:bg-white text-white dark:text-black font-bold rounded-2xl shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-center group"
+          >
+            Sign In <Icon
+              name="tabler:chevron-right"
+              class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
+            />
+          </button>
+        </form>
+
+        <!-- Signup Form (Hidden by default) -->
+        <form id="signup-form" class="hidden space-y-4">
+          <div>
+            <label for="signup-name" class="block text-xs font-bold text-muted uppercase tracking-widest mb-2 ml-1"
+              >Full Name</label
+            >
+            <input
+              type="text"
+              id="signup-name"
+              required
+              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+              placeholder="Your name"
+            />
+          </div>
+          <div>
+            <label for="signup-email" class="block text-xs font-bold text-muted uppercase tracking-widest mb-2 ml-1"
+              >Email Address</label
+            >
+            <input
+              type="email"
+              id="signup-email"
+              required
+              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+              placeholder="name@example.com"
+            />
+          </div>
+          <div>
+            <label for="signup-password" class="block text-xs font-bold text-muted uppercase tracking-widest mb-2 ml-1"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="signup-password"
+              required
+              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+              placeholder="Minimum 8 characters"
+              minlength="8"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full py-4 bg-black dark:bg-white text-white dark:text-black font-bold rounded-2xl shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-center group"
+          >
+            Create Account <Icon
+              name="tabler:rocket"
+              class="w-5 h-5 ml-2 group-hover:-translate-y-1 group-hover:translate-x-1 transition-transform"
+            />
+          </button>
+        </form>
+
+        <!-- Recovery Form (Hidden by default) -->
+        <form id="recovery-form" class="hidden space-y-4">
+          <div>
+            <label for="recovery-email" class="block text-xs font-bold text-muted uppercase tracking-widest mb-2 ml-1"
+              >Email Address</label
+            >
+            <input
+              type="email"
+              id="recovery-email"
+              required
+              class="w-full px-5 py-4 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none"
+              placeholder="name@example.com"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full py-4 bg-black dark:bg-white text-white dark:text-black font-bold rounded-2xl shadow-lg hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] transition-all flex items-center justify-center group"
+          >
+            Send Recovery Email <Icon
+              name="tabler:mail-forward"
+              class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform"
+            />
+          </button>
+        </form>
+      </div>
+
+      <!-- Switcher -->
+      <p id="auth-switcher" class="mt-8 text-center text-sm font-medium text-muted">
+        Don't have an account? <button id="switch-to-signup" class="text-primary hover:underline font-bold ml-1"
+          >Sign up free</button
+        >
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Auth Modal Logic
+  class AuthModal {
+    modal: HTMLElement;
+    backdrop: HTMLElement;
+    container: HTMLElement;
+    closeBtn: HTMLElement;
+    title: HTMLElement;
+    subtitle: HTMLElement;
+    errorBox: HTMLElement;
+    loginForm: HTMLFormElement;
+    signupForm: HTMLFormElement;
+    recoveryForm: HTMLFormElement;
+    switcherText: HTMLElement;
+    showRecoveryBtn: HTMLElement;
+    switchToSignupBtn: HTMLElement;
+    externalProvidersWrap: HTMLElement;
+    googleBtn: HTMLElement;
+
+    constructor() {
+      this.modal = document.getElementById('auth-modal');
+      this.backdrop = document.getElementById('auth-modal-backdrop');
+      this.container = document.getElementById('auth-modal-container');
+      this.closeBtn = document.getElementById('close-auth-modal');
+      this.title = document.getElementById('modal-title');
+      this.subtitle = document.getElementById('modal-subtitle');
+      this.errorBox = document.getElementById('auth-error');
+
+      this.loginForm = document.getElementById('login-form') as HTMLFormElement;
+      this.signupForm = document.getElementById('signup-form') as HTMLFormElement;
+      this.recoveryForm = document.getElementById('recovery-form') as HTMLFormElement;
+      this.switcherText = document.getElementById('auth-switcher');
+
+      this.showRecoveryBtn = document.getElementById('show-recovery');
+      this.switchToSignupBtn = document.getElementById('switch-to-signup');
+      this.externalProvidersWrap = document.getElementById('external-providers');
+      this.googleBtn = document.getElementById('google-signin-btn');
+
+      this.init();
+    }
+
+    init() {
+      if (!this.modal) return;
+
+      this.closeBtn?.addEventListener('click', () => this.close());
+      this.backdrop?.addEventListener('click', () => this.close());
+      this.showRecoveryBtn?.addEventListener('click', () => this.showView('recovery'));
+      this.switchToSignupBtn?.addEventListener('click', () => {
+        if (this.switchToSignupBtn.textContent.includes('Sign up')) {
+          this.showView('signup');
+        } else {
+          this.showView('login');
+        }
+      });
+
+      this.googleBtn?.addEventListener('click', () => this.handleGoogleLogin());
+
+      this.loginForm?.addEventListener('submit', (e) => this.handleLogin(e));
+      this.signupForm?.addEventListener('submit', (e) => this.handleSignup(e));
+      this.recoveryForm?.addEventListener('submit', (e) => this.handleRecovery(e));
+
+      // Global event listener for opening
+      window.addEventListener('open-auth-modal', (e: any) => {
+        this.open(e.detail?.view || 'login');
+      });
+    }
+
+    open(view = 'login') {
+      this.showView(view);
+      this.modal.classList.remove('hidden');
+      setTimeout(() => {
+        this.backdrop.classList.add('opacity-100');
+        this.container.classList.add('opacity-100', 'scale-100', 'translate-y-0');
+      }, 10);
+      document.body.style.overflow = 'hidden';
+    }
+
+    close() {
+      this.backdrop.classList.remove('opacity-100');
+      this.container.classList.remove('opacity-100', 'scale-100', 'translate-y-0');
+      setTimeout(() => {
+        this.modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        this.resetForms();
+      }, 300);
+    }
+
+    showView(view) {
+      this.errorBox.classList.add('hidden');
+      this.loginForm.classList.add('hidden');
+      this.signupForm.classList.add('hidden');
+      this.recoveryForm.classList.add('hidden');
+      if (this.externalProvidersWrap) this.externalProvidersWrap.classList.add('hidden');
+
+      if (view === 'login') {
+        this.title.textContent = 'Welcome Back';
+        this.subtitle.textContent = 'Enter your details to access your courses';
+        this.loginForm.classList.remove('hidden');
+        if (this.externalProvidersWrap) this.externalProvidersWrap.classList.remove('hidden');
+        this.switcherText.innerHTML = `Don't have an account? <button id="switch-to-signup" class="text-primary hover:underline font-bold ml-1">Sign up free</button>`;
+      } else if (view === 'signup') {
+        this.title.textContent = 'Join the Coven';
+        this.subtitle.textContent = 'Create your account to start learning';
+        this.signupForm.classList.remove('hidden');
+        if (this.externalProvidersWrap) this.externalProvidersWrap.classList.remove('hidden');
+        this.switcherText.innerHTML = `Already have an account? <button id="switch-to-signup" class="text-primary hover:underline font-bold ml-1">Log in</button>`;
+      } else if (view === 'recovery') {
+        this.title.textContent = 'Recover Password';
+        this.subtitle.textContent = "We'll send you a link to reset your password";
+        this.recoveryForm.classList.remove('hidden');
+        this.switcherText.innerHTML = `Wait, I remember it! <button id="switch-to-signup" class="text-primary hover:underline font-bold ml-1">Go back to login</button>`;
+      }
+
+      // Re-bind switching as innerHTML kills references
+      document.getElementById('switch-to-signup')?.addEventListener('click', () => {
+        const btn = document.getElementById('switch-to-signup');
+        if (btn.textContent.includes('Sign up')) this.showView('signup');
+        else if (btn.textContent.includes('Log in') || btn.textContent.includes('back')) this.showView('login');
+      });
+    }
+
+    showError(msg) {
+      this.errorBox.textContent = msg;
+      this.errorBox.classList.remove('hidden');
+      this.container.classList.add('shake'); // Optional animation
+      setTimeout(() => this.container.classList.remove('shake'), 500);
+    }
+
+    resetForms() {
+      this.loginForm.reset();
+      this.signupForm.reset();
+      this.recoveryForm.reset();
+    }
+
+    async handleLogin(e) {
+      e.preventDefault();
+      const email = (document.getElementById('login-email') as HTMLInputElement).value;
+      const password = (document.getElementById('login-password') as HTMLInputElement).value;
+      const submitBtn = this.loginForm.querySelector('button[type="submit"]');
+
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError(
+          'Authentication service is not available. Please make sure Identity is enabled on your Netlify site.'
+        );
+        return;
+      }
+
+      try {
+        submitBtn.innerHTML =
+          '<span class="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Signing In...';
+        const user = await gotrue.login(email, password, true);
+        // Set the nf_jwt cookie so Netlify's edge router can read the user's
+        // roles for role-based redirects. Use jwt(true) for a fresh token since
+        // user.token.access_token may be stale/expired.
+        const token = await user?.jwt(true);
+        if (token) {
+          document.cookie = `nf_jwt=${token}; path=/`;
+        }
+
+        // Allow time for Netlify Identity cross-origin iframe storage to sync before reloading
+        setTimeout(() => {
+          window.location.reload(); // Refresh to update user state
+        }, 500);
+      } catch (err: any) {
+        this.showError(err.message || 'Invalid email or password');
+        submitBtn.innerHTML =
+          'Sign In <svg class="w-5 h-5 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>';
+      }
+    }
+
+    async handleSignup(e) {
+      e.preventDefault();
+      const name = (document.getElementById('signup-name') as HTMLInputElement).value;
+      const email = (document.getElementById('signup-email') as HTMLInputElement).value;
+      const password = (document.getElementById('signup-password') as HTMLInputElement).value;
+      const submitBtn = this.signupForm.querySelector('button[type="submit"]');
+
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError(
+          'Authentication service is not available. Please make sure Identity is enabled on your Netlify site.'
+        );
+        return;
+      }
+
+      try {
+        submitBtn.innerHTML =
+          '<span class="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Creating...';
+        await gotrue.signup(email, password, { full_name: name });
+        this.showView('login');
+        this.showError('Confirmation email sent! Please check your inbox.');
+        this.errorBox.classList.replace('text-red-600', 'text-green-600');
+        this.errorBox.classList.replace('bg-red-50', 'bg-green-50');
+      } catch (err: any) {
+        this.showError(err.message || 'Error creating account');
+        submitBtn.innerHTML = 'Create Account';
+      }
+    }
+
+    async handleRecovery(e) {
+      e.preventDefault();
+      const email = (document.getElementById('recovery-email') as HTMLInputElement).value;
+      const submitBtn = this.recoveryForm.querySelector('button[type="submit"]');
+
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError(
+          'Authentication service is not available. Please make sure Identity is enabled on your Netlify site.'
+        );
+        return;
+      }
+
+      try {
+        submitBtn.innerHTML =
+          '<span class="animate-spin mr-3 border-2 border-white border-t-transparent rounded-full w-5 h-5"></span> Sending...';
+        await gotrue.requestPasswordRecovery(email);
+        this.showError('Recovery email sent! Check your inbox.');
+        this.errorBox.classList.replace('text-red-600', 'text-green-600');
+        this.errorBox.classList.replace('bg-red-50', 'bg-green-50');
+      } catch (err: any) {
+        this.showError(err.message || 'Error sending recovery email');
+        submitBtn.innerHTML = 'Send Recovery Email';
+      }
+    }
+
+    async handleGoogleLogin() {
+      // @ts-ignore
+      const gotrue = window.netlifyIdentity?.gotrue;
+      if (!gotrue) {
+        this.showError(
+          'Authentication service is not available. Please make sure Identity is enabled on your Netlify site.'
+        );
+        return;
+      }
+
+      try {
+        if (this.googleBtn) {
+          this.googleBtn.innerHTML =
+            '<span class="animate-spin mr-3 border-2 border-slate-600 dark:border-slate-300 border-t-transparent rounded-full w-5 h-5"></span> Redirecting...';
+        }
+
+        // Get the Google OAuth URL from GoTrue and redirect
+        // @ts-ignore
+        const url = gotrue.loginExternalUrl('google');
+        window.location.href = url;
+      } catch (err: any) {
+        this.showError(err.message || 'Error connecting to Google');
+        if (this.googleBtn) {
+          this.googleBtn.innerHTML =
+            '<Icon name="tabler:brand-google-filled" class="w-5 h-5 text-red-500" /> Continue with Google';
+        }
+      }
+    }
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => new AuthModal());
+  document.addEventListener('astro:page-load', () => new AuthModal());
+</script>
+
+<style>
+  .shake {
+    animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  }
+  @keyframes shake {
+    10%,
+    90% {
+      transform: translate3d(-1px, 0, 0);
+    }
+    20%,
+    80% {
+      transform: translate3d(2px, 0, 0);
+    }
+    30%,
+    50%,
+    70% {
+      transform: translate3d(-4px, 0, 0);
+    }
+    40%,
+    60% {
+      transform: translate3d(4px, 0, 0);
+    }
+  }
+</style>

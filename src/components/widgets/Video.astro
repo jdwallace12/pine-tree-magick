@@ -1,0 +1,15 @@
+---
+import { YouTube } from 'astro-embed';
+
+export interface Props {
+  id: string;
+  caption?: string;
+}
+
+const { id, caption } = Astro.props;
+---
+
+<figure class="lesson-figure">
+  <YouTube id={id} />
+  {caption && <figcaption class="text-left">{caption}</figcaption>}
+</figure>
