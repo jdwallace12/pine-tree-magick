@@ -37,6 +37,4 @@ quiz:
         qualities: { Fire: 2 }
 ---
 
-# Personality Test
-
 Testing the new "qualities" scoring system. Choose answers to see your dominant element!

@@ -17,7 +17,7 @@ const metadata = {
 const bundles = await getCollection('bundle');
 const rituals = await getCollection('ritual');
 const courses = await getCollection('course', ({ data }) => data.published === true);
-const freebies = await getCollection('freebie');
+const freebies = await getCollection('freebie', ({ data }) => data.published !== false);
 
 // Get sorted components with content
 const shopComponents = await getShopComponents(bundles, rituals, courses, freebies);
