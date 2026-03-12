@@ -18,7 +18,7 @@ const {
 // Use passed items or fetch from collection with default empty array
 let activeFreebies = items || [];
 if (!items) {
-  const freebies = await getCollection('freebie');
+  const freebies = await getCollection('freebie', ({ data }) => data.published !== false);
   const currentDate = new Date();
   activeFreebies = freebies.filter((freebie) => {
     if (!freebie.data.expirationDate) return true;
