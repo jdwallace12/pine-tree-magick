@@ -1,10 +1,61 @@
 // netlify/functions/workshop-spots.js
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { getStore } from '@netlify/blobs';
 
-// Workshop configuration: maps slug → { title, maxParticipants }
-const WORKSHOP_CONFIG = {
-  'candle-magick': { title: 'Candle Magick Workshop', maxParticipants: 12 },
-};
+// Cache for workshop config loaded from build-generated JSON
+let WORKSHOP_CONFIG_CACHE = null;
+
+/**
+ * Load workshop config from the JSON file generated at build time
+ * by scripts/generate-workshop-slugs.js.
+ * Returns a map of { slug: { title, maxParticipants } }
+ */
+function getWorkshopConfig() {
+  if (WORKSHOP_CONFIG_CACHE) {
+    return WORKSHOP_CONFIG_CACHE;
+  }
+
+  const functionDir = path.dirname(fileURLToPath(import.meta.url));
+  const jsonPath = path.join(functionDir, 'workshop-slugs.json');
+
+  const altPaths = [
+    jsonPath,
+    path.join(process.cwd(), 'netlify/functions/workshop-slugs.json'),
+    path.join(process.cwd(), 'workshop-slugs.json'),
+  ];
+
+  let config = {};
+  let found = false;
+
+  for (const altPath of altPaths) {
+    try {
+      if (fs.existsSync(altPath)) {
+        const raw = JSON.parse(fs.readFileSync(altPath, 'utf-8'));
+        // raw is { "Workshop Title": { slug, maxParticipants } }
+        // Re-key by slug for easy lookup: { "candle-magick": { title, maxParticipants } }
+        for (const [title, data] of Object.entries(raw)) {
+          config[data.slug] = { title, maxParticipants: data.maxParticipants };
+        }
+        console.log(`✅ Loaded workshop config from: ${altPath}`);
+        console.log(`📊 Workshops: ${Object.keys(config).join(', ')}`);
+        found = true;
+        break;
+      }
+    } catch (err) {
+      console.warn(`⚠️ Error reading ${altPath}:`, err.message);
+    }
+  }
+
+  if (!found) {
+    console.error(`❌ Workshop slugs file not found. Tried:`, altPaths);
+    console.error(`❌ Make sure to run 'npm run generate-workshop-slugs' during build`);
+  }
+
+  WORKSHOP_CONFIG_CACHE = config;
+  return config;
+}
 
 /**
  * Get the current signup count from Netlify Blobs.
@@ -48,6 +99,7 @@ export default async function handler(req) {
     );
   }
 
+  const WORKSHOP_CONFIG = getWorkshopConfig();
   const config = WORKSHOP_CONFIG[workshopSlug];
 
   if (!config) {
@@ -58,8 +110,10 @@ export default async function handler(req) {
   }
 
   const signupCount = await getSubmissions(workshopSlug);
-  const spotsRemaining = Math.max(0, config.maxParticipants - signupCount);
-  const soldOut = spotsRemaining === 0;
+  const spotsRemaining = config.maxParticipants != null
+    ? Math.max(0, config.maxParticipants - signupCount)
+    : null;
+  const soldOut = spotsRemaining != null ? spotsRemaining === 0 : false;
 
   return new Response(
     JSON.stringify({

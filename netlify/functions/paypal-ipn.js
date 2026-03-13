@@ -29,6 +29,12 @@ const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || process.env.EMAIL_FROM || '
 // Cache for PDF links map
 let PDF_LINKS_CACHE = null;
 
+// Cache for workshop slugs map
+let WORKSHOP_SLUGS_CACHE = null;
+
+// Cache for course slugs map
+let COURSE_SLUGS_CACHE = null;
+
 /**
  * Read PDF links from the generated JSON file
  * IMPORTANT: The title in the markdown frontmatter must match exactly what PayPal sends as "item_name"
@@ -76,6 +82,100 @@ function getPdfLinks() {
   
   PDF_LINKS_CACHE = pdfLinks;
   return pdfLinks;
+}
+
+/**
+ * Read workshop slug mappings from the generated JSON file.
+ * Maps "Workshop Title" -> "workshop-slug" for all paid workshops.
+ * The JSON is generated during build by scripts/generate-workshop-slugs.js
+ */
+function getWorkshopSlugs() {
+  if (WORKSHOP_SLUGS_CACHE) {
+    return WORKSHOP_SLUGS_CACHE;
+  }
+
+  const functionDir = path.dirname(fileURLToPath(import.meta.url));
+  const jsonPath = path.join(functionDir, 'workshop-slugs.json');
+
+  const altPaths = [
+    jsonPath,
+    path.join(process.cwd(), 'netlify/functions/workshop-slugs.json'),
+    path.join(process.cwd(), 'workshop-slugs.json'),
+  ];
+
+  let workshopSlugs = {};
+  let found = false;
+
+  for (const altPath of altPaths) {
+    try {
+      if (fs.existsSync(altPath)) {
+        const content = fs.readFileSync(altPath, 'utf-8');
+        workshopSlugs = JSON.parse(content);
+        console.log(`✅ Loaded workshop slugs from: ${altPath}`);
+        console.log(`📊 Total workshop slugs: ${Object.keys(workshopSlugs).length}`);
+        console.log(`📊 Workshop titles:`, Object.keys(workshopSlugs));
+        found = true;
+        break;
+      }
+    } catch (err) {
+      console.warn(`⚠️ Error reading ${altPath}:`, err.message);
+    }
+  }
+
+  if (!found) {
+    console.error(`❌ Workshop slugs file not found. Tried:`, altPaths);
+    console.error(`❌ Make sure to run 'npm run generate-workshop-slugs' during build`);
+  }
+
+  WORKSHOP_SLUGS_CACHE = workshopSlugs;
+  return workshopSlugs;
+}
+
+/**
+ * Read course slug mappings from the generated JSON file.
+ * Maps "Course Title" -> "course-slug" for all paid courses.
+ * The JSON is generated during build by scripts/generate-course-slugs.js
+ */
+function getCourseSlugs() {
+  if (COURSE_SLUGS_CACHE) {
+    return COURSE_SLUGS_CACHE;
+  }
+
+  const functionDir = path.dirname(fileURLToPath(import.meta.url));
+  const jsonPath = path.join(functionDir, 'course-slugs.json');
+
+  const altPaths = [
+    jsonPath,
+    path.join(process.cwd(), 'netlify/functions/course-slugs.json'),
+    path.join(process.cwd(), 'course-slugs.json'),
+  ];
+
+  let courseSlugs = {};
+  let found = false;
+
+  for (const altPath of altPaths) {
+    try {
+      if (fs.existsSync(altPath)) {
+        const content = fs.readFileSync(altPath, 'utf-8');
+        courseSlugs = JSON.parse(content);
+        console.log(`✅ Loaded course slugs from: ${altPath}`);
+        console.log(`📊 Total course slugs: ${Object.keys(courseSlugs).length}`);
+        console.log(`📊 Course titles:`, Object.keys(courseSlugs));
+        found = true;
+        break;
+      }
+    } catch (err) {
+      console.warn(`⚠️ Error reading ${altPath}:`, err.message);
+    }
+  }
+
+  if (!found) {
+    console.error(`❌ Course slugs file not found. Tried:`, altPaths);
+    console.error(`❌ Make sure to run 'npm run generate-course-slugs' during build`);
+  }
+
+  COURSE_SLUGS_CACHE = courseSlugs;
+  return courseSlugs;
 }
 
 // Send email via Resend
@@ -307,12 +407,8 @@ export default async function handler(req) {
     }
 
     // 2. Handle Course access
-    // We assume courses items are named exactly as their title or similar
-    // For simplicity, let's map course names to slugs. 
-    // In a production env, you might use 'item_number' for the course slug.
-    const courseSlugs = {
-      "Magickal Foundations: A Beginner's Guide": "magickal-foundations"
-    };
+    // We dynamically load course slugs from the JSON artifact built at compile time.
+    const courseSlugs = getCourseSlugs();
 
     const courseSlug = courseSlugs[itemName];
     if (courseSlug && custom) {
@@ -323,11 +419,11 @@ export default async function handler(req) {
     }
 
     // 3. Handle Workshop Spots (Netlify Blobs)
-    const workshopSlugs = {
-      "Candle Magick Workshop": "candle-magick"
-    };
+    const workshopSlugs = getWorkshopSlugs();
     
-    const purchasedWorkshopSlug = workshopSlugs[itemName];
+    // JSON now stores { slug, maxParticipants } per title
+    const workshopEntry = workshopSlugs[itemName];
+    const purchasedWorkshopSlug = workshopEntry?.slug;
     if (purchasedWorkshopSlug) {
       try {
         const store = getStore('workshops');
