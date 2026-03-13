@@ -9,6 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getStore } from '@netlify/blobs';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const EMAIL_BCC_INTERNAL = process.env.EMAIL_BCC_INTERNAL || "";
@@ -305,7 +306,7 @@ export default async function handler(req) {
       console.log(`✅ Download delivered: ${itemName}`);
     }
 
-    // 2. Handle Course access (New logic)
+    // 2. Handle Course access
     // We assume courses items are named exactly as their title or similar
     // For simplicity, let's map course names to slugs. 
     // In a production env, you might use 'item_number' for the course slug.
@@ -319,6 +320,26 @@ export default async function handler(req) {
       console.log(`✅ Course role granted: course:${courseSlug}`);
     } else if (courseSlug && !custom) {
       console.warn(`⚠️ Course purchase detected but no User ID (custom) provided. Manual grant needed for ${email}`);
+    }
+
+    // 3. Handle Workshop Spots (Netlify Blobs)
+    const workshopSlugs = {
+      "Candle Magick Workshop": "candle-magick"
+    };
+    
+    const purchasedWorkshopSlug = workshopSlugs[itemName];
+    if (purchasedWorkshopSlug) {
+      try {
+        const store = getStore('workshops');
+        const currentCountStr = await store.get(purchasedWorkshopSlug);
+        const currentCount = currentCountStr ? parseInt(currentCountStr, 10) : 0;
+        const newCount = currentCount + 1;
+        
+        await store.set(purchasedWorkshopSlug, newCount.toString());
+        console.log(`✅ Workshop spots updated: ${purchasedWorkshopSlug} is now at ${newCount} signups`);
+      } catch (err) {
+        console.error(`❌ Failed to update workshop spots for ${purchasedWorkshopSlug}:`, err);
+      }
     }
 
     return new Response("OK", { status: 200 });
