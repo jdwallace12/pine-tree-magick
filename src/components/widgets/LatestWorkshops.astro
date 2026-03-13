@@ -126,7 +126,7 @@ const sortedWorkshops = filteredWorkshops.sort(
           if (spotsText) Object.assign(spotsText.style, { display: 'none' });
         } else {
           if (spotsText) {
-            spotsText.textContent = `${spotsRemaining} spots left`;
+            spotsText.textContent = `${spotsRemaining} ${spotsRemaining === 1 ? 'spot' : 'spots'} left`;
             spotsText.classList.remove('hidden');
           }
         }

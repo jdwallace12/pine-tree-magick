@@ -185,7 +185,30 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
 
         // Update all spots-remaining elements
         document.querySelectorAll('.spots-remaining').forEach((el) => {
+          // If the element's parent text includes "left" or "remaining", we just update the number.
+          // The spans themselves only contain the number currently.
           el.textContent = spotsRemaining;
+
+          // Let's also update the text node *after* the span to handle pluralization
+          if (el.nextSibling && el.nextSibling.nodeType === Node.TEXT_NODE) {
+            const node = el.nextSibling as Text;
+            const text = node.textContent;
+            if (text && text.includes('spot left')) {
+              node.textContent = text.replace(/spots? left/, spotsRemaining === 1 ? 'spot left' : 'spots left');
+            } else if (text && text.includes('spots left')) {
+              node.textContent = text.replace(/spots? left/, spotsRemaining === 1 ? 'spot left' : 'spots left');
+            } else if (text && text.includes('spot remaining')) {
+              node.textContent = text.replace(
+                /spots? remaining/,
+                spotsRemaining === 1 ? 'spot remaining' : 'spots remaining'
+              );
+            } else if (text && text.includes('spots remaining')) {
+              node.textContent = text.replace(
+                /spots? remaining/,
+                spotsRemaining === 1 ? 'spot remaining' : 'spots remaining'
+              );
+            }
+          }
         });
 
         // Show the counter
