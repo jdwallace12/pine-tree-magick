@@ -86,6 +86,7 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
       <p><strong>Time:</strong> {time}</p>
       <p><strong>Location:</strong> {location}</p>
       <p><strong>Price:</strong> ${price}</p>
+      <p><strong>Spots Remaining:</strong> <span class="spots-remaining">{maxParticipants}</span></p>
     </div>
     <div>
       <div
@@ -141,7 +142,7 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
               data-max-participants={maxParticipants}
             >
               <h3 class="text-2xl text-primary font-heading">
-                <span id="spots-remaining">{maxParticipants}</span> of {maxParticipants} spots remaining
+                <span class="spots-remaining">{maxParticipants}</span> spots remaining
               </h3>
             </div>
           )}
@@ -182,9 +183,10 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
         const soldOut = data.soldOut ?? false;
         const filledPercent = Math.round(((maxParticipants - spotsRemaining) / maxParticipants) * 100);
 
-        // Update counter text
-        const remainingEl = document.getElementById('spots-remaining');
-        if (remainingEl) remainingEl.textContent = spotsRemaining;
+        // Update all spots-remaining elements
+        document.querySelectorAll('.spots-remaining').forEach((el) => {
+          el.textContent = spotsRemaining;
+        });
 
         // Show the counter
         counterEl.classList.remove('hidden');
