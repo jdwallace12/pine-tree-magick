@@ -50,7 +50,12 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
 ---
 
 <Layout metadata={metadata}>
-  <article class="max-w-2xl mx-auto p-6 space-y-6">
+  <article
+    class="max-w-2xl mx-auto p-6 space-y-6"
+    id="workshop-article"
+    data-workshop-slug={workshopSlug || slug}
+    data-max-participants={maxParticipants}
+  >
     <div class="flex justify-between items-center sticky top-[4.5rem] bg-dark py-4 z-10">
       <a href="/workshops#workshops" class="flex underline w-max"
         ><Icon name="tabler:arrow-left" class="w-5 h-5 mr-1" />Back to All Workshops</a
@@ -72,13 +77,12 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
     </div>
     <div class="relative">
       <img src={image} alt={title} class="w-full h-64 object-cover rounded-lg shadow-md" />
-      {
-        soldOut && (
-          <div class="absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-md font-bold shadow-lg transform rotate-3 uppercase tracking-wider border-2 border-white">
-            Sold Out
-          </div>
-        )
-      }
+      <div
+        id="dynamic-image-badge"
+        class={`absolute top-4 right-4 bg-red-600 text-white px-4 py-2 rounded-md font-bold shadow-lg transform rotate-3 uppercase tracking-wider border-2 border-white ${soldOut ? '' : 'hidden'}`}
+      >
+        Sold Out
+      </div>
     </div>
     <h1 class="text-4xl mt-4 font-heading">{title}</h1>
     <div class="text-lg">
@@ -86,7 +90,10 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
       <p><strong>Time:</strong> {time}</p>
       <p><strong>Location:</strong> {location}</p>
       <p><strong>Price:</strong> ${price}</p>
-      <p><strong>Spots Remaining:</strong> <span class="spots-remaining">{maxParticipants}</span></p>
+      <p>
+        <strong>Spots Remaining:</strong>
+        <span class="spots-remaining" style="visibility: hidden;">{maxParticipants}</span>
+      </p>
     </div>
     <div>
       <div
@@ -107,22 +114,10 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
       </div>
     </div>
 
-    {/* Static sold-out banner (from frontmatter) */}
-    {
-      soldOut && (
-        <div class="mt-12 p-8 border-2 border-dashed border-gray-300 dark:border-slate-700 rounded-lg text-center">
-          <h2 class="text-3xl font-heading mb-4">Sold Out</h2>
-          <p class="text-muted text-lg">
-            This workshop is currently sold out. Follow me on social media or check back later for future dates!
-          </p>
-        </div>
-      )
-    }
-
-    {/* Dynamic sold-out banner — shown by JS when spots reach 0 */}
+    {/* Sold Out Banner */}
     <div
       id="dynamic-sold-out"
-      class="hidden mt-12 p-8 border-2 border-dashed border-gray-300 dark:border-slate-700 rounded-lg text-center"
+      class={`mt-12 p-8 border-2 border-dashed border-gray-300 dark:border-slate-700 rounded-lg text-center ${soldOut ? '' : 'hidden'}`}
     >
       <h2 class="text-3xl font-heading mb-4">Sold Out</h2>
       <p class="text-muted text-lg">
@@ -132,7 +127,7 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
 
     {
       hasPurchase && payPalButtonId && !soldOut && (
-        <div class="mt-12">
+        <div id="purchase-wrapper" class="mt-12">
           {/* Dynamic spots counter — hidden until JS loads the count */}
           {maxParticipants && (
             <div
@@ -166,12 +161,14 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
 
 <script>
   function initSpotsCounter() {
-    const counterEl = document.getElementById('spots-counter');
-    if (!counterEl) return;
+    const articleEl = document.getElementById('workshop-article');
+    if (!articleEl) return;
 
-    const workshopSlug = counterEl.dataset.workshopSlug;
-    const maxParticipants = parseInt(counterEl.dataset.maxParticipants, 10);
-    if (!workshopSlug || !maxParticipants) return;
+    const workshopSlug = articleEl.dataset.workshopSlug;
+    // maxParticipants could be undefined if there's no limit
+    if (!workshopSlug || !articleEl.dataset.maxParticipants) return;
+
+    const maxParticipants = parseInt(articleEl.dataset.maxParticipants, 10);
 
     fetch(`/.netlify/functions/workshop-spots?workshop=${workshopSlug}`)
       .then((res) => {
@@ -209,32 +206,28 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
               );
             }
           }
+
+          // Reveal the number now that we have the real count
+          (el as HTMLElement).style.visibility = 'visible';
         });
+
+        const counterEl = document.getElementById('spots-counter');
 
         // Show the counter only if 5 or fewer spots remain
         if (spotsRemaining <= 5) {
-          counterEl.classList.remove('hidden');
-          // Also handle the info section counter which doesn't use the counterEl hidden class directly
-          document.querySelectorAll('.spots-remaining').forEach((el) => {
-            const parent = el.closest('p');
-            if (parent) parent.classList.remove('hidden');
-          });
+          if (counterEl) counterEl.classList.remove('hidden');
         } else {
-          counterEl.classList.add('hidden');
-          document.querySelectorAll('.spots-remaining').forEach((el) => {
-            const parent = el.closest('p');
-            if (parent) parent.classList.add('hidden');
-          });
+          if (counterEl) counterEl.classList.add('hidden');
         }
 
         // Handle sold-out state
         if (soldOut) {
           // Hide the registration section
-          const purchaseSection = document.getElementById('purchase');
-          if (purchaseSection) purchaseSection.closest('.mt-12')?.classList.add('hidden');
+          const purchaseWrapper = document.getElementById('purchase-wrapper');
+          if (purchaseWrapper) purchaseWrapper.classList.add('hidden');
 
           // Hide the "Register Now" sticky button
-          const registerBtns = document.querySelectorAll('a[href="#purchase"]');
+          const registerBtns = document.querySelectorAll('a[href="#purchase-wrapper"], a[href="#purchase"]');
           registerBtns.forEach((btn) => btn.classList.add('hidden'));
 
           // Hide the inline sign-up link
@@ -243,19 +236,25 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
             if (btn.textContent.trim() === 'Sign Up') btn.classList.add('hidden');
           });
 
-          // Show the dynamic sold-out banner
+          // Show the dynamic sold-out banners
           const dynamicSoldOut = document.getElementById('dynamic-sold-out');
           if (dynamicSoldOut) dynamicSoldOut.classList.remove('hidden');
 
+          const dynamicImageBadge = document.getElementById('dynamic-image-badge');
+          if (dynamicImageBadge) dynamicImageBadge.classList.remove('hidden');
+
           // Update counter styling for sold-out
-          counterEl.classList.remove('bg-primary/10', 'border-primary/30');
-          counterEl.classList.add('bg-red-500/10', 'border-red-500/30');
+          if (counterEl) {
+            counterEl.classList.remove('bg-primary/10', 'border-primary/30');
+            counterEl.classList.add('bg-red-500/10', 'border-red-500/30');
+          }
         }
       })
       .catch((err) => {
         console.warn('Could not load workshop spots:', err);
         // On error, still show the counter with the static max value
-        counterEl.classList.remove('hidden');
+        const counterEl = document.getElementById('spots-counter');
+        if (counterEl) counterEl.classList.remove('hidden');
       });
   }
 
