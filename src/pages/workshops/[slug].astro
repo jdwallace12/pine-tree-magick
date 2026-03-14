@@ -211,8 +211,21 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
           }
         });
 
-        // Show the counter
-        counterEl.classList.remove('hidden');
+        // Show the counter only if 5 or fewer spots remain
+        if (spotsRemaining <= 5) {
+          counterEl.classList.remove('hidden');
+          // Also handle the info section counter which doesn't use the counterEl hidden class directly
+          document.querySelectorAll('.spots-remaining').forEach((el) => {
+            const parent = el.closest('p');
+            if (parent) parent.classList.remove('hidden');
+          });
+        } else {
+          counterEl.classList.add('hidden');
+          document.querySelectorAll('.spots-remaining').forEach((el) => {
+            const parent = el.closest('p');
+            if (parent) parent.classList.add('hidden');
+          });
+        }
 
         // Handle sold-out state
         if (soldOut) {

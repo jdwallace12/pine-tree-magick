@@ -126,7 +126,7 @@ const sortedWorkshops = filteredWorkshops.sort(
           if (soldOutBadge) soldOutBadge.classList.remove('hidden');
           if (spotsText) Object.assign(spotsText.style, { display: 'none' });
         } else {
-          if (spotsText) {
+          if (spotsText && spotsRemaining <= 5) {
             spotsText.textContent = `${spotsRemaining} ${spotsRemaining === 1 ? 'spot' : 'spots'} left`;
             spotsText.classList.remove('hidden');
           }
