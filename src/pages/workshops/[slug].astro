@@ -129,20 +129,20 @@ const hasPurchase = (payPalButtonId || isPaid) && !soldOut;
       hasPurchase && payPalButtonId && !soldOut && (
         <div id="purchase-wrapper" class="mt-12">
           {/* Dynamic spots counter — hidden until JS loads the count */}
+          <h2 class="text-3xl font-heading text-center mb-0 mt-16">Reserve Your Spot</h2>
           {maxParticipants && (
             <div
               id="spots-counter"
-              class="hidden bg-primary/10 rounded-lg p-4 text-center mb-0"
+              class="hidden bg-primary/10 rounded-lg text-center mb-0"
               data-workshop-slug={workshopSlug || slug}
               data-max-participants={maxParticipants}
             >
-              <h3 class="text-2xl text-primary font-heading">
+              <h3 class="text-lg text-primary font-thin">
                 <span class="spots-remaining">{maxParticipants}</span> spots left
               </h3>
             </div>
           )}
-          <h2 class="text-3xl font-heading text-center mb-4">Reserve Your Spot</h2>
-          <p class="text-center text-muted mb-8">
+          <p class="text-center text-muted mb-8 mt-4">
             Register below to secure your place in this workshop. After submission, you'll be redirected to PayPal to
             complete your purchase.
           </p>
