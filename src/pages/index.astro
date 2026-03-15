@@ -67,18 +67,36 @@ const metadata = {
         description:
           'Private sessions are perfect for anyone seeking real-time connection and actionable guidance. Each private session includes a personalized step-by-step ritual designed around your unique astrological blueprint, aligning your energy with your cosmic path.',
         icon: 'tabler:calendar-check',
+        callToAction: {
+          text: 'Book Private Session',
+          href: '/private-sessions',
+          variant: 'link',
+          icon: 'tabler:chevron-right',
+        },
       },
       {
         title: 'Book an Audio Reading',
         description:
           'This reading is ideal for anyone who prefers to listen and reflect in their own time. You’ll receive a detailed, pre-recorded astrology reading plus a written, step-by-step ritual to help align your vibration with your desired manifestation.',
         icon: 'tabler:sun',
+        callToAction: {
+          text: 'Book Audio Reading',
+          href: '/audio-reading',
+          variant: 'link',
+          icon: 'tabler:chevron-right',
+        },
       },
       {
         title: 'Book Me for Your Next Gathering',
         description:
-          "Bring a touch of magick to your next gathering with a personalized Tarot, ritual, or astrology experience. Whether it’s an intimate celebration or a girls night in, I’ll guide your guests through a mystical experience that inspires connection and reflection.",
+          'Bring a touch of magick to your next gathering with a personalized Tarot, ritual, or astrology experience. Whether it’s an intimate celebration or a girls night in, I’ll guide your guests through a mystical experience that inspires connection and reflection.',
         icon: 'tabler:pencil',
+        callToAction: {
+          text: 'Book Your Next Gathering',
+          href: '/group-bookings',
+          variant: 'link',
+          icon: 'tabler:chevron-right',
+        },
       },
     ]}
     image={{
@@ -138,12 +156,13 @@ const metadata = {
         job: 'Gifted Natal Promise Reading',
         image: { src: client1Image, alt: 'Client 6' },
       },
-      // {
-      //   testimonial:
-      //     'This is awesome!!!  Knowing her well, this is pretty amazing to see how much it correlates with her life right now. Thank you! I love the organization too.',
-      //   name: 'Client Testimonial',
-      //   job: 'Gifted Unlock Your Natal Chart',
-      // },
+      {
+        testimonial:
+          'I really enjoyed the Winter Solstice ritual. It felt like a perfect reset for the year and a meaningful chance to check in with myself.',
+        name: 'Client Testimonial',
+        job: 'Winter Solstice Ritual',
+        image: { src: client1Image, alt: 'Client 7' },
+      },
     ]}
     wrapperClass=""
   />
@@ -163,7 +182,7 @@ const metadata = {
       {
         title: "What's included with the ritual?",
         description:
-          "Each ritual includes a recorded meditation, journal prompts,  altar suggestions, and step-by-step instructions. Rituals are included with all readings, but vary based on which type of reading you purchase. A private session includes a personalized ritual designed specifically for your unique chart, current planetary alignment, and divine timing. Audio readings provide astrological guidance based on your chart, in addition to a powerful manifestation ritual designed around your intention.",
+          'Each ritual includes a recorded meditation, journal prompts,  altar suggestions, and step-by-step instructions. Rituals are included with all readings, but vary based on which type of reading you purchase. A private session includes a personalized ritual designed specifically for your unique chart, current planetary alignment, and divine timing. Audio readings provide astrological guidance based on your chart, in addition to a powerful manifestation ritual designed around your intention.',
         icon: 'tabler:chevrons-right',
       },
       {
