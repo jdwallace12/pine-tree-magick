@@ -123,6 +123,7 @@ const freebieCollection = defineCollection({
     title: z.string(),
     description: z.string(),
     image: z.string(),
+    published: z.boolean().optional(),
     expirationDate: z.string().optional(),
     pdfUrl: z.string().optional(),
     redirectUrl: z.string().optional(),

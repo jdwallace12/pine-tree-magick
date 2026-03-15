@@ -24,6 +24,7 @@
         "npm:@fontsource-variable/merriweather-sans@^5.1.0",
         "npm:@iconify-json/flat-color-icons@^1.2.0",
         "npm:@iconify-json/tabler@^1.2.3",
+        "npm:@netlify/blobs@^8.2.0",
         "npm:@tailwindcss/typography@~0.5.15",
         "npm:@types/eslint__js@^8.42.3",
         "npm:@types/js-yaml@^4.0.9",

@@ -15,7 +15,7 @@ const stringifiedQuestions = JSON.stringify(questions);
 <div class="hidden grid-cols-2 md:grid-cols-4 aspect-square group-hover:opacity-90"></div>
 
 <div
-  class="quiz-container w-full mx-auto p-8 md:p-12 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 relative overflow-hidden"
+  class="quiz-container w-full mx-auto p-8 md:p-12 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800 relative overflow-hidden min-h-[70vh] flex flex-col"
   data-questions={stringifiedQuestions}
   data-show-score={showScore.toString()}
   data-hide-feedback={hideFeedback.toString()}
@@ -25,19 +25,17 @@ const stringifiedQuestions = JSON.stringify(questions);
     <p class="quiz-progress text-slate-500 dark:text-slate-400 font-medium">Question 1 of {questions.length}</p>
   </div>
 
-  <div class="quiz-body min-h-[250px] relative transition-opacity duration-300">
+  <div class="quiz-body min-h-[250px] relative transition-opacity duration-300 flex-grow flex flex-col justify-center">
     <!-- Question Content Injected Here by JS -->
     <div class="question-container" id="question-container"></div>
   </div>
 
-  <div class="quiz-results hidden flex-col justify-center min-h-[250px] text-center" id="quiz-results">
-    <div class="text-5xl mb-4">🎉</div>
-    <h3 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Quiz Complete!</h3>
+  <div class="quiz-results hidden flex-col justify-center min-h-[250px] text-center flex-grow" id="quiz-results">
     <p class="text-xl text-slate-600 dark:text-slate-300 mb-6 font-medium">
-      Your score: <span id="score-display" class="text-primary-600 font-bold"></span> / <span id="total-display"></span>
+      Your score: <span id="score-display" class="text-[#f59bbb] font-bold"></span> / <span id="total-display"></span>
     </p>
     <button
-      class="btn btn-primary px-8 py-3 rounded-lg font-bold bg-primary-600 hover:bg-primary-700 text-white transition-all shadow-md hover:shadow-lg w-full max-w-xs mx-auto"
+      class="mt-8 px-8 py-3 rounded-full font-bold bg-[#f59bbb] hover:bg-[#e88aae] text-slate-900 transition-all shadow-md hover:shadow-lg w-full max-w-xs mx-auto"
       id="btn-restart"
     >
       Restart Quiz
@@ -183,7 +181,7 @@ const stringifiedQuestions = JSON.stringify(questions);
             if (isGrid || isRow) {
               const flipClass = isFlippable ? 'flip-card' : '';
               html += `
-                <label class="custom-grid-option flex flex-col h-full border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group
+                <label tabindex="0" role="button" class="custom-grid-option flex flex-col h-full border rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group
                   ${isSelected ? 'selected flipped' : 'unselected'} ${flipClass}">
                   <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="custom-radio-input" ${isSelected ? 'checked' : ''}>
                   ${
@@ -211,9 +209,9 @@ const stringifiedQuestions = JSON.stringify(questions);
               `;
             } else {
               html += `
-                <label class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 
+                <label tabindex="0" role="button" class="flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 
                   ${isSelected ? 'selected' : 'unselected-row'}">
-                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="w-5 h-5 text-primary-600 focus:ring-primary-500 border-slate-300 dark:bg-slate-800 flex-shrink-0" ${isSelected ? 'checked' : ''}>
+                  <input type="radio" name="q-${q.id}" value="${escapeHtml(optValue)}" class="quiz-radio w-5 h-5 border-slate-300 dark:bg-slate-800 flex-shrink-0" tabindex="-1" ${isSelected ? 'checked' : ''}>
                   <div class="ml-4 flex flex-col sm:flex-row sm:items-center gap-3 w-full">
                     ${
                       optImage
@@ -253,6 +251,23 @@ const stringifiedQuestions = JSON.stringify(questions);
               if (answerRevealed) return;
               userAnswers[currentIndex] = (e.target as HTMLInputElement).value;
               revealAnswer(q);
+            });
+          });
+
+          // Keyboard: let users tab to each label and press Enter/Space to select
+          const labels = questionContainer!.querySelectorAll('label[tabindex]');
+          labels.forEach((label) => {
+            label.addEventListener('keydown', (e) => {
+              const key = (e as KeyboardEvent).key;
+              if (key === 'Enter' || key === ' ') {
+                e.preventDefault();
+                if (answerRevealed) return;
+                const radio = label.querySelector('input[type="radio"]') as HTMLInputElement;
+                if (radio) {
+                  radio.checked = true;
+                  radio.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+              }
             });
           });
         } else if (q.type === 'text') {
@@ -457,10 +472,10 @@ const stringifiedQuestions = JSON.stringify(questions);
             const topCategory = topCategoryEntry[0];
             const categoryEl = document.createElement('div');
             categoryEl.className =
-              'mt-6 p-6 bg-primary-50 dark:bg-primary-900/20 rounded-2xl border border-primary-100 dark:border-primary-800/50 animate-fade-in';
+              'mt-6 p-8 bg-gradient-to-br from-[#f59bbb]/10 to-[#9acac6]/10 dark:from-[#f59bbb]/20 dark:to-[#9acac6]/20 rounded-2xl border border-[#f59bbb]/30 dark:border-[#f59bbb]/40 animate-fade-in shadow-lg shadow-[#f59bbb]/5';
             categoryEl.innerHTML = `
-              <h4 class="text-sm font-bold uppercase tracking-wider text-primary-600 dark:text-primary-400 mb-1">Your Primary Path</h4>
-              <p class="text-3xl font-bold text-slate-800 dark:text-white capitalize">${topCategory}</p>
+              <h4 class="text-sm font-bold uppercase tracking-[0.2em] text-[#f59bbb] dark:text-[#f59bbb] mb-2">Your Strongest Clair</h4>
+              <p class="text-3xl font-heading font-bold text-slate-800 dark:text-white capitalize">${topCategory}</p>
             `;
             resultsEl!.prepend(categoryEl);
           }
@@ -744,6 +759,21 @@ const stringifiedQuestions = JSON.stringify(questions);
     border-color: #334155;
   }
 
+  /* ─── Keyboard Focus Styles ─── */
+  .unselected-row:focus-within,
+  .unselected:focus-within {
+    border-color: #f59bbb;
+    box-shadow: 0 0 0 3px rgba(245, 155, 187, 0.3);
+    background-color: rgb(245 155 187 / 5%);
+    outline: none;
+  }
+
+  .custom-grid-option:focus-within {
+    border-color: #f59bbb;
+    box-shadow: 0 0 0 3px rgba(245, 155, 187, 0.3);
+    outline: none;
+  }
+
   /* ─── Flip Card Styles ─── */
   .flip-card {
     perspective: 1000px;
@@ -798,5 +828,61 @@ const stringifiedQuestions = JSON.stringify(questions);
 
   .flip-card.flipped .reveal-text {
     opacity: 1;
+  }
+
+  /* ─── Brand Pink Radio Buttons ─── */
+  .quiz-radio {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+  }
+
+  .dark .quiz-radio {
+    background: #1e293b;
+    border-color: #475569;
+  }
+
+  .quiz-radio:checked {
+    border-color: #f59bbb;
+    background: white;
+  }
+
+  .dark .quiz-radio:checked {
+    background: #1e293b;
+    border-color: #f59bbb;
+  }
+
+  .quiz-radio:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: #f59bbb;
+    animation: radioPopIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .quiz-radio:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 155, 187, 0.3);
+  }
+
+  @keyframes radioPopIn {
+    0% {
+      transform: translate(-50%, -50%) scale(0);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
   }
 </style>
